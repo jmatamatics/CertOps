@@ -56,14 +56,15 @@ export function FrameworkView({ framework }: FrameworkViewProps) {
                         <p className="mb-2 text-xs text-muted-foreground">
                           {skill.description}
                         </p>
-                        <div className="flex gap-1">
+                        <div className="flex gap-1 flex-wrap">
                           {skill.proficiency_levels.map((lvl, j) => (
                             <Badge
                               key={j}
                               variant="secondary"
                               className="text-[10px]"
+                              title={lvl.descriptor}
                             >
-                              {lvl}
+                              {lvl.level}
                             </Badge>
                           ))}
                         </div>
