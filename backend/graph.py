@@ -56,6 +56,11 @@ PIPELINE_STEPS = [
     "generate_blueprint",
 ]
 
+TRACK_SEARCH_QUERIES = {
+    "AI Champion": "Microsoft Copilot Studio latest updates 2026",
+    "M365 Copilot User": "Microsoft 365 Copilot latest updates 2026",
+}
+
 TRACK_DOMAIN_HINTS = {
     "AI Champion": (
         "Include at least 4 domains covering agent creation & configuration, "
@@ -81,7 +86,8 @@ def retrieve_docs(state: CertOpsState) -> dict:
 
     tavily = TavilySearch(max_results=3)
     try:
-        tavily_results = tavily.invoke("Microsoft Copilot Studio latest updates 2026")
+        search_query = TRACK_SEARCH_QUERIES.get(state["track"], f"{state['track']} latest updates 2026")
+        tavily_results = tavily.invoke(search_query)
         tavily_context = str(tavily_results)[:2000]
     except Exception:
         tavily_context = ""
