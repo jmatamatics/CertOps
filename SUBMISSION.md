@@ -1,4 +1,4 @@
-# CertOps — Certification Challenge Submission
+# CertOps - Certification Challenge Submission
 
 **[Live Demo](https://certops.vercel.app)** | **[GitHub Repo](https://github.com/jmatamatics/CertOps)** | **[Loom Video](TODO_LOOM_LINK)**
 
@@ -8,35 +8,38 @@
 
 ### 1.1 Problem Statement
 
-Enterprise AI platforms evolve faster than organizations can build and maintain rigorous certifications for them, forcing Certification Architects to choose between shallow assessments that ship on time and rigorous ones that are outdated within weeks.
+Enterprise AI adoption efforts struggle to create up-to-date, role-specific, competency-based learning paths because official documentation is fragmented, rapidly evolving, and difficult to operationalize into structured certification programs.
 
 ### 1.2 Why This Is a Problem
 
-The primary users of CertOps are **Certification Architects** and **AI Enablement Leaders** — the people responsible for ensuring that employees can actually use tools like Microsoft 365 Copilot and Copilot Studio at a professional level.
+As a Senior AI Enablement Manager, I am responsible for driving Microsoft 365 Copilot adoption across the organization. However, Microsoft's official learning materials and technical documentation are distributed across multiple sources, including documentation hubs, training paths, blog posts, and release notes. This fragmentation makes it difficult to determine which content is current, authoritative, and aligned with our governance standards.
 
-Today, these professionals manually author competency frameworks, design scenario-based assessments, write scoring rubrics, and maintain item banks. Every time the platform ships an update (and Copilot Studio ships updates monthly), the entire certification must be reviewed, rewritten, and revalidated. A single certification cycle can take weeks of expert labor, and by the time it's finished, the platform has already changed.
+At the same time, we need differentiated AI fluency tracks for everyday users, AI champions, and technical builders. Existing certifications and learning paths are either too generic or quickly become outdated as the product evolves. This leads to inconsistent adoption, unclear competency benchmarks, and significant manual effort to maintain enablement programs. We need a structured, AI-native system that transforms curated documentation into dynamic learning paths and competency-based assessments tailored to our organization.
 
-The result is a painful tradeoff: certifications become either **shallow** (multiple-choice recall questions that don't measure real competence) or **stale** (rigorous but outdated within weeks). Neither outcome serves the organization. Teams roll out AI tools to thousands of employees with no reliable way to verify competence, creating risk for compliance, adoption, and ROI measurement.
+### 1.3 Evaluation Criteria
 
-### 1.3 Evaluation Questions
+CertOps is a pipeline, not a chatbot. The user selects a certification track (AI Champion or M365 Copilot User), clicks Generate, and the system produces six structured artifacts in a single run. Evaluation focuses on whether each artifact is grounded in the retrieved documentation, structurally complete, and useful to an enablement team.
 
-These are representative questions a Certification Architect would ask CertOps, paired with the expected output type:
+| # | Pipeline Input (Track Selection) | Artifact Produced | Quality Criteria |
+|---|----------------------------------|-------------------|-----------------|
+| 1 | AI Champion | Competency Framework | 4+ domains covering agent creation, conversational design, connectors, and security/governance with behavioral indicators at each proficiency level |
+| 2 | AI Champion | Learning Progression | Ordered objectives with prerequisites, suggested activities, and estimated hours that map back to framework domains |
+| 3 | AI Champion | Assessment Tasks | Scenario-based performance tasks (not recall questions) grounded in retrieved Copilot Studio documentation |
+| 4 | AI Champion | Scoring Rubrics | Weighted criteria with multi-level descriptors that align to the proficiency levels in the framework |
+| 5 | AI Champion | Item Bank | Reusable items with model answers and scoring notes covering all framework domains |
+| 6 | AI Champion | Certification Blueprint | Executive summary tying all artifacts together with assessment strategy and estimated duration |
+| 7 | M365 Copilot User | Competency Framework | 4+ domains covering productivity apps, communication tools, data analysis, and prompting |
+| 8 | M365 Copilot User | Assessment Tasks | Scenario-based tasks grounded in retrieved M365 Copilot documentation, not generic productivity advice |
 
-| # | Input (User Question / Track Selection) | Expected Output |
-|---|----------------------------------------|-----------------|
-| 1 | Generate certification for "AI Champion" | Competency framework with 4+ domains covering agent creation, conversational design, connectors, and security/governance |
-| 2 | Generate certification for "M365 Copilot User" | Competency framework with 4+ domains covering productivity apps, communication tools, data analysis, and prompting |
-| 3 | What skills should an AI Champion demonstrate in security? | Assessment tasks with scenarios involving authentication management, data privacy, and governance |
-| 4 | How should we assess Copilot proficiency in Excel? | Scenario-based assessment with data analysis tasks, rubric criteria, and model answers |
-| 5 | What does a novice vs. expert look like for prompt engineering? | Proficiency levels with behavioral indicators distinguishing novice, competent, and expert |
+The key evaluation question across all artifacts: **Is the generated content grounded in the retrieved documentation, or is it generic LLM output that could have been produced without RAG?**
 
-Additionally, the synthetic test set used for RAGAS evaluation (`data/synthetic_testset.csv`) contains questions generated from the Microsoft Learn corpus. Examples:
+Additionally, the retriever itself is evaluated using RAGAS on a synthetic test set (`data/synthetic_testset.csv`) generated from the Microsoft Learn corpus. Example retrieval queries:
 
 - *"Is Copilot in Teams available for Mac users, and what are the requirements to access it?"*
 - *"How does Microsoft 365 Copilot Chat integrate with OneDrive to enhance user productivity?"*
 - *"What is Copilot in Excel used for?"*
 
-These questions validate that the retriever surfaces the correct documentation chunks and that the LLM generates grounded, faithful answers.
+These measure whether the retriever surfaces the correct documentation chunks (context precision, context recall) and whether the LLM's answers stay faithful to them (faithfulness).
 
 ---
 
@@ -44,7 +47,7 @@ These questions validate that the retriever surfaces the correct documentation c
 
 ### 2.1 Solution Description
 
-CertOps is an agentic RAG application built with LangGraph. The user selects a certification track through a Next.js dashboard, and the system runs a multi-step pipeline: retrieve relevant documentation from Qdrant (Cohere-reranked), augment with Tavily web search for the latest platform updates, then generate six certification artifacts in sequence — competency framework, learning progression, assessments, rubrics, item bank, and certification blueprint.
+CertOps is an agentic RAG application built with LangGraph. The user selects a certification track through a Next.js dashboard, and the system runs a multi-step pipeline: retrieve relevant documentation from Qdrant (Cohere-reranked), augment with Tavily web search for the latest platform updates, then generate six certification artifacts in sequence - competency framework, learning progression, assessments, rubrics, item bank, and certification blueprint.
 
 Every LLM call uses OpenAI GPT-4o with structured output (Pydantic models) to ensure artifacts are valid and exportable. The final output is a comprehensive, styled HTML certification report that a non-technical user can download and hand to stakeholders. The look and feel is a polished dashboard: select a track, watch the pipeline progress with animated step indicators, then view and export the results.
 
@@ -54,16 +57,16 @@ The full architecture diagram is in the [README](README.md#architecture). Each t
 
 | # | Component | Choice | Why |
 |---|-----------|--------|-----|
-| 1 | **LLM** | OpenAI GPT-4o | Best-in-class structured output via `with_structured_output()` — critical for generating valid Pydantic models |
+| 1 | **LLM** | OpenAI GPT-4o | Best-in-class structured output via `with_structured_output()` - critical for generating valid Pydantic models |
 | 2 | **Agent Orchestration** | LangGraph | Stateful graph maps directly to a multi-step pipeline where each node depends on the previous |
 | 3 | **Tool** | Tavily Search | Purpose-built for AI apps; fetches latest platform updates not yet in the local corpus |
 | 4 | **Embedding Model** | OpenAI text-embedding-3-small | High quality at low cost; 1536-dim vectors |
 | 5 | **Vector Database** | Qdrant Cloud | Production-grade managed vector DB with metadata filtering on domain and audience |
 | 6 | **Monitoring** | LangSmith | Full tracing of every LLM call, retrieval, and tool use |
-| 7 | **Evaluation** | RAGAS | Measures faithfulness, context precision, and context recall — the metrics that matter for grounded generation |
+| 7 | **Evaluation** | RAGAS | Measures faithfulness, context precision, and context recall - the metrics that matter for grounded generation |
 | 8 | **User Interface** | Next.js + Tailwind + shadcn/ui + Motion | Polished dashboard with animated pipeline progress |
 | 9 | **Deployment** | Vercel (frontend) + Render (backend) | Vercel handles CDN/edge; Render runs the FastAPI + LangGraph workflow |
-| 10 | **Retriever** | Cohere Rerank v3.5 | Winner from RAGAS evaluation — retrieve top 20, rerank to top 5 |
+| 10 | **Retriever** | Cohere Rerank v3.5 | Winner from RAGAS evaluation - retrieve top 20, rerank to top 5 |
 
 ### 2.3 RAG and Agent Components
 
@@ -73,8 +76,8 @@ The full architecture diagram is in the [README](README.md#architecture). Each t
 - **Generation**: GPT-4o with Pydantic structured output generates each artifact from the retrieved context.
 
 **Agent components:**
-- **Tavily Search tool**: Called during the `retrieve_docs` node to fetch the latest platform updates that may not yet be in the local corpus. The search query is track-specific — "Microsoft Copilot Studio latest updates" for AI Champion, "Microsoft 365 Copilot latest updates" for the User track.
-- **Conditional routing**: The `check_documents` node acts as a quality gate — if fewer than 3 documents are retrieved, it loops back to retry before proceeding to generation.
+- **Tavily Search tool**: Called during the `retrieve_docs` node to fetch the latest platform updates that may not yet be in the local corpus. The search query is track-specific - "Microsoft Copilot Studio latest updates" for AI Champion, "Microsoft 365 Copilot latest updates" for the User track.
+- **Conditional routing**: The `check_documents` node acts as a quality gate - if fewer than 3 documents are retrieved, it loops back to retry before proceeding to generation.
 
 ---
 
@@ -131,7 +134,7 @@ cd frontend && npm run dev
 
 The LangGraph pipeline is fully operational: select a track at `localhost:3000`, click Generate, and the system runs all 7 nodes (retrieve_docs → generate_competency_framework → generate_learning_progression → generate_assessments → generate_rubrics → generate_item_bank → generate_blueprint), returning a complete certification package.
 
-### 4.3 Public Deployment (Optional — Completed)
+### 4.3 Public Deployment (Optional - Completed)
 
 | Service | Platform | URL |
 |---------|----------|-----|
@@ -159,7 +162,7 @@ See: [`notebooks/02_retrieval_evaluation.ipynb`](notebooks/02_retrieval_evaluati
 
 ### 5.2 Conclusions
 
-- **Faithfulness (0.62)** indicates moderate grounding — the LLM answer is partially supported by the retrieved context, but there is room for hallucination.
+- **Faithfulness (0.62)** indicates moderate grounding - the LLM answer is partially supported by the retrieved context, but there is room for hallucination.
 - **Context Precision (0.41)** is the weakest metric. The retriever returns relevant chunks but struggles to rank them highest, meaning the most useful context isn't always at the top of the context window.
 - **Context Recall (0.59)** shows the retriever captures roughly half the required evidence. For a certification system where accuracy matters, this needs improvement.
 
@@ -171,7 +174,7 @@ These scores motivated testing advanced retriever strategies: reranking and doma
 
 ### 6.1 Technique Choice
 
-We chose **Cohere Rerank v3.5** as a cross-encoder reranker. Unlike the baseline retriever that scores documents independently using embedding similarity, the reranker scores each query-document pair together. This means it can understand nuanced relevance that bi-encoder embeddings miss — critical for our use case where certification questions often require specific procedural knowledge from the documentation.
+We chose **Cohere Rerank v3.5** as a cross-encoder reranker. Unlike the baseline retriever that scores documents independently using embedding similarity, the reranker scores each query-document pair together. This means it can understand nuanced relevance that bi-encoder embeddings miss - critical for our use case where certification questions often require specific procedural knowledge from the documentation.
 
 ### 6.2 Implementation
 
@@ -193,13 +196,13 @@ Implementation: [`notebooks/02_retrieval_evaluation.ipynb`](notebooks/02_retriev
 
 **Winner: Reranked retriever (Cohere `rerank-v3.5`, k=20 → top 5)**
 
-The Cohere reranker outperformed every other strategy on the two metrics that matter most for a certification system — **faithfulness** and **context precision** — while keeping context recall essentially flat.
+The Cohere reranker outperformed every other strategy on the two metrics that matter most for a certification system - **faithfulness** and **context precision** - while keeping context recall essentially flat.
 
 - **Reranked (Cohere):** Faithfulness jumped from 0.62 to 0.79 (+0.17), and context precision rose from 0.41 to 0.50 (+0.09). The cross-encoder sees query and document together, which promotes genuinely relevant chunks and grounds the LLM more faithfully.
 - **Filtered (Single Domain):** All metrics dropped sharply. The synthetic test set includes multi-hop questions (25% MultiHopSpecific + 25% MultiHopAbstract) that span multiple domains. A single-domain filter excludes the cross-domain chunks those questions require.
 - **Filtered (Multi Domain):** Achieved the highest context recall (0.63) by correctly identifying and pulling from multiple relevant domains. However, faithfulness and precision lagged behind the reranker.
 
-We selected the Cohere reranked retriever for the production pipeline. It delivers the highest faithfulness (0.79) and context precision (0.50) — the two most critical metrics for a certification system where accuracy and grounding must be reliable.
+We selected the Cohere reranked retriever for the production pipeline. It delivers the highest faithfulness (0.79) and context precision (0.50) - the two most critical metrics for a certification system where accuracy and grounding must be reliable.
 
 ---
 
@@ -207,13 +210,13 @@ We selected the Cohere reranked retriever for the production pipeline. It delive
 
 ### 7.1 Keeping Dense Vector Retrieval for Demo Day?
 
-Yes — with the Cohere reranker on top. The retrieval pipeline for Demo Day will remain **dense vector retrieval (Qdrant) + Cohere cross-encoder reranking**, and here's why:
+Yes - with the Cohere reranker on top. The retrieval pipeline for Demo Day will remain **dense vector retrieval (Qdrant) + Cohere cross-encoder reranking**, and here's why:
 
-1. **The RAGAS numbers justify it.** The reranked retriever achieved 0.79 faithfulness and 0.50 context precision — the highest across all four strategies tested. For a certification system, faithfulness is non-negotiable: generated assessments and rubrics must be grounded in actual documentation, not hallucinated.
+1. **The RAGAS numbers justify it.** The reranked retriever achieved 0.79 faithfulness and 0.50 context precision - the highest across all four strategies tested. For a certification system, faithfulness is non-negotiable: generated assessments and rubrics must be grounded in actual documentation, not hallucinated.
 
 2. **Dense retrieval gives us the right initial candidate pool.** Qdrant's embedding-based search with k=20 casts a wide enough net to surface relevant chunks even when the query doesn't share exact terminology with the documentation. The reranker then promotes the truly relevant ones.
 
-3. **The alternative (domain-filtered retrieval) is too brittle.** Single-domain filtering collapsed on multi-hop questions. Multi-domain filtering had the best recall but lower faithfulness — it retrieves more context but the LLM gets noisier input. The reranker strikes the best balance.
+3. **The alternative (domain-filtered retrieval) is too brittle.** Single-domain filtering collapsed on multi-hop questions. Multi-domain filtering had the best recall but lower faithfulness - it retrieves more context but the LLM gets noisier input. The reranker strikes the best balance.
 
 4. **The architecture already supports it in production.** Both `backend/graph.py` and `notebooks/03_certification_engine.ipynb` use the same `CohereRerank(model="rerank-v3.5", top_n=5)` configuration. The pipeline is deployed and running at [certops.vercel.app](https://certops.vercel.app).
 

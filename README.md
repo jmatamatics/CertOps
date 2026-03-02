@@ -2,7 +2,7 @@
 
 **AI-Native Certification Builder for Enterprise AI Platforms**
 
-CertOps is an LLM-powered system that ingests platform documentation, retrieves relevant content via RAG, and generates production-ready certification artifacts — competency frameworks, learning progressions, performance-based assessments, scoring rubrics, item banks, and certification blueprints.
+CertOps is an LLM-powered system that ingests platform documentation, retrieves relevant content via RAG, and generates production-ready certification artifacts - competency frameworks, learning progressions, performance-based assessments, scoring rubrics, item banks, and certification blueprints.
 
 **[Live Demo](https://certops.vercel.app)** | **[Loom Video](TODO_LOOM_LINK)** | **[API Health Check](https://certops.onrender.com/health)**
 
@@ -12,11 +12,11 @@ CertOps is an LLM-powered system that ingests platform documentation, retrieves 
 
 ## The Problem
 
-Enterprise AI platforms like Microsoft 365 Copilot and Copilot Studio evolve faster than organizations can build and maintain rigorous certifications for them. When your company rolls out M365 Copilot to thousands of employees, someone has to certify that those people can actually use it — not just pass a multiple-choice quiz, but demonstrate real competence in context.
+Enterprise AI adoption efforts struggle to create up-to-date, role-specific, competency-based learning paths because official documentation is fragmented, rapidly evolving, and difficult to operationalize into structured certification programs.
 
-Today, that work falls on Certification Architects and AI Enablement Leaders who manually author competency frameworks, design scenario-based assessments, write scoring rubrics, and maintain item banks. Every time the platform ships an update (and Copilot Studio ships updates monthly), the entire certification must be reviewed, rewritten, and revalidated. This is a labor-intensive, expert-driven process that does not scale.
+As a Senior AI Enablement Manager, I am responsible for driving Microsoft 365 Copilot adoption across the organization. However, Microsoft's official learning materials and technical documentation are distributed across multiple sources, including documentation hubs, training paths, blog posts, and release notes. This fragmentation makes it difficult to determine which content is current, authoritative, and aligned with our governance standards.
 
-The result is a painful tradeoff: certifications become either **shallow** (multiple-choice recall questions that don't measure real competence) or **stale** (rigorous but outdated within weeks). Neither outcome serves the organization. CertOps addresses this by using retrieval-augmented generation to keep certification content grounded in current documentation, and structured LLM output to generate the artifacts that currently require weeks of expert labor.
+At the same time, we need differentiated AI fluency tracks for everyday users, AI champions, and technical builders. Existing certifications and learning paths are either too generic or quickly become outdated as the product evolves. This leads to inconsistent adoption, unclear competency benchmarks, and significant manual effort to maintain enablement programs. We need a structured, AI-native system that transforms curated documentation into dynamic learning paths and competency-based assessments tailored to our organization.
 
 ## The Solution
 
@@ -24,7 +24,7 @@ CertOps is an agentic RAG application built with LangGraph. The user selects a c
 
 1. **Retrieve** relevant documentation chunks from Qdrant (Cohere-reranked)
 2. **Augment** with Tavily web search for the latest platform updates
-3. **Generate** each certification artifact in sequence — framework first (so downstream artifacts can reference it), then learning progression, assessments, rubrics, item bank, and a certification blueprint
+3. **Generate** each certification artifact in sequence - framework first (so downstream artifacts can reference it), then learning progression, assessments, rubrics, item bank, and a certification blueprint
 
 Every LLM call uses OpenAI GPT-4o with structured output (Pydantic models) to ensure artifacts are valid and exportable. The final output is a comprehensive, styled HTML certification report that a non-technical user can download and hand to stakeholders.
 
@@ -32,11 +32,11 @@ Every LLM call uses OpenAI GPT-4o with structured output (Pydantic models) to en
 
 ```mermaid
 flowchart TB
-    subgraph frontend ["Frontend — Vercel"]
+    subgraph frontend ["Frontend - Vercel"]
         NextJS["Next.js + shadcn/ui"]
     end
 
-    subgraph backend ["Backend — FastAPI"]
+    subgraph backend ["Backend - FastAPI"]
         API["FastAPI Routes"]
         subgraph pipeline ["LangGraph Pipeline"]
             Retrieve["retrieve_docs"]
@@ -82,7 +82,7 @@ flowchart TB
 | **Orchestration** | LangGraph | Stateful graph maps directly to a multi-step pipeline where each node depends on the previous |
 | **Embeddings** | OpenAI text-embedding-3-small | High quality at low cost; 1536-dim vectors |
 | **Vector DB** | Qdrant Cloud | Production-grade managed vector DB with metadata filtering |
-| **Retriever** | Cohere Rerank v3.5 | Winner from RAGAS evaluation — retrieve top 20, rerank to top 5 |
+| **Retriever** | Cohere Rerank v3.5 | Winner from RAGAS evaluation - retrieve top 20, rerank to top 5 |
 | **Search Tool** | Tavily | Purpose-built for AI apps; fetches latest platform updates not in the local corpus |
 | **Monitoring** | LangSmith | Full tracing of every LLM call, retrieval, and tool use |
 | **Evaluation** | RAGAS | Measures faithfulness, context precision, and context recall |
@@ -95,7 +95,7 @@ flowchart TB
 
 CertOps currently supports two tracks built from a curated corpus of 45 Microsoft Learn training module pages:
 
-**AI Champion** — For professionals building AI agents with Copilot Studio (25 pages).
+**AI Champion** - For professionals building AI agents with Copilot Studio (25 pages).
 
 | Domain | Example Skills |
 |--------|---------------|
@@ -104,7 +104,7 @@ CertOps currently supports two tracks built from a curated corpus of 45 Microsof
 | Connectors & Integrations | Channel deployment, system integration, API utilization |
 | Security & Governance | Authentication management, data privacy, performance monitoring |
 
-**M365 Copilot User** — For everyday users leveraging Copilot across Word, Excel, PowerPoint, Teams, and Outlook (20 pages).
+**M365 Copilot User** - For everyday users leveraging Copilot across Word, Excel, PowerPoint, Teams, and Outlook (20 pages).
 
 | Domain | Example Skills |
 |--------|---------------|
@@ -113,7 +113,7 @@ CertOps currently supports two tracks built from a curated corpus of 45 Microsof
 | Data Analysis | Data insights generation, advanced reasoning with Copilot |
 | Prompting Best Practices | Effective prompt creation, custom agent utilization |
 
-> Domain names are representative — the LLM generates professional labels each run, but `TRACK_DOMAIN_HINTS` ensure the same four areas are always covered.
+> Domain names are representative - the LLM generates professional labels each run, but `TRACK_DOMAIN_HINTS` ensure the same four areas are always covered.
 
 ## What It Generates
 
@@ -126,7 +126,7 @@ Each pipeline run produces six structured artifacts:
 | **Assessment Tasks** | Scenario-based performance assessments with instructions, expected outputs, and evaluator guides |
 | **Scoring Rubrics** | Weighted criteria with multi-level descriptors for consistent grading |
 | **Item Bank** | Reusable assessment items (performance, scenario, analysis) with model answers and scoring notes |
-| **Certification Blueprint** | Executive summary tying all artifacts together — program overview, assessment strategy, estimated duration |
+| **Certification Blueprint** | Executive summary tying all artifacts together - program overview, assessment strategy, estimated duration |
 
 All artifacts are delivered as a single downloadable HTML report styled for print and screen.
 
