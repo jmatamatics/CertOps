@@ -94,9 +94,25 @@ flowchart TB
 
 CertOps currently supports two tracks built from a curated corpus of 45 Microsoft Learn training module pages:
 
-**AI Champion** — For professionals building AI agents with Copilot Studio. Covers agent creation, conversational design, connector integration, security, and governance.
+**AI Champion** — For professionals building AI agents with Copilot Studio (25 pages).
 
-**M365 Copilot User** — For everyday users leveraging Copilot across Word, Excel, PowerPoint, Teams, and Outlook. Covers productivity workflows, communication, and prompt engineering.
+| Domain | Example Skills |
+|--------|---------------|
+| Agent Creation & Configuration | Agent setup, action configuration, trigger management |
+| Conversational Design | Intent definition, response design, topic management |
+| Connectors & Integrations | Channel deployment, system integration, API utilization |
+| Security & Governance | Authentication management, data privacy, performance monitoring |
+
+**M365 Copilot User** — For everyday users leveraging Copilot across Word, Excel, PowerPoint, Teams, and Outlook (20 pages).
+
+| Domain | Example Skills |
+|--------|---------------|
+| Productivity Tools | Word processing, Excel data management, PowerPoint design |
+| Communication Tools | Teams collaboration, Outlook email management |
+| Data Analysis | Data insights generation, advanced reasoning with Copilot |
+| Prompting Best Practices | Effective prompt creation, custom agent utilization |
+
+> Domain names are representative — the LLM generates professional labels each run, but `TRACK_DOMAIN_HINTS` ensure the same four areas are always covered.
 
 ## What It Generates
 
