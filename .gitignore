@@ -1,0 +1,45 @@
+# Environment
+.env
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# uv
+.python-version
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Ruff
+.ruff_cache/
+
+# Pytest
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data (large files - keep structure, ignore content)
+data/docs/*.md
+!data/docs/.gitkeep
+
+# Large build artifacts
+notebooks/certops_kg.json
+
+# Next.js
+frontend/.next/
+
+# Docker
+*.log

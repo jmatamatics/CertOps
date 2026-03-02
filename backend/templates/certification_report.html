@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ data.blueprint.program_title }} — CertOps Report</title>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --surface-2: #1c1c1c;
+            --border: #2a2a2a;
+            --text: #e5e5e5;
+            --text-muted: #999;
+            --accent: #3b82f6;
+            --accent-soft: #1e3a5f;
+            --green: #22c55e;
+            --amber: #f59e0b;
+            --red: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        h2 { font-size: 1.5rem; font-weight: 600; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+        h3 { font-size: 1.15rem; font-weight: 600; margin: 1.5rem 0 0.75rem; }
+        h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 0.5rem; color: var(--accent); }
+
+        p { margin-bottom: 0.75rem; }
+
+        .title-block {
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--accent);
+        }
+        .title-block h1 { font-size: 2.5rem; }
+        .title-block .subtitle { color: var(--text-muted); font-size: 1.1rem; margin-top: 0.5rem; }
+        .title-block .meta { color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+        .badge-green { background: #14532d; color: var(--green); }
+        .badge-amber { background: #451a03; color: var(--amber); }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .blueprint-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .blueprint-item { padding: 0.75rem; background: var(--surface-2); border-radius: 6px; }
+        .blueprint-item .label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
+        .blueprint-item .value { font-size: 0.95rem; }
+
+        .domain-block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 1.25rem;
+            overflow: hidden;
+        }
+        .domain-header {
+            padding: 1rem 1.25rem;
+            background: var(--surface-2);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .domain-body { padding: 1.25rem; }
+
+        .skill-card {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        .skill-name { font-weight: 600; margin-bottom: 0.25rem; }
+        .skill-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+
+        .proficiency-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+        .proficiency-level {
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        .proficiency-level.novice { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .proficiency-level.competent { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); }
+        .proficiency-level.expert { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); }
+        .proficiency-level .level-label { font-weight: 600; text-transform: capitalize; margin-bottom: 0.3rem; }
+        .proficiency-level .level-desc { margin-bottom: 0.5rem; }
+        .proficiency-level ul { padding-left: 1rem; font-size: 0.8rem; }
+        .proficiency-level li { margin-bottom: 0.2rem; }
+
+        .objective-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+            display: grid;
+            grid-template-columns: 48px 1fr;
+            gap: 1rem;
+        }
+        .objective-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-soft);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .objective-activities { margin-top: 0.5rem; }
+        .objective-activities li { font-size: 0.9rem; margin-bottom: 0.3rem; color: var(--text-muted); }
+        .objective-meta {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .assessment-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .assessment-card .section-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 1rem 0 0.3rem;
+        }
+        .assessment-card .section-label:first-of-type { margin-top: 0.5rem; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        th, td { padding: 0.75rem; text-align: left; border: 1px solid var(--border); }
+        th { background: var(--surface-2); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+        td { vertical-align: top; }
+
+        .item-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .item-stem { font-weight: 500; margin-bottom: 0.75rem; }
+        .model-answer {
+            background: var(--surface-2);
+            border-left: 3px solid var(--accent);
+            padding: 1rem;
+            margin-top: 0.75rem;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+        }
+
+        .toc { list-style: none; padding: 0; }
+        .toc li { padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
+        .toc a { color: var(--accent); text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+
+        .evaluator-guide {
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+        }
+
+        ul { padding-left: 1.25rem; }
+        li { margin-bottom: 0.3rem; }
+
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        @media print {
+            :root {
+                --bg: #fff;
+                --surface: #f9f9f9;
+                --surface-2: #f0f0f0;
+                --border: #ddd;
+                --text: #111;
+                --text-muted: #555;
+                --accent: #2563eb;
+                --accent-soft: #dbeafe;
+            }
+            body { padding: 0; max-width: none; }
+            .domain-block, .assessment-card, .item-card, .objective-card { break-inside: avoid; }
+            .proficiency-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Title Page -->
+<div class="title-block">
+    <h1>{{ data.blueprint.program_title }}</h1>
+    <div class="subtitle">{{ data.competency_framework.track }}</div>
+    <div class="meta">Generated by CertOps &middot; {{ generated_date }}</div>
+</div>
+
+<!-- Table of Contents -->
+<h2>Contents</h2>
+<ul class="toc">
+    <li><a href="#blueprint">1. Certification Blueprint</a></li>
+    <li><a href="#framework">2. Competency Framework</a></li>
+    <li><a href="#progression">3. Learning Progression</a></li>
+    <li><a href="#assessments">4. Assessment Tasks</a></li>
+    <li><a href="#rubrics">5. Scoring Rubrics</a></li>
+    <li><a href="#itembank">6. Item Bank</a></li>
+</ul>
+
+<!-- 1. Blueprint -->
+<h2 id="blueprint">1. Certification Blueprint</h2>
+
+<div class="blueprint-grid">
+    <div class="blueprint-item">
+        <div class="label">Target Audience</div>
+        <div class="value">{{ data.blueprint.target_audience }}</div>
+    </div>
+    <div class="blueprint-item">
+        <div class="label">Prerequisites</div>
+        <div class="value">{{ data.blueprint.prerequisites }}</div>
+    </div>
+    <div class="blueprint-item">
+        <div class="label">Estimated Duration</div>
+        <div class="value">{{ data.blueprint.estimated_duration_hours }} hours</div>
+    </div>
+    <div class="blueprint-item">
+        <div class="label">Renewal Cadence</div>
+        <div class="value">{{ data.blueprint.renewal_cadence }}</div>
+    </div>
+</div>
+
+<h3>Program Overview</h3>
+<p>{{ data.blueprint.program_overview }}</p>
+
+<h3>Domain Coverage</h3>
+<ul>
+{% for summary in data.blueprint.domain_summary %}
+    <li>{{ summary }}</li>
+{% endfor %}
+</ul>
+
+<h3>Assessment Strategy</h3>
+<p>{{ data.blueprint.assessment_strategy }}</p>
+
+<!-- 2. Competency Framework -->
+<h2 id="framework">2. Competency Framework</h2>
+<p>{{ data.competency_framework.description }}</p>
+
+{% for domain in data.competency_framework.domains %}
+<div class="domain-block">
+    <div class="domain-header">
+        <h3 style="margin:0">{{ domain.name }}</h3>
+        <span class="badge">{{ domain.skills | length }} skills</span>
+    </div>
+    <div class="domain-body">
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;">{{ domain.description }}</p>
+
+        {% for skill in domain.skills %}
+        <div class="skill-card">
+            <div class="skill-name">{{ skill.name }}</div>
+            <div class="skill-desc">{{ skill.description }}</div>
+            <div class="proficiency-grid">
+                {% for pl in skill.proficiency_levels %}
+                <div class="proficiency-level {{ pl.level }}">
+                    <div class="level-label">{{ pl.level }}</div>
+                    <div class="level-desc">{{ pl.descriptor }}</div>
+                    <ul>
+                        {% for indicator in pl.behavioral_indicators %}
+                        <li>{{ indicator }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+
+<!-- 3. Learning Progression -->
+<h2 id="progression">3. Learning Progression</h2>
+
+{% for obj in data.learning_progression.objectives %}
+<div class="objective-card">
+    <div class="objective-number">{{ obj.order }}</div>
+    <div>
+        <h4 style="margin-top:0">{{ obj.title }}</h4>
+        <span class="badge" style="margin-bottom:0.5rem">{{ obj.domain }}</span>
+        <p style="font-size:0.9rem; margin-top:0.5rem;">{{ obj.description }}</p>
+
+        {% if obj.prerequisites %}
+        <div class="objective-meta">
+            <span>Prerequisites: {{ obj.prerequisites | join(', ') }}</span>
+        </div>
+        {% endif %}
+
+        <div class="section-label" style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; margin-top:0.75rem;">Suggested Activities</div>
+        <ul class="objective-activities">
+            {% for activity in obj.suggested_activities %}
+            <li>{{ activity }}</li>
+            {% endfor %}
+        </ul>
+
+        <div class="objective-meta">
+            <span>Estimated: {{ obj.estimated_hours }} hours</span>
+        </div>
+
+        <div class="section-label" style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; margin-top:0.5rem;">Success Criteria</div>
+        <p style="font-size:0.9rem; color:var(--text-muted);">{{ obj.success_criteria }}</p>
+    </div>
+</div>
+{% endfor %}
+
+<!-- 4. Assessment Tasks -->
+<h2 id="assessments">4. Assessment Tasks</h2>
+
+{% for task in data.assessments %}
+<div class="assessment-card">
+    <div class="card-header">
+        <h3 style="margin:0">{{ task.title }}</h3>
+        <span class="badge-amber badge">{{ task.time_estimate_minutes }} min</span>
+    </div>
+    <span class="badge">{{ task.competency_ref }}</span>
+
+    <div class="section-label">Scenario</div>
+    <p>{{ task.scenario }}</p>
+
+    <div class="section-label">Instructions</div>
+    <p style="white-space: pre-wrap;">{{ task.instructions }}</p>
+
+    <div class="section-label">Expected Outputs</div>
+    <ul>
+        {% for output in task.expected_outputs %}
+        <li>{{ output }}</li>
+        {% endfor %}
+    </ul>
+
+    {% if task.evaluator_guide %}
+    <div class="section-label">Evaluator Guide</div>
+    <div class="evaluator-guide">{{ task.evaluator_guide }}</div>
+    {% endif %}
+</div>
+{% endfor %}
+
+<!-- 5. Rubrics -->
+<h2 id="rubrics">5. Scoring Rubrics</h2>
+
+{% for rubric in data.rubrics %}
+<h3>{{ rubric.assessment_ref }}</h3>
+<table>
+    <thead>
+        <tr>
+            <th style="width:18%">Criterion</th>
+            <th style="width:5%">Wt</th>
+            <th style="width:25%">Novice</th>
+            <th style="width:26%">Competent</th>
+            <th style="width:26%">Expert</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in rubric.criteria %}
+        <tr>
+            <td><strong>{{ c.criterion }}</strong></td>
+            <td style="text-align:center">{{ c.weight }}</td>
+            <td>{{ c.novice }}</td>
+            <td>{{ c.competent }}</td>
+            <td>{{ c.expert }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endfor %}
+
+<!-- 6. Item Bank -->
+<h2 id="itembank">6. Item Bank</h2>
+
+{% for item in data.item_bank %}
+<div class="item-card">
+    <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.75rem;">
+        <span class="badge-green badge">{{ item.task_type }}</span>
+        <span class="badge">{{ item.competency_ref }}</span>
+    </div>
+    <div class="item-stem">{{ item.stem }}</div>
+
+    <div class="section-label" style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Expected Response</div>
+    <p style="font-size:0.9rem; color:var(--text-muted);">{{ item.expected_response_summary }}</p>
+
+    <div class="section-label" style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Scoring Notes</div>
+    <p style="font-size:0.9rem; color:var(--text-muted);">{{ item.scoring_notes }}</p>
+
+    {% if item.model_answer %}
+    <div class="section-label" style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Model Answer</div>
+    <div class="model-answer">{{ item.model_answer }}</div>
+    {% endif %}
+</div>
+{% endfor %}
+
+<div class="footer">
+    <p>Generated by <strong>CertOps</strong> &mdash; AI-Native Certification Builder</p>
+    <p>Powered by LangGraph &middot; OpenAI GPT-4o &middot; Qdrant &middot; Cohere Rerank</p>
+</div>
+
+</body>
+</html>
