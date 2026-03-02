@@ -71,11 +71,10 @@ TRACK_DOMAIN_HINTS = {
 def retrieve_docs(state: CertOpsState) -> dict:
     query = f"{state['track']} certification competencies and skills"
     wide_retriever = vector_store.as_retriever(search_kwargs={"k": 20})
-    compressor = CohereRerank(model="rerank-v3.5")
+    compressor = CohereRerank(model="rerank-v3.5", top_n=5)
     reranked_retriever = ContextualCompressionRetriever(
         base_compressor=compressor,
         base_retriever=wide_retriever,
-        search_kwargs={"k": 10},
     )
     docs = reranked_retriever.invoke(query)
     doc_texts = [doc.page_content for doc in docs]

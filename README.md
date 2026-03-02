@@ -77,7 +77,7 @@ flowchart TB
 | **Orchestration** | LangGraph | Stateful graph maps directly to a multi-step pipeline where each node depends on the previous |
 | **Embeddings** | OpenAI text-embedding-3-small | High quality at low cost; 1536-dim vectors |
 | **Vector DB** | Qdrant Cloud | Production-grade managed vector DB with metadata filtering |
-| **Retriever** | Cohere Rerank v3.5 | Winner from RAGAS evaluation — retrieve top 20, rerank to top 10 |
+| **Retriever** | Cohere Rerank v3.5 | Winner from RAGAS evaluation — retrieve top 20, rerank to top 5 |
 | **Search Tool** | Tavily | Purpose-built for AI apps; fetches latest platform updates not in the local corpus |
 | **Monitoring** | LangSmith | Full tracing of every LLM call, retrieval, and tool use |
 | **Evaluation** | RAGAS | Measures faithfulness, context precision, and context recall |
