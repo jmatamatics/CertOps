@@ -92,7 +92,7 @@ flowchart TB
 
 ## Certification Tracks
 
-CertOps currently supports two tracks built from Microsoft Learn documentation:
+CertOps currently supports two tracks built from a curated corpus of 45 Microsoft Learn training module pages:
 
 **AI Champion** — For professionals building AI agents with Copilot Studio. Covers agent creation, conversational design, connector integration, security, and governance.
 
