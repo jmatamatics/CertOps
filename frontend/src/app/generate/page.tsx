@@ -140,9 +140,26 @@ function GenerateContent() {
                 className="flex items-center justify-center py-20"
               >
                 <div className="text-center space-y-2">
-                  <p className="text-sm font-medium">
-                    Building your certification program...
-                  </p>
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={step}
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.25 }}
+                      className="text-sm font-medium"
+                    >
+                      {[
+                        "Retrieving relevant documentation from Qdrant...",
+                        "Reranking results with Cohere...",
+                        "Generating competency framework...",
+                        "Building learning progression...",
+                        "Designing assessment tasks...",
+                        "Creating scoring rubrics...",
+                        "Assembling item bank and blueprint...",
+                      ][step] ?? "Finishing up..."}
+                    </motion.p>
+                  </AnimatePresence>
                   <p className="text-xs text-muted-foreground">
                     This takes 60-90 seconds. Each step uses GPT-4o with
                     structured output.
