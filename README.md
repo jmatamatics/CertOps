@@ -4,7 +4,7 @@
 
 CertOps is an LLM-powered system that ingests platform documentation, retrieves relevant content via RAG, and generates production-ready certification artifacts — competency frameworks, learning progressions, performance-based assessments, scoring rubrics, item banks, and certification blueprints.
 
-**[Live Demo](https://certops.vercel.app)** | **[API Health Check](https://certops.onrender.com/health)**
+**[Live Demo](https://certops.vercel.app)** | **[Loom Video](TODO_LOOM_LINK)** | **[API Health Check](https://certops.onrender.com/health)**
 
 > Note: The backend runs on Render's free tier and may take ~30 seconds to wake up on first request.
 
