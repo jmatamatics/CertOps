@@ -38,6 +38,9 @@ data/docs/*.md
 # Large build artifacts
 notebooks/certops_kg.json
 
+# Internal design docs (not yet public)
+docs/
+
 # Next.js
 frontend/.next/
 
