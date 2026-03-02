@@ -62,7 +62,8 @@ flowchart TB
         LangSmith["LangSmith"]
     end
 
-    NextJS -->|HTTP| API
+    NextJS -->|"POST /generate"| API
+    API -->|"JSON + HTML"| NextJS
     API --> pipeline
     Retrieve --> Qdrant
     Retrieve --> Cohere
