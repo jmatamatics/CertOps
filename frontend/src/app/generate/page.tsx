@@ -251,7 +251,6 @@ function GenerateContent() {
                   <Button
                     variant="ghost"
                     size="lg"
-                    disabled={status === "generating"}
                     onClick={startGenerate}
                   >
                     Regenerate
