@@ -4,6 +4,10 @@
 
 CertOps is an LLM-powered system that ingests platform documentation, retrieves relevant content via RAG, and generates production-ready certification artifacts — competency frameworks, learning progressions, performance-based assessments, scoring rubrics, item banks, and certification blueprints.
 
+**[Live Demo](https://frontend-hms3cgfqe-josephs-projects-8536c5c0.vercel.app)** | **[API Health Check](https://certops.onrender.com/health)**
+
+> Note: The backend runs on Render's free tier and may take ~30 seconds to wake up on first request.
+
 ---
 
 ## The Problem
@@ -166,9 +170,13 @@ uv run jupyter notebook
 
 ## Deployment
 
-- **Frontend**: Deployed on [Vercel](https://vercel.com). The `frontend/.env.production` file points to the live backend URL.
-- **Backend**: Run via Docker or directly with `uvicorn`. The `Dockerfile` is configured for production.
-- **Vector DB**: Qdrant Cloud (managed). Collection `certops_docs` with payload indexes on `metadata.domain` and `metadata.audience`.
+| Service | Platform | URL |
+|---------|----------|-----|
+| **Frontend** | Vercel | [certops on Vercel](https://frontend-hms3cgfqe-josephs-projects-8536c5c0.vercel.app) |
+| **Backend** | Render | [certops.onrender.com](https://certops.onrender.com) |
+| **Vector DB** | Qdrant Cloud | Collection `certops_docs` with payload indexes on `metadata.domain` and `metadata.audience` |
+
+The frontend auto-deploys from the `main` branch via Vercel. The backend auto-deploys via Render using the project's `Dockerfile`.
 
 ## Screenshots
 
