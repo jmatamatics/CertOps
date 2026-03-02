@@ -4,7 +4,7 @@
 
 CertOps is an LLM-powered system that ingests platform documentation, retrieves relevant content via RAG, and generates production-ready certification artifacts — competency frameworks, learning progressions, performance-based assessments, scoring rubrics, item banks, and certification blueprints.
 
-**[Live Demo](https://frontend-hms3cgfqe-josephs-projects-8536c5c0.vercel.app)** | **[API Health Check](https://certops.onrender.com/health)**
+**[Live Demo](https://certops.vercel.app)** | **[API Health Check](https://certops.onrender.com/health)**
 
 > Note: The backend runs on Render's free tier and may take ~30 seconds to wake up on first request.
 
@@ -172,7 +172,7 @@ uv run jupyter notebook
 
 | Service | Platform | URL |
 |---------|----------|-----|
-| **Frontend** | Vercel | [certops on Vercel](https://frontend-hms3cgfqe-josephs-projects-8536c5c0.vercel.app) |
+| **Frontend** | Vercel | [certops on Vercel](https://certops.vercel.app) |
 | **Backend** | Render | [certops.onrender.com](https://certops.onrender.com) |
 | **Vector DB** | Qdrant Cloud | Collection `certops_docs` with payload indexes on `metadata.domain` and `metadata.audience` |
 
