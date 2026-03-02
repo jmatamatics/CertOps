@@ -246,7 +246,7 @@ function GenerateContent() {
 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button size="lg" onClick={handleDownloadReport} className="flex-1">
-                    Download Certification Report
+                    View Certification Report
                   </Button>
                   <Button
                     variant="ghost"
