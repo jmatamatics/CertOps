@@ -1,232 +1,109 @@
 {
   "competency_framework": {
     "track": "M365 Copilot User",
-    "description": "This certification validates foundational skills in using Microsoft 365 Copilot tools to enhance productivity, communication, data analysis, and effective prompting.",
+    "description": "This certification validates the ability to effectively utilize Microsoft 365 Copilot and its integrated applications to enhance productivity, communication, data analysis, and prompting best practices.",
     "domains": [
       {
-        "name": "Productivity",
-        "description": "Skills related to using Microsoft 365 Copilot in Word, Excel, and PowerPoint to enhance productivity.",
+        "name": "Productivity Tools",
+        "description": "Covers the use of Microsoft 365 applications like Word, Excel, and PowerPoint with Copilot to enhance productivity.",
         "skills": [
           {
-            "name": "Word Processing with Copilot",
-            "description": "Using Microsoft 365 Copilot to create, edit, and manage documents in Word.",
+            "name": "Word with Copilot",
+            "description": "Utilize Copilot to draft, edit, and format documents efficiently.",
             "proficiency_levels": [
-              {
-                "level": "novice",
-                "descriptor": "Understands basic document creation and editing using Copilot in Word.",
-                "behavioral_indicators": [
-                  "Can create a new document using Copilot suggestions.",
-                  "Edits text based on Copilot's grammar and style recommendations."
-                ]
-              },
-              {
-                "level": "competent",
-                "descriptor": "Efficiently uses Copilot to enhance document formatting and content creation.",
-                "behavioral_indicators": [
-                  "Applies Copilot's advanced formatting suggestions to improve document layout.",
-                  "Incorporates Copilot's content suggestions to enrich document content."
-                ]
-              },
-              {
-                "level": "expert",
-                "descriptor": "Leverages Copilot to automate complex document tasks and optimize workflow.",
-                "behavioral_indicators": [
-                  "Automates repetitive tasks using Copilot's advanced features.",
-                  "Customizes Copilot's suggestions to fit specific document needs."
-                ]
-              }
+              "Novice: Can use basic Copilot features to draft documents.",
+              "Competent: Can leverage Copilot for advanced editing and formatting.",
+              "Expert: Can customize Copilot prompts for specific document needs."
             ]
           },
           {
-            "name": "Data Management with Excel Copilot",
-            "description": "Utilizing Microsoft 365 Copilot to analyze and manage data in Excel.",
+            "name": "Excel with Copilot",
+            "description": "Employ Copilot to analyze data, create formulas, and generate reports.",
             "proficiency_levels": [
-              {
-                "level": "novice",
-                "descriptor": "Can perform basic data entry and simple analysis using Copilot in Excel.",
-                "behavioral_indicators": [
-                  "Uses Copilot to enter data into spreadsheets.",
-                  "Applies basic formulas suggested by Copilot for data analysis."
-                ]
-              },
-              {
-                "level": "competent",
-                "descriptor": "Effectively uses Copilot to perform intermediate data analysis and visualization.",
-                "behavioral_indicators": [
-                  "Generates charts and graphs using Copilot's visualization tools.",
-                  "Applies Copilot's advanced formulas for data analysis."
-                ]
-              },
-              {
-                "level": "expert",
-                "descriptor": "Maximizes Copilot's capabilities for complex data modeling and automation.",
-                "behavioral_indicators": [
-                  "Automates data analysis processes using Copilot's advanced features.",
-                  "Customizes data models with Copilot's assistance for specific business needs."
-                ]
-              }
+              "Novice: Can use Copilot for basic data entry and formula creation.",
+              "Competent: Can utilize Copilot for data analysis and visualization.",
+              "Expert: Can automate complex data tasks using Copilot."
             ]
           },
           {
-            "name": "Presentation Design with PowerPoint Copilot",
-            "description": "Creating and enhancing presentations using Microsoft 365 Copilot in PowerPoint.",
+            "name": "PowerPoint with Copilot",
+            "description": "Use Copilot to design presentations and enhance visual storytelling.",
             "proficiency_levels": [
-              {
-                "level": "novice",
-                "descriptor": "Uses Copilot to create basic presentations with simple design elements.",
-                "behavioral_indicators": [
-                  "Creates slides using Copilot's template suggestions.",
-                  "Incorporates basic design elements recommended by Copilot."
-                ]
-              },
-              {
-                "level": "competent",
-                "descriptor": "Enhances presentations with Copilot's advanced design and content features.",
-                "behavioral_indicators": [
-                  "Applies Copilot's design suggestions to improve slide aesthetics.",
-                  "Integrates multimedia elements using Copilot's recommendations."
-                ]
-              },
-              {
-                "level": "expert",
-                "descriptor": "Utilizes Copilot to create dynamic and interactive presentations.",
-                "behavioral_indicators": [
-                  "Customizes interactive elements with Copilot's guidance.",
-                  "Optimizes presentation flow and engagement using Copilot's advanced features."
-                ]
-              }
+              "Novice: Can create simple presentations with Copilot assistance.",
+              "Competent: Can design engaging presentations using advanced Copilot features.",
+              "Expert: Can integrate multimedia and interactive elements with Copilot."
             ]
           }
         ]
       },
       {
-        "name": "Communication",
-        "description": "Skills related to using Microsoft 365 Copilot in Teams and Outlook to enhance communication.",
+        "name": "Communication Tools",
+        "description": "Focuses on using Microsoft Teams and Outlook with Copilot to improve communication and collaboration.",
         "skills": [
           {
-            "name": "Collaboration with Teams Copilot",
-            "description": "Using Microsoft 365 Copilot to facilitate collaboration and communication in Teams.",
+            "name": "Teams with Copilot",
+            "description": "Enhance team collaboration and communication using Copilot features.",
             "proficiency_levels": [
-              {
-                "level": "novice",
-                "descriptor": "Understands basic communication and collaboration features in Teams with Copilot.",
-                "behavioral_indicators": [
-                  "Participates in Teams meetings using Copilot's scheduling features.",
-                  "Uses Copilot to send messages and share files in Teams."
-                ]
-              },
-              {
-                "level": "competent",
-                "descriptor": "Effectively uses Copilot to manage and enhance team collaboration.",
-                "behavioral_indicators": [
-                  "Organizes team tasks and projects using Copilot's task management tools.",
-                  "Facilitates team discussions with Copilot's meeting insights and summaries."
-                ]
-              },
-              {
-                "level": "expert",
-                "descriptor": "Leverages Copilot to optimize team workflows and communication strategies.",
-                "behavioral_indicators": [
-                  "Customizes team workflows using Copilot's advanced collaboration features.",
-                  "Analyzes team communication patterns with Copilot's insights to improve efficiency."
-                ]
-              }
+              "Novice: Can use Copilot for basic messaging and meeting scheduling.",
+              "Competent: Can manage team projects and communications with Copilot.",
+              "Expert: Can customize Copilot for complex team workflows."
             ]
           },
           {
-            "name": "Email Management with Outlook Copilot",
-            "description": "Utilizing Microsoft 365 Copilot to manage and optimize email communication in Outlook.",
+            "name": "Outlook with Copilot",
+            "description": "Optimize email management and scheduling with Copilot.",
             "proficiency_levels": [
-              {
-                "level": "novice",
-                "descriptor": "Can manage basic email tasks using Copilot in Outlook.",
-                "behavioral_indicators": [
-                  "Composes and sends emails using Copilot's suggestions.",
-                  "Organizes emails into folders with Copilot's assistance."
-                ]
-              },
-              {
-                "level": "competent",
-                "descriptor": "Uses Copilot to enhance email management and communication efficiency.",
-                "behavioral_indicators": [
-                  "Applies Copilot's email prioritization features to manage inbox effectively.",
-                  "Utilizes Copilot's templates for consistent email communication."
-                ]
-              },
-              {
-                "level": "expert",
-                "descriptor": "Maximizes Copilot's capabilities for strategic email communication and management.",
-                "behavioral_indicators": [
-                  "Automates email responses and workflows using Copilot's advanced features.",
-                  "Analyzes email communication patterns with Copilot's insights for strategic improvements."
-                ]
-              }
+              "Novice: Can use Copilot for basic email drafting and scheduling.",
+              "Competent: Can organize and prioritize communications using Copilot.",
+              "Expert: Can automate email workflows and integrate with other tools using Copilot."
             ]
           }
         ]
       },
       {
         "name": "Data Analysis",
-        "description": "Skills related to using Microsoft 365 Copilot for data analysis and insights generation.",
+        "description": "Involves using Copilot for advanced data analysis and insights generation.",
         "skills": [
           {
             "name": "Data Insights with Copilot",
-            "description": "Using Microsoft 365 Copilot to generate insights and analyze data across platforms.",
+            "description": "Generate and interpret data insights using Copilot's advanced reasoning capabilities.",
             "proficiency_levels": [
-              {
-                "level": "novice",
-                "descriptor": "Understands basic data analysis concepts using Copilot's tools.",
-                "behavioral_indicators": [
-                  "Generates simple reports using Copilot's data analysis features.",
-                  "Identifies trends in data with Copilot's basic insights."
-                ]
-              },
-              {
-                "level": "competent",
-                "descriptor": "Effectively uses Copilot to perform detailed data analysis and generate insights.",
-                "behavioral_indicators": [
-                  "Creates comprehensive reports with Copilot's advanced analysis tools.",
-                  "Interprets complex data sets using Copilot's insights."
-                ]
-              },
-              {
-                "level": "expert",
-                "descriptor": "Leverages Copilot to conduct sophisticated data analysis and strategic insights generation.",
-                "behavioral_indicators": [
-                  "Customizes data analysis models with Copilot's advanced features.",
-                  "Develops strategic insights from data using Copilot's comprehensive analysis capabilities."
-                ]
-              }
+              "Novice: Can generate basic insights from data using Copilot.",
+              "Competent: Can perform detailed data analysis and visualization with Copilot.",
+              "Expert: Can develop custom data models and insights using Copilot."
             ]
           },
           {
-            "name": "Prompting Best Practices",
-            "description": "Skills related to effectively using prompts with Microsoft 365 Copilot to achieve desired outcomes.",
+            "name": "Integration with Data Sources",
+            "description": "Connect and analyze data from various sources using Copilot.",
             "proficiency_levels": [
-              {
-                "level": "novice",
-                "descriptor": "Understands basic prompting techniques to interact with Copilot.",
-                "behavioral_indicators": [
-                  "Uses simple prompts to initiate tasks with Copilot.",
-                  "Follows Copilot's guidance to complete basic tasks."
-                ]
-              },
-              {
-                "level": "competent",
-                "descriptor": "Effectively uses advanced prompting techniques to enhance Copilot interactions.",
-                "behavioral_indicators": [
-                  "Crafts detailed prompts to achieve specific outcomes with Copilot.",
-                  "Adapts prompts based on Copilot's feedback to refine task execution."
-                ]
-              },
-              {
-                "level": "expert",
-                "descriptor": "Masters prompting techniques to fully leverage Copilot's capabilities for complex tasks.",
-                "behavioral_indicators": [
-                  "Designs complex prompt sequences to automate workflows with Copilot.",
-                  "Optimizes task outcomes by iteratively refining prompts based on Copilot's responses."
-                ]
-              }
+              "Novice: Can connect basic data sources to Copilot.",
+              "Competent: Can integrate multiple data sources for comprehensive analysis.",
+              "Expert: Can customize data integration and analysis workflows with Copilot."
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Prompting Best Practices",
+        "description": "Covers the development of effective prompts to maximize Copilot's capabilities.",
+        "skills": [
+          {
+            "name": "Prompt Design",
+            "description": "Create effective prompts to guide Copilot in generating desired outputs.",
+            "proficiency_levels": [
+              "Novice: Can use basic prompts to interact with Copilot.",
+              "Competent: Can design prompts for specific tasks and outputs.",
+              "Expert: Can optimize and customize prompts for complex scenarios."
+            ]
+          },
+          {
+            "name": "Prompt Optimization",
+            "description": "Refine and optimize prompts for efficiency and accuracy.",
+            "proficiency_levels": [
+              "Novice: Can identify basic prompt improvements.",
+              "Competent: Can refine prompts for better performance and accuracy.",
+              "Expert: Can develop advanced prompt strategies for complex tasks."
             ]
           }
         ]
@@ -238,571 +115,435 @@
     "objectives": [
       {
         "order": 1,
-        "title": "Basic Document Creation with Word Copilot",
-        "description": "Create and edit documents using Microsoft 365 Copilot in Word.",
-        "domain": "Productivity",
-        "prerequisites": [],
-        "suggested_activities": [
-          "Create a new document using Copilot's suggestions for structure and content.",
-          "Edit an existing document by applying Copilot's grammar and style recommendations."
-        ],
-        "estimated_hours": 2.0,
-        "success_criteria": "Learner can create a document with at least three sections and edit text using Copilot's suggestions."
+        "title": "Basic Document Drafting with Word and Copilot",
+        "description": "Use basic Copilot features to draft documents in Word.",
+        "domain": "Productivity Tools",
+        "prerequisites": []
       },
       {
         "order": 2,
-        "title": "Advanced Document Formatting with Word Copilot",
-        "description": "Enhance document formatting and content creation using Copilot in Word.",
-        "domain": "Productivity",
-        "prerequisites": [
-          "Basic Document Creation with Word Copilot"
-        ],
-        "suggested_activities": [
-          "Apply Copilot's advanced formatting suggestions to improve a document's layout.",
-          "Incorporate Copilot's content suggestions to enrich a document with additional information."
-        ],
-        "estimated_hours": 3.0,
-        "success_criteria": "Learner can demonstrate improved document layout and enriched content using Copilot's suggestions."
+        "title": "Basic Data Entry and Formula Creation with Excel and Copilot",
+        "description": "Use Copilot for basic data entry and formula creation in Excel.",
+        "domain": "Productivity Tools",
+        "prerequisites": []
       },
       {
         "order": 3,
-        "title": "Basic Data Entry and Analysis with Excel Copilot",
-        "description": "Perform basic data entry and simple analysis using Microsoft 365 Copilot in Excel.",
-        "domain": "Productivity",
-        "prerequisites": [],
-        "suggested_activities": [
-          "Use Copilot to enter data into a spreadsheet and apply basic formulas for analysis.",
-          "Create a simple chart using Copilot's visualization tools."
-        ],
-        "estimated_hours": 2.0,
-        "success_criteria": "Learner can enter data, apply formulas, and create a chart using Copilot."
+        "title": "Simple Presentation Creation with PowerPoint and Copilot",
+        "description": "Create simple presentations with Copilot assistance in PowerPoint.",
+        "domain": "Productivity Tools",
+        "prerequisites": []
       },
       {
         "order": 4,
-        "title": "Intermediate Data Analysis with Excel Copilot",
-        "description": "Perform intermediate data analysis and visualization using Copilot in Excel.",
-        "domain": "Productivity",
-        "prerequisites": [
-          "Basic Data Entry and Analysis with Excel Copilot"
-        ],
-        "suggested_activities": [
-          "Generate charts and graphs using Copilot's visualization tools.",
-          "Apply Copilot's advanced formulas to analyze data trends."
-        ],
-        "estimated_hours": 3.0,
-        "success_criteria": "Learner can generate visualizations and apply advanced formulas to analyze data."
+        "title": "Basic Messaging and Meeting Scheduling with Teams and Copilot",
+        "description": "Use Copilot for basic messaging and meeting scheduling in Teams.",
+        "domain": "Communication Tools",
+        "prerequisites": []
       },
       {
         "order": 5,
-        "title": "Basic Presentation Design with PowerPoint Copilot",
-        "description": "Create basic presentations using Microsoft 365 Copilot in PowerPoint.",
-        "domain": "Productivity",
-        "prerequisites": [],
-        "suggested_activities": [
-          "Create a presentation using Copilot's template suggestions.",
-          "Incorporate basic design elements recommended by Copilot."
-        ],
-        "estimated_hours": 2.0,
-        "success_criteria": "Learner can create a presentation with at least five slides using Copilot's templates and design elements."
+        "title": "Basic Email Drafting and Scheduling with Outlook and Copilot",
+        "description": "Use Copilot for basic email drafting and scheduling in Outlook.",
+        "domain": "Communication Tools",
+        "prerequisites": []
       },
       {
         "order": 6,
-        "title": "Enhanced Presentation Design with PowerPoint Copilot",
-        "description": "Enhance presentations with advanced design and content features using Copilot in PowerPoint.",
-        "domain": "Productivity",
-        "prerequisites": [
-          "Basic Presentation Design with PowerPoint Copilot"
-        ],
-        "suggested_activities": [
-          "Apply Copilot's design suggestions to improve slide aesthetics.",
-          "Integrate multimedia elements using Copilot's recommendations."
-        ],
-        "estimated_hours": 3.0,
-        "success_criteria": "Learner can enhance a presentation with advanced design and multimedia elements using Copilot."
+        "title": "Basic Data Insights Generation with Copilot",
+        "description": "Generate basic insights from data using Copilot.",
+        "domain": "Data Analysis",
+        "prerequisites": []
       },
       {
         "order": 7,
-        "title": "Basic Communication with Teams Copilot",
-        "description": "Use Microsoft 365 Copilot to facilitate basic communication and collaboration in Teams.",
-        "domain": "Communication",
-        "prerequisites": [],
-        "suggested_activities": [
-          "Participate in a Teams meeting using Copilot's scheduling features.",
-          "Send messages and share files in Teams using Copilot."
-        ],
-        "estimated_hours": 2.0,
-        "success_criteria": "Learner can schedule a meeting, send messages, and share files using Copilot in Teams."
+        "title": "Basic Prompt Usage with Copilot",
+        "description": "Use basic prompts to interact with Copilot.",
+        "domain": "Prompting Best Practices",
+        "prerequisites": []
       },
       {
         "order": 8,
-        "title": "Enhanced Collaboration with Teams Copilot",
-        "description": "Manage and enhance team collaboration using Copilot in Teams.",
-        "domain": "Communication",
+        "title": "Advanced Editing and Formatting with Word and Copilot",
+        "description": "Leverage Copilot for advanced editing and formatting in Word.",
+        "domain": "Productivity Tools",
         "prerequisites": [
-          "Basic Communication with Teams Copilot"
-        ],
-        "suggested_activities": [
-          "Organize team tasks and projects using Copilot's task management tools.",
-          "Facilitate team discussions with Copilot's meeting insights and summaries."
-        ],
-        "estimated_hours": 3.0,
-        "success_criteria": "Learner can organize tasks and facilitate discussions using Copilot's tools in Teams."
+          "Basic Document Drafting with Word and Copilot"
+        ]
       },
       {
         "order": 9,
-        "title": "Basic Email Management with Outlook Copilot",
-        "description": "Manage basic email tasks using Microsoft 365 Copilot in Outlook.",
-        "domain": "Communication",
-        "prerequisites": [],
-        "suggested_activities": [
-          "Compose and send emails using Copilot's suggestions.",
-          "Organize emails into folders with Copilot's assistance."
-        ],
-        "estimated_hours": 2.0,
-        "success_criteria": "Learner can compose, send, and organize emails using Copilot in Outlook."
+        "title": "Data Analysis and Visualization with Excel and Copilot",
+        "description": "Utilize Copilot for data analysis and visualization in Excel.",
+        "domain": "Productivity Tools",
+        "prerequisites": [
+          "Basic Data Entry and Formula Creation with Excel and Copilot"
+        ]
       },
       {
         "order": 10,
-        "title": "Enhanced Email Management with Outlook Copilot",
-        "description": "Enhance email management and communication efficiency using Copilot in Outlook.",
-        "domain": "Communication",
+        "title": "Engaging Presentation Design with PowerPoint and Copilot",
+        "description": "Design engaging presentations using advanced Copilot features in PowerPoint.",
+        "domain": "Productivity Tools",
         "prerequisites": [
-          "Basic Email Management with Outlook Copilot"
-        ],
-        "suggested_activities": [
-          "Apply Copilot's email prioritization features to manage inbox effectively.",
-          "Utilize Copilot's templates for consistent email communication."
-        ],
-        "estimated_hours": 3.0,
-        "success_criteria": "Learner can manage their inbox and use templates for communication using Copilot."
+          "Simple Presentation Creation with PowerPoint and Copilot"
+        ]
       },
       {
         "order": 11,
-        "title": "Basic Data Insights with Copilot",
-        "description": "Generate basic insights and analyze data using Microsoft 365 Copilot.",
-        "domain": "Data Analysis",
-        "prerequisites": [],
-        "suggested_activities": [
-          "Generate a simple report using Copilot's data analysis features.",
-          "Identify trends in data with Copilot's basic insights."
-        ],
-        "estimated_hours": 2.0,
-        "success_criteria": "Learner can generate a report and identify data trends using Copilot."
+        "title": "Team Project Management with Teams and Copilot",
+        "description": "Manage team projects and communications with Copilot in Teams.",
+        "domain": "Communication Tools",
+        "prerequisites": [
+          "Basic Messaging and Meeting Scheduling with Teams and Copilot"
+        ]
       },
       {
         "order": 12,
-        "title": "Advanced Data Analysis with Copilot",
-        "description": "Perform detailed data analysis and generate insights using Copilot.",
-        "domain": "Data Analysis",
+        "title": "Organizing Communications with Outlook and Copilot",
+        "description": "Organize and prioritize communications using Copilot in Outlook.",
+        "domain": "Communication Tools",
         "prerequisites": [
-          "Basic Data Insights with Copilot"
-        ],
-        "suggested_activities": [
-          "Create comprehensive reports with Copilot's advanced analysis tools.",
-          "Interpret complex data sets using Copilot's insights."
-        ],
-        "estimated_hours": 3.0,
-        "success_criteria": "Learner can create detailed reports and interpret complex data using Copilot."
+          "Basic Email Drafting and Scheduling with Outlook and Copilot"
+        ]
       },
       {
         "order": 13,
-        "title": "Basic Prompting Techniques with Copilot",
-        "description": "Use basic prompting techniques to interact with Microsoft 365 Copilot.",
+        "title": "Detailed Data Analysis with Copilot",
+        "description": "Perform detailed data analysis and visualization with Copilot.",
         "domain": "Data Analysis",
-        "prerequisites": [],
-        "suggested_activities": [
-          "Use simple prompts to initiate tasks with Copilot.",
-          "Follow Copilot's guidance to complete basic tasks."
-        ],
-        "estimated_hours": 2.0,
-        "success_criteria": "Learner can initiate tasks and complete them using simple prompts with Copilot."
+        "prerequisites": [
+          "Basic Data Insights Generation with Copilot"
+        ]
       },
       {
         "order": 14,
-        "title": "Advanced Prompting Techniques with Copilot",
-        "description": "Use advanced prompting techniques to enhance interactions with Microsoft 365 Copilot.",
+        "title": "Prompt Design for Specific Tasks with Copilot",
+        "description": "Design prompts for specific tasks and outputs with Copilot.",
+        "domain": "Prompting Best Practices",
+        "prerequisites": [
+          "Basic Prompt Usage with Copilot"
+        ]
+      },
+      {
+        "order": 15,
+        "title": "Customizing Copilot Prompts for Word",
+        "description": "Customize Copilot prompts for specific document needs in Word.",
+        "domain": "Productivity Tools",
+        "prerequisites": [
+          "Advanced Editing and Formatting with Word and Copilot"
+        ]
+      },
+      {
+        "order": 16,
+        "title": "Automating Data Tasks with Excel and Copilot",
+        "description": "Automate complex data tasks using Copilot in Excel.",
+        "domain": "Productivity Tools",
+        "prerequisites": [
+          "Data Analysis and Visualization with Excel and Copilot"
+        ]
+      },
+      {
+        "order": 17,
+        "title": "Integrating Multimedia with PowerPoint and Copilot",
+        "description": "Integrate multimedia and interactive elements with Copilot in PowerPoint.",
+        "domain": "Productivity Tools",
+        "prerequisites": [
+          "Engaging Presentation Design with PowerPoint and Copilot"
+        ]
+      },
+      {
+        "order": 18,
+        "title": "Customizing Copilot for Team Workflows",
+        "description": "Customize Copilot for complex team workflows in Teams.",
+        "domain": "Communication Tools",
+        "prerequisites": [
+          "Team Project Management with Teams and Copilot"
+        ]
+      },
+      {
+        "order": 19,
+        "title": "Automating Email Workflows with Outlook and Copilot",
+        "description": "Automate email workflows and integrate with other tools using Copilot in Outlook.",
+        "domain": "Communication Tools",
+        "prerequisites": [
+          "Organizing Communications with Outlook and Copilot"
+        ]
+      },
+      {
+        "order": 20,
+        "title": "Developing Custom Data Models with Copilot",
+        "description": "Develop custom data models and insights using Copilot.",
         "domain": "Data Analysis",
         "prerequisites": [
-          "Basic Prompting Techniques with Copilot"
-        ],
-        "suggested_activities": [
-          "Craft detailed prompts to achieve specific outcomes with Copilot.",
-          "Adapt prompts based on Copilot's feedback to refine task execution."
-        ],
-        "estimated_hours": 3.0,
-        "success_criteria": "Learner can craft and adapt prompts to achieve specific outcomes using Copilot."
+          "Detailed Data Analysis with Copilot"
+        ]
+      },
+      {
+        "order": 21,
+        "title": "Integrating Data Sources with Copilot",
+        "description": "Integrate multiple data sources for comprehensive analysis with Copilot.",
+        "domain": "Data Analysis",
+        "prerequisites": [
+          "Basic Data Insights Generation with Copilot"
+        ]
+      },
+      {
+        "order": 22,
+        "title": "Prompt Optimization for Efficiency with Copilot",
+        "description": "Refine prompts for better performance and accuracy with Copilot.",
+        "domain": "Prompting Best Practices",
+        "prerequisites": [
+          "Prompt Design for Specific Tasks with Copilot"
+        ]
+      },
+      {
+        "order": 23,
+        "title": "Advanced Prompt Strategies with Copilot",
+        "description": "Develop advanced prompt strategies for complex tasks with Copilot.",
+        "domain": "Prompting Best Practices",
+        "prerequisites": [
+          "Prompt Optimization for Efficiency with Copilot"
+        ]
       }
     ]
   },
   "assessments": [
     {
-      "title": "Document Creation and Editing with Word Copilot",
-      "scenario": "You are tasked with creating a project proposal document for a new client. The document needs to be professional, well-structured, and free of grammatical errors. You will use Microsoft 365 Copilot in Word to assist you in creating and editing this document.",
-      "instructions": "1. Open Microsoft Word and start a new document.\n2. Use Copilot to generate a title page with the project name and your contact information.\n3. Create an introduction section using Copilot's content suggestions.\n4. Add a section for project objectives and use Copilot to enhance the text with advanced formatting.\n5. Include a timeline section and use Copilot to format it as a table.\n6. Review the entire document and apply Copilot's grammar and style recommendations.\n7. Save the document as 'Project_Proposal.docx'.",
+      "title": "Drafting and Formatting a Business Proposal in Word with Copilot",
+      "scenario": "You are a project manager at a tech company tasked with drafting a business proposal for a new client. The proposal needs to be well-structured, professionally formatted, and include specific sections such as an executive summary, project timeline, and budget overview.",
+      "instructions": "Use Microsoft Word with Copilot to draft a comprehensive business proposal. Start by outlining the key sections of the proposal. Use Copilot to assist in drafting the content for each section, ensuring clarity and professionalism. Leverage Copilot's formatting capabilities to ensure the document is visually appealing and adheres to company standards. Customize Copilot prompts to refine the document's tone and style as needed.",
       "expected_outputs": [
-        "A Word document named 'Project_Proposal.docx' with a title page, introduction, objectives, timeline, and no grammatical errors."
+        "A complete business proposal document with all required sections.",
+        "Properly formatted text with headings, bullet points, and tables where necessary.",
+        "Consistent tone and style throughout the document."
       ],
-      "competency_ref": "Productivity: Word Processing with Copilot",
-      "time_estimate_minutes": 45,
-      "evaluator_guide": "Look for a well-structured document with clear sections as outlined in the instructions. The document should be free of grammatical errors and demonstrate the use of Copilot's formatting and content suggestions. Common mistakes include not using Copilot for content generation or failing to apply grammar corrections. A passing submission will have all sections present, formatted correctly, and free of errors."
+      "competency_ref": "Productivity Tools - Word with Copilot",
+      "time_estimate_minutes": 90
     },
     {
-      "title": "Data Analysis with Excel Copilot",
-      "scenario": "You are responsible for preparing a sales report for the last quarter. The report should include data analysis and visualizations to present to the management team. You will use Microsoft 365 Copilot in Excel to assist with this task.",
-      "instructions": "1. Open Microsoft Excel and create a new spreadsheet.\n2. Use Copilot to import sales data from a provided CSV file.\n3. Apply basic formulas suggested by Copilot to calculate total sales, average sales, and sales growth.\n4. Use Copilot to generate a bar chart visualizing sales by month.\n5. Create a summary sheet with Copilot's help, highlighting key insights from the data.\n6. Save the spreadsheet as 'Q4_Sales_Report.xlsx'.",
+      "title": "Managing a Team Project in Microsoft Teams with Copilot",
+      "scenario": "You are leading a cross-functional team working on a product launch. Effective communication and collaboration are crucial to ensure the project stays on track.",
+      "instructions": "Use Microsoft Teams with Copilot to set up a project management hub. Create channels for different aspects of the project (e.g., marketing, development, logistics). Schedule regular meetings using Copilot and ensure all team members are informed and prepared. Utilize Copilot to assist in tracking project progress, assigning tasks, and managing deadlines. Customize Copilot to automate routine updates and reminders for the team.",
       "expected_outputs": [
-        "An Excel file named 'Q4_Sales_Report.xlsx' with calculated sales data, a bar chart, and a summary sheet."
+        "A structured Teams environment with channels for each project aspect.",
+        "Scheduled meetings with agendas and participant lists.",
+        "Task assignments and deadlines managed through Teams.",
+        "Automated updates and reminders set up using Copilot."
       ],
-      "competency_ref": "Productivity: Data Management with Excel Copilot",
-      "time_estimate_minutes": 60,
-      "evaluator_guide": "Ensure the spreadsheet includes correctly calculated sales data and a bar chart that accurately represents the data. The summary sheet should highlight key insights and demonstrate the use of Copilot's analysis features. Common pitfalls include incorrect formula application or incomplete data visualization. A passing submission will have all elements present and correctly executed."
+      "competency_ref": "Communication Tools - Teams with Copilot",
+      "time_estimate_minutes": 60
     },
     {
-      "title": "Presentation Enhancement with PowerPoint Copilot",
-      "scenario": "You need to prepare a presentation for an upcoming conference. The presentation should be visually appealing and include multimedia elements to engage the audience. You will use Microsoft 365 Copilot in PowerPoint to enhance your presentation.",
-      "instructions": "1. Open Microsoft PowerPoint and create a new presentation.\n2. Use Copilot to select a suitable template for your presentation.\n3. Create an introductory slide with Copilot's content suggestions.\n4. Add three slides with key points and use Copilot to enhance them with design suggestions.\n5. Incorporate a video or image on one of the slides using Copilot's multimedia recommendations.\n6. Review the presentation and apply any additional design improvements suggested by Copilot.\n7. Save the presentation as 'Conference_Presentation.pptx'.",
+      "title": "Generating Data Insights for Quarterly Sales Report with Copilot",
+      "scenario": "You are a data analyst tasked with preparing a quarterly sales report for the executive team. The report should highlight key trends, insights, and recommendations based on the sales data.",
+      "instructions": "Use Excel with Copilot to analyze the provided sales data. Generate visualizations such as charts and graphs to represent key trends. Use Copilot to assist in identifying significant patterns and insights from the data. Prepare a summary of findings and recommendations for the executive team, ensuring the report is clear and actionable.",
       "expected_outputs": [
-        "A PowerPoint file named 'Conference_Presentation.pptx' with an introductory slide, three key point slides, and multimedia elements."
+        "An Excel workbook with data visualizations (charts, graphs).",
+        "A summary of key insights and trends identified from the data.",
+        "Recommendations based on the data analysis."
       ],
-      "competency_ref": "Productivity: Presentation Design with PowerPoint Copilot",
-      "time_estimate_minutes": 50,
-      "evaluator_guide": "The presentation should be visually appealing with a consistent design theme. Look for the use of Copilot's template and design suggestions, as well as the inclusion of multimedia elements. Common mistakes include poor slide design or lack of multimedia integration. A passing submission will have a coherent design, engaging content, and multimedia elements effectively used."
+      "competency_ref": "Data Analysis - Data Insights with Copilot",
+      "time_estimate_minutes": 120
     },
     {
-      "title": "Team Collaboration with Teams Copilot",
-      "scenario": "Your team is working on a collaborative project, and you need to organize a virtual meeting to discuss progress and next steps. You will use Microsoft 365 Copilot in Teams to facilitate this meeting.",
-      "instructions": "1. Open Microsoft Teams and schedule a new meeting using Copilot's scheduling features.\n2. Use Copilot to draft and send a meeting agenda to all participants.\n3. During the meeting, use Copilot to take notes and highlight key discussion points.\n4. After the meeting, use Copilot to generate a summary and share it with the team.\n5. Organize follow-up tasks using Copilot's task management tools.",
+      "title": "Designing Effective Prompts for Copilot in a Marketing Campaign",
+      "scenario": "You are a marketing specialist designing a new campaign for a product launch. You need to create effective prompts for Copilot to generate creative content and strategies.",
+      "instructions": "Develop a series of prompts to guide Copilot in generating marketing content for the campaign. The prompts should cover various aspects such as social media posts, email newsletters, and ad copy. Test the prompts to ensure they produce relevant and creative outputs. Refine the prompts based on the initial results to optimize content quality and alignment with campaign goals.",
       "expected_outputs": [
-        "A scheduled Teams meeting with an agenda, meeting notes, a summary, and organized follow-up tasks."
+        "A set of well-designed prompts for different marketing content types.",
+        "Generated content samples for social media, email, and ads.",
+        "Refined prompts based on testing and feedback."
       ],
-      "competency_ref": "Communication: Collaboration with Teams Copilot",
-      "time_estimate_minutes": 40,
-      "evaluator_guide": "Check for a properly scheduled meeting with a clear agenda sent to participants. The meeting notes and summary should accurately reflect the discussion, and follow-up tasks should be organized and assigned. Common pitfalls include incomplete notes or lack of task organization. A passing submission will have all elements completed and demonstrate effective use of Copilot's features."
-    },
-    {
-      "title": "Email Management with Outlook Copilot",
-      "scenario": "You are managing a busy inbox and need to prioritize and respond to important emails efficiently. You will use Microsoft 365 Copilot in Outlook to assist with email management.",
-      "instructions": "1. Open Microsoft Outlook and review your inbox.\n2. Use Copilot to prioritize emails based on importance and urgency.\n3. Draft responses to the top three priority emails using Copilot's suggestions.\n4. Organize emails into folders with Copilot's assistance.\n5. Set up a rule using Copilot to automatically sort incoming emails from a specific sender into a designated folder.",
-      "expected_outputs": [
-        "Prioritized emails, drafted responses, organized folders, and an email sorting rule."
-      ],
-      "competency_ref": "Communication: Email Management with Outlook Copilot",
-      "time_estimate_minutes": 30,
-      "evaluator_guide": "Look for effective prioritization of emails and well-drafted responses using Copilot's suggestions. Emails should be organized into folders, and a sorting rule should be set up correctly. Common mistakes include poor email prioritization or incorrect rule setup. A passing submission will demonstrate efficient email management and correct use of Copilot's features."
-    },
-    {
-      "title": "Data Insights Generation with Copilot",
-      "scenario": "You are tasked with generating insights from a dataset to inform business strategy. You will use Microsoft 365 Copilot to analyze the data and create a report with your findings.",
-      "instructions": "1. Open the provided dataset in Microsoft Excel.\n2. Use Copilot to identify key trends and patterns in the data.\n3. Generate a report using Copilot's data analysis features, including charts and graphs.\n4. Write a summary of insights and recommendations based on the data analysis.\n5. Save the report as 'Business_Insights_Report.xlsx'.",
-      "expected_outputs": [
-        "An Excel file named 'Business_Insights_Report.xlsx' with data analysis, charts, graphs, and a summary of insights."
-      ],
-      "competency_ref": "Data Analysis: Data Insights with Copilot",
-      "time_estimate_minutes": 70,
-      "evaluator_guide": "Ensure the report includes accurate data analysis with clear charts and graphs. The summary should provide actionable insights and recommendations. Common pitfalls include misinterpretation of data or unclear visualizations. A passing submission will have comprehensive analysis and clear, actionable insights."
+      "competency_ref": "Prompting Best Practices - Prompt Design",
+      "time_estimate_minutes": 75
     }
   ],
   "rubrics": [
     {
-      "assessment_ref": "Document Creation and Editing with Word Copilot",
+      "assessment_ref": "Drafting and Formatting a Business Proposal in Word with Copilot",
       "criteria": [
         {
-          "criterion": "Title Page Creation",
-          "weight": 3,
-          "novice": "The title page is missing key elements such as the project name or contact information. Copilot's features were not utilized effectively, resulting in a lack of professionalism.",
-          "competent": "The title page includes the project name and contact information, meeting basic professional standards. Copilot was used to generate the content, but the design may lack refinement.",
-          "expert": "The title page is professionally designed with all required elements, demonstrating effective use of Copilot's features. The layout is visually appealing and sets a strong first impression."
+          "criterion": "Structure and Content Completeness",
+          "novice": "The proposal is missing several key sections and lacks a coherent structure.",
+          "competent": "The proposal includes most required sections with a logical structure, but some sections may lack depth.",
+          "expert": "The proposal is comprehensive, including all required sections with detailed and well-organized content."
         },
         {
-          "criterion": "Introduction Section",
-          "weight": 4,
-          "novice": "The introduction section is poorly structured and lacks coherence. Copilot's content suggestions were not effectively used, resulting in unclear or incomplete information.",
-          "competent": "The introduction section is clear and coherent, using Copilot's content suggestions to provide a solid overview. The information is relevant and well-organized.",
-          "expert": "The introduction section is exceptionally well-written, with a clear and engaging narrative. Copilot's suggestions were used to enhance clarity and depth, providing a compelling introduction."
+          "criterion": "Formatting and Visual Appeal",
+          "novice": "The document is poorly formatted with inconsistent use of headings and bullet points.",
+          "competent": "The document is generally well-formatted with appropriate use of headings and bullet points, but may have minor inconsistencies.",
+          "expert": "The document is professionally formatted with consistent and appropriate use of headings, bullet points, and tables, enhancing readability."
         },
         {
-          "criterion": "Project Objectives and Formatting",
-          "weight": 3,
-          "novice": "The objectives section is unclear or lacks advanced formatting. Copilot's features were not used to enhance the text, resulting in a basic presentation.",
-          "competent": "The objectives section is clear and uses Copilot's advanced formatting features to enhance readability. The content is well-organized and meets professional standards.",
-          "expert": "The objectives section is expertly formatted, with clear and concise content. Copilot's features were used to create a visually appealing and highly readable section."
-        },
-        {
-          "criterion": "Timeline Section",
-          "weight": 3,
-          "novice": "The timeline section is missing or not formatted as a table. Copilot's assistance was not effectively utilized, leading to a disorganized presentation.",
-          "competent": "The timeline section is present and formatted as a table using Copilot's features. The information is clear and logically organized.",
-          "expert": "The timeline section is expertly formatted, with a well-structured table that clearly presents the information. Copilot's features were used to enhance clarity and visual appeal."
-        },
-        {
-          "criterion": "Grammar and Style",
-          "weight": 5,
-          "novice": "The document contains multiple grammatical errors and lacks style consistency. Copilot's grammar and style recommendations were not applied effectively.",
-          "competent": "The document is free of grammatical errors and demonstrates consistent style. Copilot's recommendations were applied to ensure clarity and professionalism.",
-          "expert": "The document is impeccably written, with no grammatical errors and a sophisticated style. Copilot's recommendations were used to enhance the document's overall quality."
+          "criterion": "Tone and Style Consistency",
+          "novice": "The tone and style of the document are inconsistent and unprofessional.",
+          "competent": "The document maintains a generally consistent tone and style, with minor lapses.",
+          "expert": "The document exhibits a consistent and professional tone and style throughout, tailored to the audience."
         }
       ]
     },
     {
-      "assessment_ref": "Data Analysis with Excel Copilot",
+      "assessment_ref": "Managing a Team Project in Microsoft Teams with Copilot",
       "criteria": [
         {
-          "criterion": "Data Import and Setup",
-          "weight": 3,
-          "novice": "The sales data is not imported correctly, or the setup is incomplete. Copilot's features were not effectively used, resulting in missing or incorrect data.",
-          "competent": "The sales data is correctly imported and set up using Copilot's features. The spreadsheet is organized and ready for analysis.",
-          "expert": "The data import and setup are flawlessly executed, with Copilot's features used to ensure accuracy and efficiency. The spreadsheet is well-organized and optimized for analysis."
+          "criterion": "Teams Environment Setup",
+          "novice": "The Teams environment is poorly organized with missing or irrelevant channels.",
+          "competent": "The Teams environment is adequately organized with relevant channels for most project aspects.",
+          "expert": "The Teams environment is well-structured with comprehensive channels covering all project aspects."
         },
         {
-          "criterion": "Formula Application",
-          "weight": 4,
-          "novice": "Basic formulas are missing or incorrectly applied, leading to inaccurate calculations. Copilot's suggestions were not effectively utilized.",
-          "competent": "Basic formulas are correctly applied to calculate total sales, average sales, and sales growth. Copilot's suggestions were used to ensure accuracy.",
-          "expert": "Formulas are expertly applied, with additional insights provided through advanced calculations. Copilot's features were used to enhance the depth and accuracy of the analysis."
+          "criterion": "Meeting Scheduling and Management",
+          "novice": "Meetings are irregularly scheduled with incomplete agendas and participant lists.",
+          "competent": "Meetings are regularly scheduled with agendas and participant lists, but may lack detail.",
+          "expert": "Meetings are systematically scheduled with detailed agendas and complete participant lists, ensuring preparedness."
         },
+        {
+          "criterion": "Task and Deadline Management",
+          "novice": "Tasks and deadlines are poorly managed, leading to confusion and missed deadlines.",
+          "competent": "Tasks and deadlines are generally managed, but may occasionally lack clarity or timeliness.",
+          "expert": "Tasks and deadlines are effectively managed with clear assignments and timely updates, ensuring project progress."
+        },
+        {
+          "criterion": "Automation of Updates and Reminders",
+          "novice": "Automated updates and reminders are rarely used or ineffective.",
+          "competent": "Automated updates and reminders are used, but may not fully optimize team communication.",
+          "expert": "Automated updates and reminders are effectively set up, enhancing team communication and efficiency."
+        }
+      ]
+    },
+    {
+      "assessment_ref": "Generating Data Insights for Quarterly Sales Report with Copilot",
+      "criteria": [
         {
           "criterion": "Data Visualization",
-          "weight": 4,
-          "novice": "The bar chart is missing or does not accurately represent the data. Copilot's visualization features were not effectively used.",
-          "competent": "A bar chart is present and accurately represents the sales data by month. Copilot's features were used to create a clear and informative visualization.",
-          "expert": "The bar chart is expertly designed, providing clear insights into the sales data. Copilot's features were used to enhance visual appeal and clarity, with additional visualizations included."
+          "novice": "Visualizations are unclear or poorly represent the data trends.",
+          "competent": "Visualizations adequately represent data trends, but may lack clarity or detail.",
+          "expert": "Visualizations are clear, detailed, and effectively highlight key data trends."
         },
         {
-          "criterion": "Summary Sheet",
-          "weight": 3,
-          "novice": "The summary sheet is missing or lacks key insights. Copilot's analysis features were not effectively utilized, resulting in a superficial summary.",
-          "competent": "The summary sheet highlights key insights from the data, using Copilot's analysis features. The information is clear and relevant.",
-          "expert": "The summary sheet provides comprehensive insights and recommendations, demonstrating deep analysis. Copilot's features were used to enhance clarity and provide actionable insights."
+          "criterion": "Insight Identification",
+          "novice": "Few insights are identified, and they lack significance or relevance.",
+          "competent": "Several relevant insights are identified, but some may lack depth or clarity.",
+          "expert": "Significant and relevant insights are clearly identified, providing valuable understanding of the data."
+        },
+        {
+          "criterion": "Recommendations",
+          "novice": "Recommendations are vague or not actionable.",
+          "competent": "Recommendations are generally actionable, but may lack specificity or alignment with insights.",
+          "expert": "Recommendations are clear, specific, and directly aligned with the insights, providing actionable guidance."
         }
       ]
     },
     {
-      "assessment_ref": "Presentation Enhancement with PowerPoint Copilot",
+      "assessment_ref": "Designing Effective Prompts for Copilot in a Marketing Campaign",
       "criteria": [
         {
-          "criterion": "Template Selection",
-          "weight": 2,
-          "novice": "A suitable template is not selected, resulting in a disjointed presentation. Copilot's template suggestions were not effectively utilized.",
-          "competent": "A suitable template is selected, providing a consistent design theme. Copilot's suggestions were used to enhance the presentation's visual appeal.",
-          "expert": "An exceptional template is selected, enhancing the presentation's visual impact. Copilot's features were used to create a cohesive and professional design."
+          "criterion": "Prompt Design",
+          "novice": "Prompts are poorly designed, leading to irrelevant or low-quality outputs.",
+          "competent": "Prompts are adequately designed, producing generally relevant outputs, but may lack creativity.",
+          "expert": "Prompts are well-designed, producing highly relevant and creative outputs aligned with campaign goals."
         },
         {
-          "criterion": "Slide Content and Design",
-          "weight": 4,
-          "novice": "Slides lack coherence and design consistency. Copilot's content and design suggestions were not effectively utilized, resulting in a basic presentation.",
-          "competent": "Slides are coherent and well-designed, using Copilot's content and design suggestions. The presentation is visually appealing and informative.",
-          "expert": "Slides are expertly designed, with engaging content and a professional layout. Copilot's features were used to enhance clarity and visual impact, creating a compelling presentation."
+          "criterion": "Content Generation",
+          "novice": "Generated content is irrelevant or lacks creativity and alignment with campaign goals.",
+          "competent": "Generated content is generally relevant and creative, but may not fully align with campaign goals.",
+          "expert": "Generated content is highly relevant, creative, and well-aligned with campaign goals."
         },
         {
-          "criterion": "Multimedia Integration",
-          "weight": 3,
-          "novice": "Multimedia elements are missing or poorly integrated. Copilot's multimedia recommendations were not effectively utilized, resulting in a lack of engagement.",
-          "competent": "Multimedia elements are effectively integrated, using Copilot's recommendations. The presentation is engaging and visually appealing.",
-          "expert": "Multimedia elements are seamlessly integrated, enhancing the presentation's impact. Copilot's features were used to create a dynamic and engaging experience."
-        },
-        {
-          "criterion": "Overall Presentation Quality",
-          "weight": 3,
-          "novice": "The presentation lacks polish and professionalism. Copilot's design improvements were not applied, resulting in a basic presentation.",
-          "competent": "The presentation is polished and professional, with Copilot's design improvements applied. The overall quality meets professional standards.",
-          "expert": "The presentation is of exceptional quality, with a polished and professional finish. Copilot's features were used to enhance every aspect, creating a standout presentation."
-        }
-      ]
-    },
-    {
-      "assessment_ref": "Team Collaboration with Teams Copilot",
-      "criteria": [
-        {
-          "criterion": "Meeting Scheduling",
-          "weight": 3,
-          "novice": "The meeting is not scheduled correctly, or key details are missing. Copilot's scheduling features were not effectively utilized.",
-          "competent": "The meeting is scheduled correctly, with all necessary details included. Copilot's features were used to ensure accuracy.",
-          "expert": "The meeting is expertly scheduled, with all details meticulously organized. Copilot's features were used to optimize scheduling and participant engagement."
-        },
-        {
-          "criterion": "Agenda and Communication",
-          "weight": 3,
-          "novice": "The meeting agenda is missing or unclear. Copilot's drafting features were not effectively utilized, resulting in poor communication.",
-          "competent": "A clear meeting agenda is drafted and communicated to participants using Copilot's features. The agenda is relevant and well-organized.",
-          "expert": "The meeting agenda is comprehensive and effectively communicated, demonstrating strategic use of Copilot's features. The agenda enhances meeting focus and productivity."
-        },
-        {
-          "criterion": "Meeting Notes and Summary",
-          "weight": 4,
-          "novice": "Meeting notes are incomplete or lack key discussion points. Copilot's note-taking features were not effectively utilized.",
-          "competent": "Meeting notes are complete and accurately reflect key discussion points, using Copilot's features. A clear summary is provided.",
-          "expert": "Meeting notes are detailed and insightful, capturing all key points and decisions. Copilot's features were used to create a comprehensive and actionable summary."
-        },
-        {
-          "criterion": "Task Management",
-          "weight": 3,
-          "novice": "Follow-up tasks are disorganized or incomplete. Copilot's task management tools were not effectively utilized.",
-          "competent": "Follow-up tasks are organized and assigned using Copilot's task management tools. The tasks are clear and actionable.",
-          "expert": "Follow-up tasks are expertly organized and prioritized, demonstrating strategic use of Copilot's tools. The task management enhances team productivity and accountability."
-        }
-      ]
-    },
-    {
-      "assessment_ref": "Email Management with Outlook Copilot",
-      "criteria": [
-        {
-          "criterion": "Email Prioritization",
-          "weight": 3,
-          "novice": "Emails are not prioritized effectively, leading to inefficient management. Copilot's prioritization features were not utilized.",
-          "competent": "Emails are prioritized based on importance and urgency, using Copilot's features. The prioritization is logical and effective.",
-          "expert": "Emails are expertly prioritized, demonstrating strategic use of Copilot's features. The prioritization enhances efficiency and response time."
-        },
-        {
-          "criterion": "Drafting Responses",
-          "weight": 4,
-          "novice": "Responses to priority emails are poorly drafted or incomplete. Copilot's suggestions were not effectively utilized.",
-          "competent": "Responses to priority emails are well-drafted, using Copilot's suggestions. The responses are clear and professional.",
-          "expert": "Responses are expertly crafted, demonstrating effective use of Copilot's suggestions. The responses are articulate and enhance communication."
-        },
-        {
-          "criterion": "Email Organization",
-          "weight": 3,
-          "novice": "Emails are not organized into folders, leading to a cluttered inbox. Copilot's organization features were not utilized.",
-          "competent": "Emails are organized into folders using Copilot's features. The organization is logical and enhances inbox management.",
-          "expert": "Emails are expertly organized, demonstrating strategic use of Copilot's features. The organization enhances efficiency and accessibility."
-        },
-        {
-          "criterion": "Rule Setup",
-          "weight": 2,
-          "novice": "The email sorting rule is missing or incorrectly set up. Copilot's rule setup features were not utilized.",
-          "competent": "An email sorting rule is correctly set up using Copilot's features. The rule functions as intended.",
-          "expert": "The email sorting rule is expertly set up, demonstrating strategic use of Copilot's features. The rule enhances email management and efficiency."
-        }
-      ]
-    },
-    {
-      "assessment_ref": "Data Insights Generation with Copilot",
-      "criteria": [
-        {
-          "criterion": "Data Analysis",
-          "weight": 4,
-          "novice": "Key trends and patterns are not identified, leading to superficial analysis. Copilot's analysis features were not effectively utilized.",
-          "competent": "Key trends and patterns are identified using Copilot's analysis features. The analysis is clear and relevant.",
-          "expert": "The analysis is comprehensive, with deep insights into trends and patterns. Copilot's features were used to enhance the depth and accuracy of the analysis."
-        },
-        {
-          "criterion": "Visualization",
-          "weight": 3,
-          "novice": "Charts and graphs are missing or do not accurately represent the data. Copilot's visualization features were not effectively utilized.",
-          "competent": "Charts and graphs are present and accurately represent the data, using Copilot's features. The visualizations are clear and informative.",
-          "expert": "Visualizations are expertly designed, providing clear insights into the data. Copilot's features were used to enhance visual appeal and clarity, with additional visualizations included."
-        },
-        {
-          "criterion": "Summary of Insights",
-          "weight": 4,
-          "novice": "The summary lacks actionable insights and recommendations. Copilot's features were not effectively utilized, resulting in a superficial summary.",
-          "competent": "The summary provides actionable insights and recommendations, using Copilot's features. The information is clear and relevant.",
-          "expert": "The summary is comprehensive and provides deep insights and strategic recommendations. Copilot's features were used to enhance clarity and provide actionable insights."
-        },
-        {
-          "criterion": "Report Quality",
-          "weight": 3,
-          "novice": "The report lacks polish and professionalism. Copilot's features were not applied, resulting in a basic presentation.",
-          "competent": "The report is polished and professional, with Copilot's features applied. The overall quality meets professional standards.",
-          "expert": "The report is of exceptional quality, with a polished and professional finish. Copilot's features were used to enhance every aspect, creating a standout report."
+          "criterion": "Prompt Refinement",
+          "novice": "Prompts are rarely refined, resulting in minimal improvement in content quality.",
+          "competent": "Prompts are refined based on feedback, leading to some improvement in content quality.",
+          "expert": "Prompts are systematically refined based on testing and feedback, significantly enhancing content quality and alignment."
         }
       ]
     }
   ],
   "item_bank": [
     {
-      "stem": "You are tasked with creating a comprehensive report using Microsoft 365 Copilot in Excel. The report should include data analysis, visualizations, and insights. Describe the steps you would take to utilize Copilot's features to complete this task efficiently. Include how you would customize any data models or visualizations to meet specific business needs.",
+      "stem": "Using Microsoft Word with Copilot, draft a professional business proposal for a new project. Ensure that the document is well-structured, includes an executive summary, project objectives, and a budget overview. Use Copilot to enhance the formatting and clarity of the document.",
       "task_type": "performance",
-      "competency_ref": "Data Management with Excel Copilot",
-      "expected_response_summary": "The response should detail the use of Copilot to automate data entry, apply advanced formulas, generate visualizations, and customize data models for specific business needs.",
-      "scoring_notes": "Look for a clear explanation of how Copilot's features are used to automate and customize data analysis and visualization. The candidate should demonstrate an understanding of advanced Copilot capabilities.",
-      "model_answer": "To create a comprehensive report using Microsoft 365 Copilot in Excel, I would begin by importing the necessary data into Excel, using Copilot to assist with data entry and ensure accuracy. I would then leverage Copilot's advanced formula suggestions to perform initial data analysis, identifying key metrics and trends relevant to the business needs.\n\nNext, I would use Copilot's visualization tools to generate charts and graphs that effectively communicate the data insights. This includes selecting appropriate chart types based on the data characteristics and the audience's needs. I would customize these visualizations by adjusting colors, labels, and other design elements to align with the company's branding and presentation standards.\n\nFor deeper insights, I would customize data models using Copilot's advanced features. This might involve creating pivot tables or using Power Query to transform data sets. I would ensure that the models are tailored to address specific business questions, such as forecasting sales trends or analyzing customer behavior patterns.\n\nFinally, I would compile the analysis and visualizations into a cohesive report, using Copilot to assist with formatting and ensuring clarity and professionalism in the presentation. Throughout the process, I would iteratively refine the report based on feedback from stakeholders, using Copilot's insights to make data-driven adjustments."
+      "competency_ref": "Productivity Tools: Word with Copilot",
+      "expected_response_summary": "The response should be a well-structured business proposal with clear sections, enhanced formatting, and improved clarity using Copilot's features.",
+      "scoring_notes": "Evaluate the structure, clarity, and formatting of the document. Check for the effective use of Copilot in enhancing these aspects."
     },
     {
-      "stem": "Imagine you are preparing a presentation for a high-stakes business meeting using Microsoft 365 Copilot in PowerPoint. Describe how you would utilize Copilot to enhance the presentation's design and content, ensuring it is both engaging and informative.",
+      "stem": "Analyze a dataset in Excel using Copilot to identify trends and generate a report. The dataset includes sales figures over the past year. Use Copilot to create visualizations that highlight key insights.",
+      "task_type": "performance",
+      "competency_ref": "Productivity Tools: Excel with Copilot",
+      "expected_response_summary": "The response should include a report with identified trends and visualizations such as charts or graphs that highlight key sales insights.",
+      "scoring_notes": "Assess the accuracy of the trend analysis and the effectiveness of the visualizations. Check for the use of Copilot in generating these insights."
+    },
+    {
+      "stem": "Design a PowerPoint presentation using Copilot to showcase a new marketing strategy. Include multimedia elements and ensure the presentation is engaging and visually appealing.",
+      "task_type": "performance",
+      "competency_ref": "Productivity Tools: PowerPoint with Copilot",
+      "expected_response_summary": "The presentation should be engaging, with multimedia elements and a clear, visually appealing design, enhanced by Copilot's features.",
+      "scoring_notes": "Evaluate the engagement level, design quality, and use of multimedia. Check for Copilot's role in enhancing these elements."
+    },
+    {
+      "stem": "In Microsoft Teams, use Copilot to set up a project management workflow for a team of 10 members. Include task assignments, deadlines, and communication channels.",
+      "task_type": "performance",
+      "competency_ref": "Communication Tools: Teams with Copilot",
+      "expected_response_summary": "The workflow should include clear task assignments, deadlines, and communication channels, effectively set up using Copilot.",
+      "scoring_notes": "Assess the clarity and organization of the workflow. Check for the effective use of Copilot in setting up the project management system."
+    },
+    {
+      "stem": "Optimize your email management in Outlook using Copilot. Organize your inbox, prioritize emails, and set up a scheduling system for meetings.",
+      "task_type": "performance",
+      "competency_ref": "Communication Tools: Outlook with Copilot",
+      "expected_response_summary": "The inbox should be well-organized, with prioritized emails and an efficient scheduling system for meetings, all set up using Copilot.",
+      "scoring_notes": "Evaluate the organization and prioritization of emails and the efficiency of the scheduling system. Check for Copilot's role in these tasks."
+    },
+    {
+      "stem": "Using Copilot, generate insights from a dataset containing customer feedback. Identify key themes and suggest actionable improvements for customer service.",
+      "task_type": "analysis",
+      "competency_ref": "Data Analysis: Data Insights with Copilot",
+      "expected_response_summary": "The response should include identified key themes from the feedback and actionable improvements for customer service, generated using Copilot.",
+      "scoring_notes": "Assess the accuracy and relevance of the identified themes and suggested improvements. Check for Copilot's contribution to the analysis."
+    },
+    {
+      "stem": "Integrate data from multiple sources using Copilot to perform a comprehensive analysis of market trends. Use the integrated data to create a detailed report.",
+      "task_type": "performance",
+      "competency_ref": "Data Analysis: Integration with Data Sources",
+      "expected_response_summary": "The response should include a detailed report based on a comprehensive analysis of market trends, using data integrated from multiple sources with Copilot.",
+      "scoring_notes": "Evaluate the comprehensiveness and accuracy of the analysis and report. Check for the effective use of Copilot in data integration."
+    },
+    {
+      "stem": "Design a prompt for Copilot to generate a detailed project timeline for a product launch. Ensure the prompt is specific enough to guide Copilot in creating an accurate and useful timeline.",
       "task_type": "scenario",
-      "competency_ref": "Presentation Design with PowerPoint Copilot",
-      "expected_response_summary": "The response should describe the use of Copilot to apply advanced design suggestions, integrate multimedia elements, and customize interactive features to enhance engagement and information delivery.",
-      "scoring_notes": "Evaluate the candidate's ability to use Copilot to enhance presentation design and content. Look for specific examples of how Copilot's features are used to improve engagement and information delivery.",
-      "model_answer": "To prepare a high-stakes business presentation using Microsoft 365 Copilot in PowerPoint, I would start by outlining the key points and objectives of the presentation. Using Copilot, I would select a suitable template that aligns with the meeting's tone and audience, ensuring a professional and cohesive look.\n\nI would then leverage Copilot's design suggestions to enhance the visual appeal of each slide. This includes applying advanced formatting options, such as custom color schemes and typography, to ensure consistency and readability. Copilot's recommendations for layout adjustments would help me optimize the placement of text and images for maximum impact.\n\nTo make the presentation more engaging, I would integrate multimedia elements such as videos, animations, and interactive charts, using Copilot's guidance to ensure these elements are seamlessly incorporated. Copilot's ability to suggest relevant multimedia content based on the presentation's context would be particularly useful in enhancing the narrative.\n\nFinally, I would use Copilot to customize interactive features, such as hyperlinks and navigation buttons, to facilitate a dynamic presentation flow. This would allow me to adapt the presentation in real-time based on audience feedback and questions, ensuring a more interactive and responsive experience. Throughout the process, I would continuously refine the presentation based on Copilot's feedback and insights, ensuring it is both informative and engaging."
+      "competency_ref": "Prompting Best Practices: Prompt Design",
+      "expected_response_summary": "The prompt should be specific and detailed, guiding Copilot to generate an accurate and useful project timeline for a product launch.",
+      "scoring_notes": "Assess the specificity and clarity of the prompt. Check if it effectively guides Copilot to produce the desired output."
     },
     {
-      "stem": "You are using Microsoft 365 Copilot in Word to draft a policy document for your organization. Explain how you would leverage Copilot to automate repetitive tasks and customize suggestions to fit the specific needs of the document.",
+      "stem": "Refine an existing prompt used in Copilot to improve its efficiency and accuracy in generating monthly sales reports. Describe the changes made and their impact.",
       "task_type": "analysis",
-      "competency_ref": "Word Processing with Copilot",
-      "expected_response_summary": "The response should explain how Copilot can be used to automate repetitive tasks such as formatting and content structuring, and how suggestions can be customized to align with the document's specific requirements.",
-      "scoring_notes": "Assess the candidate's ability to use Copilot to automate tasks and customize suggestions. Look for a clear understanding of how Copilot can enhance document creation and management.",
-      "model_answer": "When drafting a policy document using Microsoft 365 Copilot in Word, I would begin by outlining the document's structure, including sections such as introduction, policy details, procedures, and appendices. Copilot can assist in automating the formatting of these sections, ensuring consistency in headings, bullet points, and numbering.\n\nTo automate repetitive tasks, I would use Copilot's features to apply predefined styles and templates that align with the organization's branding and document standards. This includes setting up automatic table of contents generation and cross-referencing within the document, which saves time and reduces the potential for errors.\n\nCopilot's grammar and style recommendations would be invaluable in ensuring the document's language is clear, concise, and professional. I would customize these suggestions to fit the specific tone and terminology required for the policy document, ensuring it meets the organization's communication standards.\n\nAdditionally, I would leverage Copilot's content suggestions to enrich the document with relevant examples, case studies, or legal references that support the policy's objectives. By customizing these suggestions, I can ensure they are directly applicable to the organization's context and enhance the document's credibility and comprehensiveness."
+      "competency_ref": "Prompting Best Practices: Prompt Optimization",
+      "expected_response_summary": "The response should describe specific changes made to the prompt and how these changes improved its efficiency and accuracy in generating sales reports.",
+      "scoring_notes": "Evaluate the effectiveness of the changes in improving prompt performance. Check for a clear explanation of the impact of these changes."
     },
     {
-      "stem": "You are tasked with managing a team project using Microsoft 365 Copilot in Teams. Describe how you would use Copilot to organize tasks, facilitate communication, and optimize team workflows.",
+      "stem": "Create a custom Copilot agent to assist with data entry tasks in Excel. Describe the agent's capabilities and how it improves efficiency.",
       "task_type": "performance",
-      "competency_ref": "Collaboration with Teams Copilot",
-      "expected_response_summary": "The response should detail the use of Copilot to organize tasks, facilitate communication, and optimize workflows, including the use of task management tools and meeting insights.",
-      "scoring_notes": "Look for a comprehensive explanation of how Copilot is used to enhance team collaboration and communication. The candidate should demonstrate an understanding of Copilot's task management and communication features.",
-      "model_answer": "To manage a team project using Microsoft 365 Copilot in Teams, I would start by setting up a dedicated channel for the project, ensuring all team members have access and are aware of the project's objectives and timelines. Using Copilot, I would organize tasks by creating a task list or board, assigning responsibilities, and setting deadlines to ensure accountability and progress tracking.\n\nCopilot's task management tools would help me prioritize tasks based on urgency and importance, allowing the team to focus on high-impact activities. I would use Copilot to automate reminders and notifications, ensuring team members are aware of upcoming deadlines and any changes to the project plan.\n\nTo facilitate communication, I would leverage Copilot's meeting insights and summaries to keep the team informed of key decisions and action items from meetings. This would include using Copilot to schedule regular check-ins and update meetings, ensuring all team members are aligned and any issues are addressed promptly.\n\nFinally, I would use Copilot to analyze team communication patterns and workflows, identifying areas for improvement and optimizing processes for efficiency. This might involve customizing workflows to reduce bottlenecks or implementing new collaboration tools suggested by Copilot to enhance team productivity and engagement."
-    },
-    {
-      "stem": "You are responsible for managing email communication for a busy executive using Microsoft 365 Copilot in Outlook. Explain how you would use Copilot to automate email responses and analyze communication patterns for strategic improvements.",
-      "task_type": "analysis",
-      "competency_ref": "Email Management with Outlook Copilot",
-      "expected_response_summary": "The response should explain how Copilot can be used to automate email responses and analyze communication patterns, including the use of templates and insights for strategic improvements.",
-      "scoring_notes": "Evaluate the candidate's ability to use Copilot to enhance email management and communication efficiency. Look for specific examples of automation and analysis features.",
-      "model_answer": "Managing email communication for a busy executive using Microsoft 365 Copilot in Outlook involves leveraging Copilot's automation and analysis features to ensure efficiency and strategic communication. I would begin by setting up automated email responses for common inquiries, using Copilot's templates to ensure consistency and professionalism in the executive's communication.\n\nCopilot's ability to prioritize emails based on importance and urgency would help me manage the executive's inbox effectively, ensuring critical messages are addressed promptly while less urgent emails are scheduled for later review. I would customize Copilot's prioritization settings to align with the executive's preferences and communication style.\n\nTo analyze communication patterns, I would use Copilot's insights to identify trends and areas for improvement. This might involve examining response times, identifying frequently contacted individuals or organizations, and assessing the effectiveness of current communication strategies. Copilot's analysis would provide valuable data to inform strategic decisions, such as adjusting communication priorities or implementing new email management practices.\n\nFinally, I would continuously refine the email management process based on Copilot's feedback and insights, ensuring the executive's communication is both efficient and aligned with their strategic objectives. This iterative approach would help optimize email workflows and enhance overall communication effectiveness."
-    },
-    {
-      "stem": "You are tasked with generating strategic insights from a large dataset using Microsoft 365 Copilot. Describe how you would use Copilot's advanced features to customize data analysis models and develop actionable insights.",
-      "task_type": "performance",
-      "competency_ref": "Data Insights with Copilot",
-      "expected_response_summary": "The response should detail the use of Copilot to customize data analysis models and generate strategic insights, including the use of advanced analysis tools and interpretation of complex data sets.",
-      "scoring_notes": "Look for a detailed explanation of how Copilot's advanced features are used to customize data analysis and generate insights. The candidate should demonstrate an understanding of strategic insights generation.",
-      "model_answer": "To generate strategic insights from a large dataset using Microsoft 365 Copilot, I would begin by importing the dataset into Excel or another suitable platform, using Copilot to assist with data cleaning and preparation. This ensures the data is accurate and ready for analysis.\n\nI would then leverage Copilot's advanced analysis tools to explore the dataset, using features such as pivot tables, Power Query, and advanced formulas to identify key patterns and trends. Copilot's ability to suggest relevant analysis techniques based on the dataset's characteristics would be invaluable in this process.\n\nTo customize data analysis models, I would use Copilot to create tailored models that address specific business questions or objectives. This might involve segmenting the data by key variables, such as customer demographics or sales regions, to uncover insights that are directly applicable to the organization's strategic goals.\n\nOnce the analysis is complete, I would use Copilot to generate comprehensive reports that communicate the insights effectively. This includes using visualizations and narrative elements to highlight key findings and recommendations. Throughout the process, I would iteratively refine the analysis based on Copilot's feedback and insights, ensuring the final output is both actionable and aligned with the organization's strategic objectives."
-    },
-    {
-      "stem": "You are preparing to train new employees on using Microsoft 365 Copilot for data analysis. Outline a training session that covers basic prompting techniques and how to use Copilot's insights to complete simple data analysis tasks.",
-      "task_type": "scenario",
-      "competency_ref": "Prompting Best Practices",
-      "expected_response_summary": "The response should outline a training session that includes basic prompting techniques and the use of Copilot's insights for simple data analysis tasks, ensuring new employees understand how to interact with Copilot effectively.",
-      "scoring_notes": "Evaluate the candidate's ability to design a training session that effectively teaches basic prompting techniques and data analysis using Copilot. Look for clarity and comprehensiveness in the training outline.",
-      "model_answer": "To train new employees on using Microsoft 365 Copilot for data analysis, I would design a training session that introduces them to the basics of interacting with Copilot and using its insights for simple data analysis tasks. The session would begin with an overview of Microsoft 365 Copilot, highlighting its capabilities and benefits for data analysis.\n\nNext, I would introduce basic prompting techniques, demonstrating how to initiate tasks with Copilot using simple prompts. This would include examples of common data analysis tasks, such as generating reports or identifying trends, and how to phrase prompts to achieve desired outcomes.\n\nI would then guide the employees through a hands-on exercise, where they use Copilot to complete a simple data analysis task. This might involve entering data into a spreadsheet, applying basic formulas, and generating a simple report using Copilot's insights. Throughout the exercise, I would provide guidance and feedback, ensuring employees understand how to interact with Copilot effectively.\n\nFinally, I would conclude the session with a discussion on how to interpret Copilot's insights and apply them to real-world scenarios. This would include tips on refining prompts based on Copilot's feedback and how to use insights to inform decision-making. By the end of the session, employees should feel confident in their ability to use Copilot for basic data analysis tasks."
-    },
-    {
-      "stem": "You are tasked with optimizing a workflow for a team using Microsoft 365 Copilot. Describe how you would use Copilot's advanced collaboration features to customize workflows and improve team efficiency.",
-      "task_type": "performance",
-      "competency_ref": "Collaboration with Teams Copilot",
-      "expected_response_summary": "The response should detail the use of Copilot's advanced collaboration features to customize workflows and improve team efficiency, including the use of insights to analyze and optimize communication patterns.",
-      "scoring_notes": "Look for a comprehensive explanation of how Copilot's advanced features are used to customize workflows and improve team efficiency. The candidate should demonstrate an understanding of workflow optimization.",
-      "model_answer": "To optimize a workflow for a team using Microsoft 365 Copilot, I would begin by analyzing the current workflow and identifying areas for improvement. Using Copilot's insights, I would assess communication patterns, task management practices, and collaboration tools to pinpoint inefficiencies and bottlenecks.\n\nI would then leverage Copilot's advanced collaboration features to customize workflows that address these inefficiencies. This might involve setting up automated task assignments and reminders, using Copilot to ensure tasks are prioritized and deadlines are met. I would also explore Copilot's recommendations for integrating new collaboration tools or features that enhance team communication and productivity.\n\nTo improve team efficiency, I would use Copilot to facilitate regular check-ins and feedback sessions, ensuring team members are aligned and any issues are addressed promptly. Copilot's meeting insights and summaries would be invaluable in keeping the team informed and focused on key objectives.\n\nFinally, I would continuously monitor the optimized workflow using Copilot's insights, making adjustments as needed to ensure ongoing efficiency and effectiveness. This iterative approach would help the team adapt to changing needs and maintain high levels of productivity and engagement."
-    },
-    {
-      "stem": "You are responsible for creating a dynamic and interactive presentation using Microsoft 365 Copilot in PowerPoint. Explain how you would use Copilot to customize interactive elements and optimize the presentation flow for maximum engagement.",
-      "task_type": "analysis",
-      "competency_ref": "Presentation Design with PowerPoint Copilot",
-      "expected_response_summary": "The response should explain how Copilot is used to customize interactive elements and optimize presentation flow, including the use of advanced features to enhance engagement and information delivery.",
-      "scoring_notes": "Evaluate the candidate's ability to use Copilot to enhance presentation interactivity and flow. Look for specific examples of customization and optimization techniques.",
-      "model_answer": "To create a dynamic and interactive presentation using Microsoft 365 Copilot in PowerPoint, I would start by outlining the presentation's key messages and objectives. Using Copilot, I would select a template that supports interactive elements, ensuring the design is both engaging and professional.\n\nI would then use Copilot to customize interactive elements such as hyperlinks, navigation buttons, and embedded multimedia. This includes setting up a non-linear presentation flow that allows the audience to explore different sections based on their interests or questions. Copilot's guidance would help me ensure these elements are seamlessly integrated and enhance the overall presentation experience.\n\nTo optimize the presentation flow, I would leverage Copilot's advanced features to analyze audience engagement and feedback. This might involve using Copilot's insights to adjust the pacing of the presentation, ensuring key points are emphasized and the audience remains engaged throughout.\n\nFinally, I would continuously refine the presentation based on Copilot's feedback and insights, making adjustments to interactive elements and flow as needed. This iterative approach would help ensure the presentation is both informative and engaging, maximizing its impact on the audience."
-    },
-    {
-      "stem": "You are tasked with developing a strategic email communication plan using Microsoft 365 Copilot in Outlook. Describe how you would use Copilot to automate workflows and analyze communication patterns to enhance strategic communication.",
-      "task_type": "performance",
-      "competency_ref": "Email Management with Outlook Copilot",
-      "expected_response_summary": "The response should detail the use of Copilot to automate email workflows and analyze communication patterns, including the use of insights to enhance strategic communication.",
-      "scoring_notes": "Look for a comprehensive explanation of how Copilot's features are used to automate workflows and analyze communication patterns. The candidate should demonstrate an understanding of strategic communication enhancement.",
-      "model_answer": "To develop a strategic email communication plan using Microsoft 365 Copilot in Outlook, I would begin by analyzing the current communication patterns and identifying areas for improvement. Using Copilot's insights, I would assess response times, email volumes, and engagement levels to understand the effectiveness of current strategies.\n\nI would then leverage Copilot to automate email workflows, setting up templates for common communication scenarios and using automated responses for frequently asked questions. This would ensure consistency and efficiency in communication, allowing the team to focus on more strategic tasks.\n\nTo enhance strategic communication, I would use Copilot's insights to identify key stakeholders and tailor communication strategies to their needs. This might involve segmenting the audience based on their roles or interests and customizing email content to ensure relevance and impact.\n\nFinally, I would continuously monitor the communication plan using Copilot's insights, making adjustments as needed to ensure ongoing effectiveness. This iterative approach would help the team adapt to changing needs and maintain high levels of engagement and strategic alignment."
+      "competency_ref": "Data Analysis: Integration with Data Sources",
+      "expected_response_summary": "The response should describe a custom Copilot agent with capabilities that assist with data entry tasks, improving efficiency in Excel.",
+      "scoring_notes": "Assess the capabilities and efficiency improvements of the custom agent. Check for a clear description of how the agent enhances data entry tasks."
     }
   ],
   "blueprint": {
-    "program_title": "Microsoft 365 Copilot User Certification - Foundational Level",
-    "target_audience": "Individuals seeking to enhance their productivity and communication skills using Microsoft 365 Copilot tools.",
-    "prerequisites": "Basic familiarity with Microsoft 365 applications such as Word, Excel, PowerPoint, Teams, and Outlook.",
-    "program_overview": "The Microsoft 365 Copilot User Certification at the Foundational Level is designed to equip individuals with essential skills to leverage Microsoft 365 Copilot tools effectively. This certification focuses on enhancing productivity, communication, and data analysis capabilities through the use of AI-driven features in Microsoft 365 applications. Participants will learn to utilize Copilot to streamline document creation, manage data, design presentations, and optimize communication workflows.\n\nThe program is structured around three core domains: Productivity, Communication, and Data Analysis. Each domain encompasses specific skills that are critical for maximizing the potential of Microsoft 365 Copilot. From automating repetitive tasks in Word and Excel to enhancing team collaboration in Teams and Outlook, this certification ensures that users can harness the full power of Copilot to achieve their professional goals. By the end of the program, participants will be proficient in using Copilot to generate insights, manage communications, and create compelling presentations, thereby driving efficiency and innovation in their work environments.",
+    "program_title": "Microsoft 365 Copilot User Certification",
+    "target_audience": "Professionals and students who use Microsoft 365 applications and want to enhance their productivity and collaboration skills with Copilot.",
+    "prerequisites": "Candidates should have a basic understanding of Microsoft 365 applications such as Word, Excel, PowerPoint, Teams, and Outlook. Familiarity with data analysis concepts and digital communication tools is recommended.",
+    "program_overview": "The Microsoft 365 Copilot User Certification is designed to empower users with the skills needed to leverage Microsoft 365 Copilot and its integrated applications effectively. This certification focuses on enhancing productivity, communication, and data analysis capabilities through the use of Copilot, a powerful AI-driven tool. Participants will learn to utilize Copilot to draft, edit, and format documents, analyze data, and create engaging presentations. Additionally, the program covers optimizing communication and collaboration using Microsoft Teams and Outlook with Copilot.\n\nThe certification program is structured around four key domains: Productivity Tools, Communication Tools, Data Analysis, and Prompting Best Practices. Each domain is crafted to build proficiency from novice to expert levels, ensuring that candidates can apply their skills in real-world scenarios. By completing this certification, users will be equipped to maximize the potential of Microsoft 365 applications, driving efficiency and innovation in their professional environments.",
     "domain_summary": [
-      "Productivity: Master the use of Microsoft 365 Copilot in Word, Excel, and PowerPoint to enhance productivity and automate tasks.",
-      "Communication: Enhance collaboration and communication using Microsoft 365 Copilot in Teams and Outlook.",
-      "Data Analysis: Utilize Microsoft 365 Copilot for data analysis and insights generation across platforms."
+      "Productivity Tools: Focuses on using Microsoft 365 applications like Word, Excel, and PowerPoint with Copilot to enhance productivity.",
+      "Communication Tools: Enhances communication and collaboration using Microsoft Teams and Outlook with Copilot.",
+      "Data Analysis: Involves using Copilot for advanced data analysis and insights generation.",
+      "Prompting Best Practices: Covers the development of effective prompts to maximize Copilot's capabilities."
     ],
-    "assessment_strategy": "The assessment strategy for the Microsoft 365 Copilot User Certification is performance-based, focusing on real-world application of skills rather than theoretical knowledge. Candidates will be evaluated through practical tasks that simulate actual workplace scenarios, requiring them to demonstrate proficiency in using Copilot tools across various Microsoft 365 applications. This approach ensures that certified individuals possess the competence to apply their skills effectively in real-world settings, enhancing their productivity and communication capabilities. The assessments are designed to test the ability to automate tasks, generate insights, and optimize workflows using Copilot, reflecting the dynamic and practical nature of the skills being certified.",
-    "estimated_duration_hours": 20.0,
-    "renewal_cadence": "Certification renewal is recommended every two years to ensure that certified individuals remain up-to-date with the latest features and enhancements in Microsoft 365 Copilot. This interval allows for the incorporation of new tools and techniques, reflecting the rapid evolution of AI-driven productivity solutions."
+    "assessment_strategy": "The assessment strategy for the Microsoft 365 Copilot User Certification is performance-based, emphasizing real-world application over theoretical knowledge. Candidates will be evaluated through practical tasks that simulate actual workplace scenarios, requiring them to demonstrate their ability to use Copilot effectively across various Microsoft 365 applications. This approach ensures that certified individuals possess the competence to apply their skills in enhancing productivity, communication, and data analysis in their professional roles. The assessments are designed to test proficiency at different levels, from novice to expert, across all domains, ensuring a comprehensive evaluation of the candidate's capabilities.",
+    "estimated_duration_hours": 40.0,
+    "renewal_cadence": "The certification is recommended to be renewed every two years. This interval ensures that certified users remain up-to-date with the latest features and best practices of Microsoft 365 Copilot, reflecting the rapid advancements in AI and productivity tools."
   }
 }
