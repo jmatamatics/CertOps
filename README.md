@@ -4,7 +4,7 @@
 
 CertOps is an LLM-powered system that ingests platform documentation, retrieves relevant content via RAG, and generates production-ready certification artifacts - competency frameworks, learning progressions, performance-based assessments, scoring rubrics, item banks, and certification blueprints.
 
-**[Live Demo](https://certops.vercel.app)** | **[Loom Video](TODO_LOOM_LINK)** | **[API Health Check](https://certops.onrender.com/health)**
+**[Live Demo](https://certops.vercel.app)** | **[Loom Video](https://www.loom.com/share/e1309d309c5940098a2b80b2c843170a)** | **[API Health Check](https://certops.onrender.com/health)**
 
 > Note: The backend runs on Render's free tier and may take ~30 seconds to wake up on first request.
 
@@ -236,5 +236,4 @@ CertOps/
 
 - **Adaptive assessment engine**: Build a second LangGraph that delivers assessments to learners in real time. The system would select items from the generated item bank based on the learner's current estimated proficiency, evaluate free-text responses against the rubrics and model answers using LLM-as-judge, and adapt the next question based on performance. Session state would be managed with a LangGraph checkpointer; long-term learner profiles would persist in a LangGraph Store keyed by user ID, enabling the system to pick up where a learner left off across sessions. All the structured artifacts the pipeline already generates (item bank with model answers, rubrics with weighted criteria, proficiency levels with behavioral indicators) serve as the evaluation backbone.
 - **Conversational refinement**: Add checkpointing to the content generation pipeline so a certification architect can iteratively refine artifacts through conversation (e.g., "Add a third skill to the security domain" or "Make that assessment harder") rather than regenerating from scratch.
-- **Additional certification tracks**: Expand beyond M365 to cover Power Platform, Azure AI, and other enterprise AI platforms.
-- **LangSmith retriever comparison**: Run all four retriever strategies through LangSmith's evaluation UI for side-by-side visual comparison.
+- **Additional certification tracks**: Expand beyond M365 to cover other AI-approved tools within the organization.

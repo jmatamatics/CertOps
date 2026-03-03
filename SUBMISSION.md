@@ -1,6 +1,6 @@
 # CertOps - Certification Challenge Submission
 
-**[Live Demo](https://certops.vercel.app)** | **[GitHub Repo](https://github.com/jmatamatics/CertOps)** | **[Loom Video](TODO_LOOM_LINK)**
+**[Live Demo](https://certops.vercel.app)** | **[GitHub Repo](https://github.com/jmatamatics/CertOps)** | **[Loom Video](https://www.loom.com/share/e1309d309c5940098a2b80b2c843170a)**
 
 ---
 
