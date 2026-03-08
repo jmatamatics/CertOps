@@ -11,6 +11,7 @@ from langchain_classic.retrievers.contextual_compression import ContextualCompre
 from langchain_cohere import CohereRerank
 from langchain_tavily import TavilySearch
 from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import MemorySaver
 
 from backend.schemas import (
     CompetencyFramework, LearningProgression, AssessmentList,
@@ -237,6 +238,18 @@ def generate_blueprint(state: CertOpsState) -> dict:
     return {"blueprint": response.model_dump()}
 
 
+ARTIFACT_TO_NODE = {
+    "competency_framework": "generate_competency_framework",
+    "learning_progression": "generate_learning_progression",
+    "assessments": "generate_assessments",
+    "rubrics": "generate_rubrics",
+    "item_bank": "generate_item_bank",
+    "blueprint": "generate_blueprint",
+}
+
+checkpointer = MemorySaver()
+
+
 def build_graph():
     builder = StateGraph(CertOpsState)
 
@@ -261,7 +274,7 @@ def build_graph():
     builder.add_edge("generate_item_bank", "generate_blueprint")
     builder.add_edge("generate_blueprint", END)
 
-    return builder.compile()
+    return builder.compile(checkpointer=checkpointer)
 
 
 graph = build_graph()

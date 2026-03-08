@@ -7,10 +7,62 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PipelineProgress } from "@/components/pipeline-progress";
-import { fetchCached, generateLive, getExportUrl } from "@/lib/api";
-import { TRACKS, type CertOpsOutput, type TrackKey } from "@/lib/types";
+import { ArtifactTabs, type ArtifactTabsHandle } from "@/components/artifact-tabs";
+import { GuidedTour } from "@/components/guided-tour";
+import { fetchCached, generateLive, editArtifact, getExportUrl } from "@/lib/api";
+import { TRACKS, type CertOpsOutput, type TrackKey, type ArtifactKey } from "@/lib/types";
 
-type Status = "idle" | "loading" | "generating" | "done" | "error";
+type Status = "idle" | "loading" | "generating" | "done" | "error" | "replaying";
+
+function buildTourSteps(tabsRef: React.RefObject<ArtifactTabsHandle | null>) {
+  return [
+    {
+      target: "[data-tour='summary-card']",
+      title: "Program Summary",
+      content:
+        "After generation, this card shows a high-level snapshot of your certification program: how many domains, skills, assessments, and items were created, plus the estimated duration.",
+      placement: "bottom" as const,
+    },
+    {
+      target: "[data-tour='artifact-tabs']",
+      title: "Explore Each Artifact",
+      content:
+        "Your program is made up of 6 artifacts. Click any tab to dive into the details: the competency framework, learning path, assessments, rubrics, item bank, and blueprint.",
+      placement: "top" as const,
+    },
+    {
+      target: "[data-tour='edit-button']",
+      title: "Edit Any Artifact",
+      content:
+        "See something you want to change? Click the Edit button on any tab. You don't need to regenerate the entire program - just edit the part you want. Let's try it.",
+      placement: "bottom" as const,
+      action: () => tabsRef.current?.openPicker("competency_framework"),
+    },
+    {
+      target: "[data-tour='section-picker']",
+      title: "Choose a Section",
+      content:
+        "Here's the drill-down picker. Each domain is shown as a separate card. Instead of scrolling through the entire framework, just click the section you want to edit. Let's pick the first domain.",
+      placement: "top" as const,
+      action: () => tabsRef.current?.selectSection("competency_framework", 1),
+    },
+    {
+      target: "[data-tour='form-editor']",
+      title: "Edit With Form Fields",
+      content:
+        "Change a domain name, update a skill description, or add a new behavioral indicator. When you're done, click 'Save & Replay' and CertOps regenerates all downstream artifacts automatically.",
+      placement: "top" as const,
+      action: () => tabsRef.current?.resetView(),
+    },
+    {
+      target: "[data-tour='actions']",
+      title: "Export or Regenerate",
+      content:
+        "When you're happy with the results, click 'View Certification Report' to get a formatted HTML report. Or click 'Regenerate' to start fresh with a new pipeline run.",
+      placement: "top" as const,
+    },
+  ];
+}
 
 function GenerateContent() {
   const searchParams = useSearchParams();
@@ -22,7 +74,10 @@ function GenerateContent() {
   const [data, setData] = useState<CertOpsOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState(0);
+  const [tourOpen, setTourOpen] = useState(false);
   const stepRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const tabsRef = useRef<ArtifactTabsHandle | null>(null);
+  const tourSteps = buildTourSteps(tabsRef);
 
   const loadCached = useCallback(async () => {
     setStatus("loading");
@@ -64,6 +119,26 @@ function GenerateContent() {
       });
   }
 
+  function handleEdit(artifactKey: ArtifactKey, updatedData: unknown) {
+    if (!data?.thread_id) {
+      setError("No active session. Generate a certification first.");
+      return;
+    }
+
+    setStatus("replaying");
+    setError(null);
+
+    editArtifact(data.thread_id, artifactKey, updatedData)
+      .then((result) => {
+        setData(result);
+        setStatus("done");
+      })
+      .catch((err) => {
+        setError(String(err));
+        setStatus("done");
+      });
+  }
+
   function handleDownloadReport() {
     window.open(getExportUrl(track.key), "_blank");
   }
@@ -73,15 +148,29 @@ function GenerateContent() {
     0
   );
 
+  const showResults = (status === "done" || (status === "idle" && data)) && data;
+
   return (
-    <div className="min-h-screen px-4 py-8 md:px-8 max-w-4xl mx-auto">
+    <div className="min-h-screen px-4 py-8 md:px-8 max-w-5xl mx-auto">
       <header className="mb-8">
-        <button
-          onClick={() => router.push("/")}
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors mb-2 block"
-        >
-          &larr; Back to tracks
-        </button>
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => router.push("/")}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors mb-2 block"
+          >
+            &larr; Back to tracks
+          </button>
+          {showResults && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setTourOpen(true)}
+              className="text-xs"
+            >
+              Take a Tour
+            </Button>
+          )}
+        </div>
         <h1 className="text-3xl font-bold tracking-tight">
           {track.name}
         </h1>
@@ -168,7 +257,27 @@ function GenerateContent() {
               </motion.div>
             )}
 
-            {(status === "done" || (status === "idle" && data)) && data && (
+            {status === "replaying" && (
+              <motion.div
+                key="replaying"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center justify-center py-20"
+              >
+                <div className="text-center space-y-2">
+                  <p className="text-sm font-medium animate-pulse">
+                    Replaying downstream artifacts...
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Only the affected artifacts are regenerating. This is faster
+                    than a full run.
+                  </p>
+                </div>
+              </motion.div>
+            )}
+
+            {showResults && (
               <motion.div
                 key="done"
                 initial={{ opacity: 0, y: 10 }}
@@ -176,92 +285,71 @@ function GenerateContent() {
                 transition={{ duration: 0.4 }}
                 className="space-y-6"
               >
-                {/* Blueprint summary */}
-                {data.blueprint && (
-                  <Card className="border-primary/20">
-                    <CardContent className="pt-6 space-y-4">
-                      <h2 className="text-xl font-semibold">
-                        {data.blueprint.program_title}
-                      </h2>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {data.blueprint.program_overview}
-                      </p>
+                {/* Summary stats */}
+                <Card data-tour="summary-card" className="border-primary/20">
+                  <CardContent className="pt-6 space-y-4">
+                    <h2 className="text-xl font-semibold">
+                      {data.blueprint?.program_title ?? track.name}
+                    </h2>
 
-                      <Separator />
-
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                        <div>
-                          <div className="text-2xl font-bold text-primary">
-                            {data.competency_framework.domains.length}
-                          </div>
-                          <div className="text-xs text-muted-foreground">Domains</div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                      <div>
+                        <div className="text-2xl font-bold text-primary">
+                          {data.competency_framework.domains.length}
                         </div>
-                        <div>
-                          <div className="text-2xl font-bold text-primary">
-                            {data.competency_framework.domains.reduce(
-                              (sum, d) => sum + d.skills.length,
-                              0
-                            )}
-                          </div>
-                          <div className="text-xs text-muted-foreground">Skills</div>
-                        </div>
-                        <div>
-                          <div className="text-2xl font-bold text-primary">
-                            {data.assessments.length}
-                          </div>
-                          <div className="text-xs text-muted-foreground">Assessments</div>
-                        </div>
-                        <div>
-                          <div className="text-2xl font-bold text-primary">
-                            {data.item_bank.length}
-                          </div>
-                          <div className="text-xs text-muted-foreground">Items</div>
-                        </div>
+                        <div className="text-xs text-muted-foreground">Domains</div>
                       </div>
+                      <div>
+                        <div className="text-2xl font-bold text-primary">
+                          {data.competency_framework.domains.reduce(
+                            (sum, d) => sum + d.skills.length,
+                            0
+                          )}
+                        </div>
+                        <div className="text-xs text-muted-foreground">Skills</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-primary">
+                          {data.assessments.length}
+                        </div>
+                        <div className="text-xs text-muted-foreground">Assessments</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-primary">
+                          {data.item_bank.length}
+                        </div>
+                        <div className="text-xs text-muted-foreground">Items</div>
+                      </div>
+                    </div>
 
-                      {(totalHours ?? 0) > 0 && (
-                        <>
-                          <Separator />
-                          <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">
-                              Estimated Program Duration
-                            </span>
-                            <span className="font-medium">
-                              {totalHours?.toFixed(0)} hours
-                            </span>
-                          </div>
-                        </>
-                      )}
-                    </CardContent>
-                  </Card>
-                )}
+                    {(totalHours ?? 0) > 0 && (
+                      <>
+                        <Separator />
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">
+                            Estimated Program Duration
+                          </span>
+                          <span className="font-medium">
+                            {totalHours?.toFixed(0)} hours
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
 
-                {/* Domains list */}
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                    Domain Coverage
-                  </h3>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {data.competency_framework.domains.map((domain) => (
-                      <Card key={domain.name} className="border-border/50">
-                        <CardContent className="py-3 px-4">
-                          <div className="font-medium text-sm">{domain.name}</div>
-                          <div className="text-xs text-muted-foreground mt-0.5">
-                            {domain.skills.length} skills &middot;{" "}
-                            {domain.skills
-                              .map((s) => s.name)
-                              .join(", ")}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+                {/* Artifact tabs with edit support */}
+                <div data-tour="artifact-tabs">
+                  <ArtifactTabs
+                    ref={tabsRef}
+                    data={data}
+                    onEdit={data.thread_id ? handleEdit : undefined}
+                  />
                 </div>
 
-                {/* Download actions */}
+                {/* Actions */}
                 <Separator />
-
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div data-tour="actions" className="flex flex-col sm:flex-row gap-3">
                   <Button size="lg" onClick={handleDownloadReport} className="flex-1">
                     View Certification Report
                   </Button>
@@ -278,6 +366,15 @@ function GenerateContent() {
           </AnimatePresence>
         </main>
       </div>
+
+      <GuidedTour
+        steps={tourSteps}
+        isOpen={tourOpen}
+        onClose={() => {
+          setTourOpen(false);
+          tabsRef.current?.resetView();
+        }}
+      />
     </div>
   );
 }

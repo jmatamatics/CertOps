@@ -1,4 +1,4 @@
-import type { CertOpsOutput } from "./types";
+import type { CertOpsOutput, ArtifactKey } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 
@@ -8,7 +8,7 @@ export async function fetchCached(trackKey: string): Promise<CertOpsOutput> {
       const res = await fetch(`${API_URL}/cached/${trackKey}`);
       if (res.ok) return res.json();
     } catch {
-      // backend unreachable — fall through to static data
+      // backend unreachable - fall through to static data
     }
   }
 
@@ -26,6 +26,29 @@ export async function generateLive(
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ track }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
+export async function editArtifact(
+  threadId: string,
+  artifactKey: ArtifactKey,
+  updatedData: unknown,
+): Promise<CertOpsOutput> {
+  if (!API_URL) throw new Error("Backend not configured. Set NEXT_PUBLIC_API_URL.");
+
+  const res = await fetch(`${API_URL}/edit`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      thread_id: threadId,
+      artifact_key: artifactKey,
+      updated_data: updatedData,
+    }),
   });
   if (!res.ok) {
     const detail = await res.text();

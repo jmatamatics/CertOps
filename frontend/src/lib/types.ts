@@ -82,6 +82,7 @@ export interface CertificationBlueprint {
 }
 
 export interface CertOpsOutput {
+  thread_id?: string;
   competency_framework: CompetencyFramework;
   learning_progression: LearningProgression;
   assessments: AssessmentTask[];
@@ -89,6 +90,14 @@ export interface CertOpsOutput {
   item_bank: ItemBankEntry[];
   blueprint: CertificationBlueprint;
 }
+
+export type ArtifactKey =
+  | "competency_framework"
+  | "learning_progression"
+  | "assessments"
+  | "rubrics"
+  | "item_bank"
+  | "blueprint";
 
 export type TrackKey = "ai_champion" | "user";
 

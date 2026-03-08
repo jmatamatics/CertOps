@@ -1,6 +1,8 @@
 import json
+import uuid
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,7 +10,7 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from jinja2 import Environment, FileSystemLoader
 
-from backend.graph import graph, CertOpsState, PIPELINE_STEPS
+from backend.graph import graph, CertOpsState, PIPELINE_STEPS, ARTIFACT_TO_NODE
 
 app = FastAPI(title="CertOps API", version="2.0.0")
 
@@ -38,6 +40,23 @@ class GenerateRequest(BaseModel):
 
 
 class GenerateResponse(BaseModel):
+    thread_id: str
+    competency_framework: dict
+    learning_progression: dict
+    assessments: list[dict]
+    rubrics: list[dict]
+    item_bank: list[dict]
+    blueprint: dict
+
+
+class EditRequest(BaseModel):
+    thread_id: str
+    artifact_key: str
+    updated_data: Any
+
+
+class EditResponse(BaseModel):
+    thread_id: str
     competency_framework: dict
     learning_progression: dict
     assessments: list[dict]
@@ -65,8 +84,29 @@ def cached(track_key: str):
     return json.loads(path.read_text())
 
 
+ARTIFACT_KEYS = [
+    "competency_framework", "learning_progression",
+    "assessments", "rubrics", "item_bank", "blueprint",
+]
+
+
+def _extract_artifacts(state: dict, thread_id: str) -> dict:
+    return {"thread_id": thread_id, **{k: state[k] for k in ARTIFACT_KEYS}}
+
+
+def _cache_artifacts(artifacts: dict, track: str) -> None:
+    track_key = REVERSE_TRACK_MAP.get(track)
+    if track_key:
+        cache_path = DATA_DIR / f"certops_{track_key}_output.json"
+        to_cache = {k: artifacts[k] for k in ARTIFACT_KEYS}
+        cache_path.write_text(json.dumps(to_cache, indent=2))
+
+
 @app.post("/generate", response_model=GenerateResponse)
 def generate(req: GenerateRequest):
+    thread_id = str(uuid.uuid4())
+    config = {"configurable": {"thread_id": thread_id}}
+
     initial_state: CertOpsState = {
         "track": req.track,
         "documents": [],
@@ -80,25 +120,39 @@ def generate(req: GenerateRequest):
     }
 
     try:
-        result = graph.invoke(initial_state)
+        result = graph.invoke(initial_state, config=config)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    output = {
-        "competency_framework": result["competency_framework"],
-        "learning_progression": result["learning_progression"],
-        "assessments": result["assessments"],
-        "rubrics": result["rubrics"],
-        "item_bank": result["item_bank"],
-        "blueprint": result["blueprint"],
-    }
+    artifacts = _extract_artifacts(result, thread_id)
+    _cache_artifacts(artifacts, req.track)
+    return GenerateResponse(**artifacts)
 
-    track_key = REVERSE_TRACK_MAP.get(req.track)
-    if track_key:
-        cache_path = DATA_DIR / f"certops_{track_key}_output.json"
-        cache_path.write_text(json.dumps(output, indent=2))
 
-    return GenerateResponse(**output)
+@app.post("/edit", response_model=EditResponse)
+def edit(req: EditRequest):
+    if req.artifact_key not in ARTIFACT_TO_NODE:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid artifact_key '{req.artifact_key}'. Must be one of: {list(ARTIFACT_TO_NODE.keys())}",
+        )
+
+    config = {"configurable": {"thread_id": req.thread_id}}
+    node_name = ARTIFACT_TO_NODE[req.artifact_key]
+
+    try:
+        graph.update_state(
+            config,
+            values={req.artifact_key: req.updated_data},
+            as_node=node_name,
+        )
+        result = graph.invoke(None, config=config)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    artifacts = _extract_artifacts(result, req.thread_id)
+    _cache_artifacts(artifacts, result.get("track", ""))
+    return EditResponse(**artifacts)
 
 
 @app.get("/export/{track_key}/html", response_class=HTMLResponse)
