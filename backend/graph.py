@@ -255,7 +255,9 @@ ARTIFACT_TO_NODE = {
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL and PostgresSaver is not None:
-    checkpointer = PostgresSaver.from_conn_string(DATABASE_URL)
+    import psycopg
+    db_conn = psycopg.Connection.connect(DATABASE_URL)
+    checkpointer = PostgresSaver(db_conn)
     checkpointer.setup()
 else:
     checkpointer = MemorySaver()
