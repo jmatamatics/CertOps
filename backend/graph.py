@@ -13,6 +13,11 @@ from langchain_tavily import TavilySearch
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
 
+try:
+    from langgraph.checkpoint.postgres import PostgresSaver
+except ImportError:
+    PostgresSaver = None
+
 from backend.schemas import (
     CompetencyFramework, LearningProgression, AssessmentList,
     RubricList, ItemBank, CertificationBlueprint,
@@ -247,7 +252,13 @@ ARTIFACT_TO_NODE = {
     "blueprint": "generate_blueprint",
 }
 
-checkpointer = MemorySaver()
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL and PostgresSaver is not None:
+    checkpointer = PostgresSaver.from_conn_string(DATABASE_URL)
+    checkpointer.setup()
+else:
+    checkpointer = MemorySaver()
 
 
 def build_graph():

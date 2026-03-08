@@ -32,6 +32,9 @@ dependencies = [
     "langchain-classic>=1.0.1",
     "langchain-cohere>=0.5.0",
     "langgraph-checkpoint-sqlite>=3.0.3",
+    "langgraph-checkpoint-postgres>=3.0.4",
+    "psycopg2-binary>=2.9.11",
+    "psycopg[binary]>=3.3.3",
 ]
 
 [build-system]
