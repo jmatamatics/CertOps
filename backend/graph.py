@@ -253,14 +253,22 @@ ARTIFACT_TO_NODE = {
 }
 
 DATABASE_URL = os.getenv("DATABASE_URL")
+checkpointer = MemorySaver()
 
 if DATABASE_URL and PostgresSaver is not None:
-    import psycopg
-    db_conn = psycopg.Connection.connect(DATABASE_URL, autocommit=True, prepare_threshold=0)
-    checkpointer = PostgresSaver(db_conn)
-    checkpointer.setup()
+    try:
+        import psycopg
+        db_conn = psycopg.Connection.connect(
+            DATABASE_URL, autocommit=True, prepare_threshold=0,
+        )
+        checkpointer = PostgresSaver(db_conn)
+        checkpointer.setup()
+        print("Checkpointer: PostgresSaver (persistent)")
+    except Exception as e:
+        print(f"PostgreSQL connection failed, using MemorySaver: {e}")
+        checkpointer = MemorySaver()
 else:
-    checkpointer = MemorySaver()
+    print("Checkpointer: MemorySaver (volatile)")
 
 
 def build_graph():
