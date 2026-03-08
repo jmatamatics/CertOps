@@ -256,7 +256,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL and PostgresSaver is not None:
     import psycopg
-    db_conn = psycopg.Connection.connect(DATABASE_URL)
+    db_conn = psycopg.Connection.connect(DATABASE_URL, autocommit=True, prepare_threshold=0)
     checkpointer = PostgresSaver(db_conn)
     checkpointer.setup()
 else:
