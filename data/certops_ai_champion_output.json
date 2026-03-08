@@ -1,136 +1,268 @@
 {
   "competency_framework": {
     "track": "AI Champion",
-    "description": "This certification validates the ability to design, implement, and manage AI-driven solutions within an enterprise environment, focusing on agent creation, conversational design, integration, and security.",
+    "description": "This certification validates the ability to design, implement, and manage AI solutions within an enterprise environment, focusing on agent creation, conversational design, integration, and security.",
     "domains": [
       {
         "name": "Agent Creation & Configuration",
-        "description": "Covers the skills required to create and configure AI agents, including defining actions, triggers, and workflows.",
+        "description": "Covers the skills required to create and configure AI agents, including defining actions, triggers, and managing agent settings.",
         "skills": [
           {
             "name": "Agent Configuration",
-            "description": "Ability to configure agent settings, including generative AI orchestration and skills management.",
+            "description": "Ability to configure agent settings and manage orchestration options.",
             "proficiency_levels": [
-              "novice",
-              "competent",
-              "expert"
+              {
+                "level": "novice",
+                "descriptor": "Understands basic agent configuration settings and can perform simple adjustments.",
+                "behavioral_indicators": [
+                  "Can navigate the settings menu to locate configuration options.",
+                  "Able to change basic settings such as language and time zone."
+                ]
+              },
+              {
+                "level": "competent",
+                "descriptor": "Can configure advanced settings and manage orchestration options effectively.",
+                "behavioral_indicators": [
+                  "Adjusts orchestration settings to optimize agent performance.",
+                  "Manages authentication settings for secure agent access."
+                ]
+              },
+              {
+                "level": "expert",
+                "descriptor": "Designs and implements complex configurations to meet specific enterprise needs.",
+                "behavioral_indicators": [
+                  "Customizes orchestration settings for multi-agent environments.",
+                  "Integrates advanced authentication protocols for enhanced security."
+                ]
+              }
             ]
           },
           {
-            "name": "Action and Workflow Definition",
-            "description": "Skill in defining actions such as API calls, email sending, and external system integration.",
+            "name": "Action and Trigger Management",
+            "description": "Defines and manages actions and triggers for AI agents.",
             "proficiency_levels": [
-              "novice",
-              "competent",
-              "expert"
-            ]
-          },
-          {
-            "name": "Trigger Management",
-            "description": "Expertise in setting up event-based triggers to initiate automated flows.",
-            "proficiency_levels": [
-              "novice",
-              "competent",
-              "expert"
+              {
+                "level": "novice",
+                "descriptor": "Can define basic actions and triggers for simple workflows.",
+                "behavioral_indicators": [
+                  "Creates simple triggers based on predefined templates.",
+                  "Defines basic actions such as sending notifications."
+                ]
+              },
+              {
+                "level": "competent",
+                "descriptor": "Develops and manages complex actions and triggers for dynamic workflows.",
+                "behavioral_indicators": [
+                  "Designs triggers that initiate multi-step workflows.",
+                  "Integrates actions with external systems for seamless operations."
+                ]
+              },
+              {
+                "level": "expert",
+                "descriptor": "Architects sophisticated action and trigger systems for enterprise-level automation.",
+                "behavioral_indicators": [
+                  "Develops custom triggers for unique business processes.",
+                  "Implements actions that interact with multiple external systems."
+                ]
+              }
             ]
           }
         ]
       },
       {
         "name": "Conversational Design",
-        "description": "Focuses on designing effective conversation flows and managing topics to ensure relevant and accurate agent responses.",
+        "description": "Focuses on designing effective and engaging conversational flows for AI agents.",
         "skills": [
           {
-            "name": "Intent and Topic Management",
-            "description": "Ability to manage conversation flows by defining intents, triggers, and responses.",
+            "name": "Conversation Flow Design",
+            "description": "Ability to design and optimize conversation flows for user engagement.",
             "proficiency_levels": [
-              "novice",
-              "competent",
-              "expert"
-            ]
-          },
-          {
-            "name": "Evaluation and Testing",
-            "description": "Skill in managing test cases to measure the accuracy and quality of agent responses.",
-            "proficiency_levels": [
-              "novice",
-              "competent",
-              "expert"
+              {
+                "level": "novice",
+                "descriptor": "Understands basic conversation flow design principles and can create simple flows.",
+                "behavioral_indicators": [
+                  "Creates linear conversation flows with predefined responses.",
+                  "Uses basic templates to design conversation paths."
+                ]
+              },
+              {
+                "level": "competent",
+                "descriptor": "Designs interactive and adaptive conversation flows that enhance user experience.",
+                "behavioral_indicators": [
+                  "Incorporates user feedback to refine conversation paths.",
+                  "Designs flows that adapt to user inputs dynamically."
+                ]
+              },
+              {
+                "level": "expert",
+                "descriptor": "Masters the art of creating complex, multi-path conversation flows for diverse user interactions.",
+                "behavioral_indicators": [
+                  "Designs conversation flows that handle ambiguous user inputs gracefully.",
+                  "Implements advanced techniques like sentiment analysis to guide conversations."
+                ]
+              }
             ]
           },
           {
             "name": "User Engagement Analysis",
-            "description": "Expertise in analyzing user interactions to improve conversation design.",
+            "description": "Analyzes user interactions to improve conversational design.",
             "proficiency_levels": [
-              "novice",
-              "competent",
-              "expert"
+              {
+                "level": "novice",
+                "descriptor": "Can interpret basic user engagement metrics to suggest improvements.",
+                "behavioral_indicators": [
+                  "Identifies common drop-off points in conversation flows.",
+                  "Suggests minor adjustments based on user feedback."
+                ]
+              },
+              {
+                "level": "competent",
+                "descriptor": "Utilizes detailed analytics to enhance conversation design and user satisfaction.",
+                "behavioral_indicators": [
+                  "Analyzes engagement data to identify trends and patterns.",
+                  "Implements changes to conversation flows based on analytical insights."
+                ]
+              },
+              {
+                "level": "expert",
+                "descriptor": "Leverages comprehensive analytics to drive strategic improvements in conversational design.",
+                "behavioral_indicators": [
+                  "Develops strategies to increase user engagement based on data analysis.",
+                  "Uses predictive analytics to anticipate user needs and adjust flows accordingly."
+                ]
+              }
             ]
           }
         ]
       },
       {
         "name": "Connectors/Integrations",
-        "description": "Involves integrating AI agents with various channels and external systems to enhance functionality.",
+        "description": "Involves integrating AI agents with various platforms and systems to enhance functionality.",
         "skills": [
           {
+            "name": "Integration with External Systems",
+            "description": "Ability to integrate AI agents with external systems and platforms.",
+            "proficiency_levels": [
+              {
+                "level": "novice",
+                "descriptor": "Understands basic integration principles and can connect agents to simple systems.",
+                "behavioral_indicators": [
+                  "Uses predefined connectors to link agents with common platforms.",
+                  "Follows step-by-step guides to set up basic integrations."
+                ]
+              },
+              {
+                "level": "competent",
+                "descriptor": "Manages integrations with multiple systems to extend agent capabilities.",
+                "behavioral_indicators": [
+                  "Configures custom connectors for specific enterprise systems.",
+                  "Troubleshoots integration issues to ensure seamless operation."
+                ]
+              },
+              {
+                "level": "expert",
+                "descriptor": "Designs and implements complex integrations for comprehensive system interoperability.",
+                "behavioral_indicators": [
+                  "Develops custom APIs for unique integration requirements.",
+                  "Architects integration solutions that support enterprise-wide automation."
+                ]
+              }
+            ]
+          },
+          {
             "name": "Channel Deployment",
-            "description": "Ability to deploy agents across different channels using the Channels tab and Publish tools.",
+            "description": "Deploys AI agents across various communication channels.",
             "proficiency_levels": [
-              "novice",
-              "competent",
-              "expert"
-            ]
-          },
-          {
-            "name": "External System Integration",
-            "description": "Skill in integrating agents with external systems to trigger workflows and actions.",
-            "proficiency_levels": [
-              "novice",
-              "competent",
-              "expert"
-            ]
-          },
-          {
-            "name": "API Management",
-            "description": "Expertise in managing API calls and integrations to extend agent capabilities.",
-            "proficiency_levels": [
-              "novice",
-              "competent",
-              "expert"
+              {
+                "level": "novice",
+                "descriptor": "Can deploy agents to basic communication channels using standard procedures.",
+                "behavioral_indicators": [
+                  "Publishes agents to common channels like web and mobile.",
+                  "Follows deployment guides to ensure correct channel setup."
+                ]
+              },
+              {
+                "level": "competent",
+                "descriptor": "Deploys agents to multiple channels, optimizing for each platform's unique features.",
+                "behavioral_indicators": [
+                  "Customizes deployment settings for different channel requirements.",
+                  "Monitors channel performance to ensure optimal agent operation."
+                ]
+              },
+              {
+                "level": "expert",
+                "descriptor": "Strategically deploys agents across diverse channels to maximize reach and engagement.",
+                "behavioral_indicators": [
+                  "Designs deployment strategies that align with business goals.",
+                  "Implements advanced channel-specific features to enhance user interaction."
+                ]
+              }
             ]
           }
         ]
       },
       {
-        "name": "Security & Governance",
-        "description": "Ensures that AI solutions are secure, compliant, and adhere to governance standards.",
+        "name": "Security/Governance",
+        "description": "Ensures AI solutions adhere to security standards and governance policies.",
         "skills": [
           {
-            "name": "Agent Authentication",
-            "description": "Ability to manage agent authentication settings to ensure secure access.",
+            "name": "Security Management",
+            "description": "Implements security measures to protect AI systems and data.",
             "proficiency_levels": [
-              "novice",
-              "competent",
-              "expert"
+              {
+                "level": "novice",
+                "descriptor": "Understands basic security principles and applies standard protection measures.",
+                "behavioral_indicators": [
+                  "Implements basic authentication protocols for agent access.",
+                  "Follows security guidelines to protect user data."
+                ]
+              },
+              {
+                "level": "competent",
+                "descriptor": "Manages security settings to safeguard AI systems against common threats.",
+                "behavioral_indicators": [
+                  "Configures advanced authentication and encryption settings.",
+                  "Monitors security logs to detect and respond to potential threats."
+                ]
+              },
+              {
+                "level": "expert",
+                "descriptor": "Designs comprehensive security frameworks to protect complex AI environments.",
+                "behavioral_indicators": [
+                  "Develops custom security protocols for unique enterprise needs.",
+                  "Leads security audits to ensure compliance with industry standards."
+                ]
+              }
             ]
           },
           {
-            "name": "Data Privacy and Compliance",
-            "description": "Skill in ensuring that AI solutions comply with data privacy regulations and governance standards.",
+            "name": "Governance and Compliance",
+            "description": "Ensures AI solutions comply with governance policies and regulations.",
             "proficiency_levels": [
-              "novice",
-              "competent",
-              "expert"
-            ]
-          },
-          {
-            "name": "Responsible AI Implementation",
-            "description": "Expertise in applying Responsible AI principles to ensure ethical AI deployment.",
-            "proficiency_levels": [
-              "novice",
-              "competent",
-              "expert"
+              {
+                "level": "novice",
+                "descriptor": "Understands basic governance requirements and applies standard compliance measures.",
+                "behavioral_indicators": [
+                  "Follows compliance checklists to ensure basic regulatory adherence.",
+                  "Documents compliance efforts for audit purposes."
+                ]
+              },
+              {
+                "level": "competent",
+                "descriptor": "Manages governance processes to ensure ongoing compliance with policies.",
+                "behavioral_indicators": [
+                  "Implements governance frameworks to support policy adherence.",
+                  "Conducts regular reviews to maintain compliance with changing regulations."
+                ]
+              },
+              {
+                "level": "expert",
+                "descriptor": "Leads governance initiatives to align AI solutions with strategic compliance goals.",
+                "behavioral_indicators": [
+                  "Develops governance strategies that integrate with enterprise objectives.",
+                  "Advises on policy development to address emerging compliance challenges."
+                ]
+              }
             ]
           }
         ]
@@ -142,348 +274,424 @@
     "objectives": [
       {
         "order": 1,
-        "title": "Agent Configuration",
-        "description": "Ability to configure agent settings, including generative AI orchestration and skills management.",
+        "title": "Basic Agent Configuration",
+        "description": "Learners will be able to navigate the settings menu to locate configuration options and change basic settings such as language and time zone.",
         "domain": "Agent Creation & Configuration",
-        "prerequisites": []
+        "prerequisites": [],
+        "suggested_activities": [
+          "Complete a guided lab to change the language and time zone settings of a sample AI agent in Copilot Studio.",
+          "Participate in a workshop to explore the settings menu and identify various configuration options available for AI agents."
+        ],
+        "estimated_hours": 2.0,
+        "success_criteria": "Learner successfully changes the language and time zone settings of an AI agent and demonstrates navigation through the settings menu."
       },
       {
         "order": 2,
-        "title": "Action and Workflow Definition",
-        "description": "Skill in defining actions such as API calls, email sending, and external system integration.",
+        "title": "Advanced Agent Configuration",
+        "description": "Learners will be able to adjust orchestration settings to optimize agent performance and manage authentication settings for secure agent access.",
         "domain": "Agent Creation & Configuration",
         "prerequisites": [
-          "Agent Configuration"
-        ]
+          "Basic Agent Configuration"
+        ],
+        "suggested_activities": [
+          "Perform a lab exercise to adjust orchestration settings for a given scenario to improve agent response time.",
+          "Configure authentication settings in a secure environment to restrict access to the AI agent."
+        ],
+        "estimated_hours": 3.0,
+        "success_criteria": "Learner optimizes agent performance through orchestration settings and secures agent access with appropriate authentication configurations."
       },
       {
         "order": 3,
-        "title": "Trigger Management",
-        "description": "Expertise in setting up event-based triggers to initiate automated flows.",
+        "title": "Basic Action and Trigger Management",
+        "description": "Learners will be able to define basic actions and triggers for simple workflows using predefined templates.",
         "domain": "Agent Creation & Configuration",
         "prerequisites": [
-          "Action and Workflow Definition"
-        ]
+          "Basic Agent Configuration"
+        ],
+        "suggested_activities": [
+          "Create a simple workflow using predefined templates to send notifications based on specific triggers.",
+          "Participate in a hands-on session to define and test basic actions and triggers in a sandbox environment."
+        ],
+        "estimated_hours": 3.0,
+        "success_criteria": "Learner successfully creates and tests a simple workflow with defined actions and triggers."
       },
       {
         "order": 4,
-        "title": "Intent and Topic Management",
-        "description": "Ability to manage conversation flows by defining intents, triggers, and responses.",
-        "domain": "Conversational Design",
+        "title": "Complex Action and Trigger Management",
+        "description": "Learners will be able to develop and manage complex actions and triggers for dynamic workflows, integrating with external systems.",
+        "domain": "Agent Creation & Configuration",
         "prerequisites": [
-          "Trigger Management"
-        ]
+          "Basic Action and Trigger Management"
+        ],
+        "suggested_activities": [
+          "Design a multi-step workflow that integrates with an external system to automate a business process.",
+          "Troubleshoot and refine complex triggers in a lab setting to ensure seamless operation."
+        ],
+        "estimated_hours": 4.0,
+        "success_criteria": "Learner develops a dynamic workflow with complex actions and triggers that integrate with external systems."
       },
       {
         "order": 5,
-        "title": "Evaluation and Testing",
-        "description": "Skill in managing test cases to measure the accuracy and quality of agent responses.",
+        "title": "Basic Conversation Flow Design",
+        "description": "Learners will be able to create linear conversation flows with predefined responses using basic templates.",
         "domain": "Conversational Design",
         "prerequisites": [
-          "Intent and Topic Management"
-        ]
+          "Basic Agent Configuration"
+        ],
+        "suggested_activities": [
+          "Design a simple conversation flow using a template to handle a basic customer inquiry.",
+          "Participate in a peer review session to refine conversation paths based on feedback."
+        ],
+        "estimated_hours": 3.0,
+        "success_criteria": "Learner designs a functional linear conversation flow that effectively handles a basic inquiry."
       },
       {
         "order": 6,
-        "title": "User Engagement Analysis",
-        "description": "Expertise in analyzing user interactions to improve conversation design.",
+        "title": "Interactive Conversation Flow Design",
+        "description": "Learners will be able to design interactive and adaptive conversation flows that enhance user experience by incorporating user feedback.",
         "domain": "Conversational Design",
         "prerequisites": [
-          "Evaluation and Testing"
-        ]
+          "Basic Conversation Flow Design"
+        ],
+        "suggested_activities": [
+          "Create an adaptive conversation flow that changes based on user input and feedback.",
+          "Conduct a user testing session to gather feedback and refine the conversation flow."
+        ],
+        "estimated_hours": 4.0,
+        "success_criteria": "Learner designs an adaptive conversation flow that dynamically responds to user inputs and incorporates feedback."
       },
       {
         "order": 7,
-        "title": "Channel Deployment",
-        "description": "Ability to deploy agents across different channels using the Channels tab and Publish tools.",
+        "title": "Basic Integration with External Systems",
+        "description": "Learners will be able to use predefined connectors to link AI agents with common platforms and set up basic integrations.",
         "domain": "Connectors/Integrations",
         "prerequisites": [
-          "User Engagement Analysis"
-        ]
+          "Basic Agent Configuration"
+        ],
+        "suggested_activities": [
+          "Use a predefined connector to integrate an AI agent with a common platform like Slack or Microsoft Teams.",
+          "Follow a step-by-step guide to set up a basic integration and test its functionality."
+        ],
+        "estimated_hours": 3.0,
+        "success_criteria": "Learner successfully integrates an AI agent with a common platform and verifies the integration's functionality."
       },
       {
         "order": 8,
-        "title": "External System Integration",
-        "description": "Skill in integrating agents with external systems to trigger workflows and actions.",
+        "title": "Advanced Integration with External Systems",
+        "description": "Learners will be able to configure custom connectors for specific enterprise systems and troubleshoot integration issues.",
         "domain": "Connectors/Integrations",
         "prerequisites": [
-          "Channel Deployment"
-        ]
+          "Basic Integration with External Systems"
+        ],
+        "suggested_activities": [
+          "Configure a custom connector for an enterprise system and test the integration in a controlled environment.",
+          "Participate in a troubleshooting workshop to resolve common integration issues."
+        ],
+        "estimated_hours": 4.0,
+        "success_criteria": "Learner configures a custom connector and resolves integration issues, ensuring seamless operation."
       },
       {
         "order": 9,
-        "title": "API Management",
-        "description": "Expertise in managing API calls and integrations to extend agent capabilities.",
-        "domain": "Connectors/Integrations",
+        "title": "Basic Security Management",
+        "description": "Learners will be able to implement basic authentication protocols for agent access and follow security guidelines to protect user data.",
+        "domain": "Security/Governance",
         "prerequisites": [
-          "External System Integration"
-        ]
+          "Basic Agent Configuration"
+        ],
+        "suggested_activities": [
+          "Set up basic authentication protocols for an AI agent in a lab environment.",
+          "Review and apply security guidelines to protect user data in a simulated scenario."
+        ],
+        "estimated_hours": 3.0,
+        "success_criteria": "Learner implements basic security measures and demonstrates understanding of data protection guidelines."
       },
       {
         "order": 10,
-        "title": "Agent Authentication",
-        "description": "Ability to manage agent authentication settings to ensure secure access.",
-        "domain": "Security & Governance",
+        "title": "Advanced Security Management",
+        "description": "Learners will be able to configure advanced authentication and encryption settings and monitor security logs to detect potential threats.",
+        "domain": "Security/Governance",
         "prerequisites": [
-          "API Management"
-        ]
-      },
-      {
-        "order": 11,
-        "title": "Data Privacy and Compliance",
-        "description": "Skill in ensuring that AI solutions comply with data privacy regulations and governance standards.",
-        "domain": "Security & Governance",
-        "prerequisites": [
-          "Agent Authentication"
-        ]
-      },
-      {
-        "order": 12,
-        "title": "Responsible AI Implementation",
-        "description": "Expertise in applying Responsible AI principles to ensure ethical AI deployment.",
-        "domain": "Security & Governance",
-        "prerequisites": [
-          "Data Privacy and Compliance"
-        ]
+          "Basic Security Management"
+        ],
+        "suggested_activities": [
+          "Configure advanced security settings for an AI agent and test their effectiveness in a simulated attack scenario.",
+          "Analyze security logs to identify and respond to potential threats in a lab exercise."
+        ],
+        "estimated_hours": 4.0,
+        "success_criteria": "Learner configures advanced security settings and successfully identifies and mitigates potential security threats."
       }
     ]
   },
   "assessments": [
     {
-      "title": "Configure an AI Agent for Customer Support",
-      "scenario": "You are tasked with setting up an AI agent for a retail company to handle customer inquiries about order status, product information, and returns.",
-      "instructions": "1. Access the agent configuration settings.\n2. Set up generative AI orchestration to handle natural language queries.\n3. Define skills for managing order status, product information, and returns.\n4. Ensure the agent can trigger actions such as sending confirmation emails and updating order status in the system.",
+      "title": "Configure Advanced Agent Settings",
+      "scenario": "You are working as an AI specialist for a large retail company. The company has recently deployed an AI agent to assist with customer inquiries. Your task is to optimize the agent's performance by configuring advanced settings and managing orchestration options to ensure secure and efficient operation.",
+      "instructions": "1. Access the agent's settings menu.\n2. Adjust the orchestration settings to optimize the agent's response time and accuracy.\n3. Configure authentication settings to ensure secure access to the agent.\n4. Document the changes made and the rationale behind each configuration.",
       "expected_outputs": [
-        "Configured AI agent with generative AI orchestration",
-        "Defined skills for order status, product information, and returns",
-        "Set up actions for email sending and order status updates"
+        "Optimized orchestration settings for improved performance.",
+        "Secure authentication settings configured.",
+        "Documentation of changes and rationale."
       ],
-      "competency_ref": "Agent Creation & Configuration",
-      "time_estimate_minutes": 90
+      "competency_ref": "Agent Creation & Configuration - Agent Configuration",
+      "time_estimate_minutes": 60,
+      "evaluator_guide": "Look for evidence of thoughtful configuration changes that enhance agent performance and security. Common mistakes include failing to document changes or not considering security implications. A passing submission will demonstrate a clear understanding of orchestration and authentication settings, with well-documented rationale for each change."
     },
     {
-      "title": "Design a Conversational Flow for a Banking Chatbot",
-      "scenario": "A bank wants to implement a chatbot to assist customers with account balance inquiries, transaction history, and branch locations.",
-      "instructions": "1. Define intents for account balance inquiries, transaction history, and branch locations.\n2. Set up conversation flows using the Topics tab to manage these intents.\n3. Create test cases in the Evaluation tab to ensure the accuracy and quality of responses.\n4. Analyze user engagement using the Analytics tab to identify areas for improvement.",
+      "title": "Design a Dynamic Conversation Flow",
+      "scenario": "As a conversational designer for a healthcare provider, you are tasked with creating an AI agent that can handle patient appointment scheduling. The agent should adapt to user inputs and provide a seamless experience.",
+      "instructions": "1. Define the intents and triggers for appointment scheduling.\n2. Design a conversation flow that adapts to user inputs, such as preferred dates and times.\n3. Incorporate user feedback mechanisms to refine the conversation path.\n4. Test the conversation flow to ensure it handles various user scenarios effectively.",
       "expected_outputs": [
-        "Defined intents and conversation flows for banking services",
-        "Test cases created and evaluated for response accuracy",
-        "User engagement analysis report"
+        "Defined intents and triggers for scheduling.",
+        "Adaptive conversation flow design.",
+        "User feedback mechanisms integrated.",
+        "Successful test results for various scenarios."
       ],
-      "competency_ref": "Conversational Design",
-      "time_estimate_minutes": 120
+      "competency_ref": "Conversational Design - Conversation Flow Design",
+      "time_estimate_minutes": 90,
+      "evaluator_guide": "Evaluate the adaptability and user-friendliness of the conversation flow. Look for integration of user feedback and dynamic response handling. Common pitfalls include rigid flows that don't adapt to user inputs. A passing submission will demonstrate a well-structured, adaptive flow with evidence of testing and refinement."
     },
     {
-      "title": "Integrate an AI Agent with a CRM System",
-      "scenario": "A company wants to integrate their AI agent with a CRM system to automate customer data updates and notifications.",
-      "instructions": "1. Use the Channels tab to deploy the agent on the company's website.\n2. Set up API calls to the CRM system to update customer data based on interactions.\n3. Configure the agent to send notifications to customers via email after data updates.\n4. Test the integration to ensure seamless data flow and notification delivery.",
+      "title": "Integrate AI Agent with CRM System",
+      "scenario": "You are an AI integration specialist at a financial services firm. Your task is to integrate the company's AI agent with their CRM system to enhance customer service capabilities.",
+      "instructions": "1. Identify the CRM system's API endpoints required for integration.\n2. Configure the AI agent to connect with the CRM system using these endpoints.\n3. Test the integration to ensure data is accurately exchanged between the agent and the CRM.\n4. Document the integration process and any challenges encountered.",
       "expected_outputs": [
-        "Agent deployed on the company website",
-        "API calls set up for CRM integration",
-        "Email notifications configured and tested"
+        "Successful connection between AI agent and CRM system.",
+        "Accurate data exchange verified.",
+        "Comprehensive documentation of the integration process."
       ],
-      "competency_ref": "Connectors/Integrations",
-      "time_estimate_minutes": 150
+      "competency_ref": "Connectors/Integrations - Integration with External Systems",
+      "time_estimate_minutes": 120,
+      "evaluator_guide": "Check for a successful and seamless integration with the CRM system. Look for accurate data exchange and thorough documentation. Common mistakes include incomplete integration or lack of testing. A passing submission will show a fully functional integration with clear documentation of the process and solutions to any challenges faced."
     },
     {
-      "title": "Implement Security Measures for an AI Agent",
-      "scenario": "A healthcare provider needs to ensure their AI agent complies with data privacy regulations and is secure against unauthorized access.",
-      "instructions": "1. Configure agent authentication settings to restrict access to authorized users only.\n2. Review and implement data privacy measures to comply with healthcare regulations.\n3. Apply Responsible AI principles to ensure ethical deployment of the AI agent.\n4. Document the security and compliance measures implemented.",
+      "title": "Implement Security Measures for AI Agent",
+      "scenario": "As a security manager for a tech company, you are responsible for ensuring that the AI agent used in customer support adheres to security standards and protects user data.",
+      "instructions": "1. Review the current security settings of the AI agent.\n2. Implement advanced authentication and encryption settings to enhance security.\n3. Monitor security logs to identify and address potential threats.\n4. Prepare a report detailing the security measures implemented and their effectiveness.",
       "expected_outputs": [
-        "Agent authentication settings configured",
-        "Data privacy measures implemented",
-        "Responsible AI principles applied",
-        "Documentation of security and compliance measures"
+        "Enhanced authentication and encryption settings.",
+        "Monitored security logs with identified threats.",
+        "Detailed report on security measures and effectiveness."
       ],
-      "competency_ref": "Security & Governance",
-      "time_estimate_minutes": 180
+      "competency_ref": "Security/Governance - Security Management",
+      "time_estimate_minutes": 90,
+      "evaluator_guide": "Assess the implementation of advanced security measures and the candidate's ability to monitor and respond to threats. Look for a comprehensive report that outlines the security enhancements and their impact. Common pitfalls include inadequate threat monitoring or insufficient security settings. A passing submission will demonstrate robust security management with clear evidence of threat mitigation and detailed reporting."
     }
   ],
   "rubrics": [
     {
-      "assessment_ref": "Configure an AI Agent for Customer Support",
+      "assessment_ref": "Configure Advanced Agent Settings",
       "criteria": [
         {
-          "criterion": "Generative AI orchestration setup",
-          "novice": "The AI orchestration is partially set up, with limited ability to handle natural language queries.",
-          "competent": "The AI orchestration is fully set up and can handle basic natural language queries effectively.",
-          "expert": "The AI orchestration is expertly configured, handling complex natural language queries with high accuracy."
+          "criterion": "Orchestration Settings Optimization",
+          "weight": 4,
+          "novice": "The orchestration settings are minimally adjusted, resulting in no noticeable improvement in response time or accuracy. The changes lack a clear rationale and do not demonstrate an understanding of optimization principles.",
+          "competent": "The orchestration settings are adjusted to improve response time and accuracy, with a clear rationale provided for each change. The adjustments demonstrate a basic understanding of optimization principles and result in noticeable performance improvements.",
+          "expert": "The orchestration settings are expertly configured to significantly enhance both response time and accuracy. Each change is supported by a detailed rationale, demonstrating a deep understanding of optimization principles and resulting in exceptional performance improvements."
         },
         {
-          "criterion": "Skill definition for order status, product information, and returns",
-          "novice": "Skills are defined but lack clarity and completeness, leading to frequent errors in handling inquiries.",
-          "competent": "Skills are clearly defined and handle most inquiries accurately, with occasional errors.",
-          "expert": "Skills are comprehensively defined, handling all inquiries accurately and efficiently."
+          "criterion": "Authentication Settings Configuration",
+          "weight": 5,
+          "novice": "Authentication settings are poorly configured, leaving potential security vulnerabilities. The configuration lacks depth and fails to ensure secure access to the agent.",
+          "competent": "Authentication settings are configured to ensure secure access, with appropriate measures in place to protect against unauthorized access. The configuration meets standard security requirements.",
+          "expert": "Authentication settings are meticulously configured with advanced security measures, providing robust protection against unauthorized access. The configuration exceeds standard security requirements and demonstrates a comprehensive understanding of security protocols."
         },
         {
-          "criterion": "Action setup for email sending and order status updates",
-          "novice": "Actions are set up but often fail to trigger correctly or lack necessary details.",
-          "competent": "Actions are set up correctly and trigger as expected in most scenarios.",
-          "expert": "Actions are expertly configured, triggering flawlessly and providing detailed confirmations."
+          "criterion": "Documentation of Changes and Rationale",
+          "weight": 3,
+          "novice": "Documentation is incomplete or lacks clarity, with insufficient explanation of the changes made and their rationale. The documentation does not provide a clear understanding of the configuration process.",
+          "competent": "Documentation is complete and clearly explains the changes made and the rationale behind them. The documentation provides a good understanding of the configuration process and decisions made.",
+          "expert": "Documentation is thorough and provides a detailed explanation of each change and its rationale. The documentation is exceptionally clear and insightful, offering a comprehensive understanding of the configuration process and strategic decisions."
         }
       ]
     },
     {
-      "assessment_ref": "Design a Conversational Flow for a Banking Chatbot",
+      "assessment_ref": "Design a Dynamic Conversation Flow",
       "criteria": [
         {
-          "criterion": "Intent and conversation flow definition",
-          "novice": "Intents and flows are defined but are incomplete or confusing, leading to poor user experience.",
-          "competent": "Intents and flows are well-defined, providing a satisfactory user experience with minor issues.",
-          "expert": "Intents and flows are expertly crafted, offering a seamless and intuitive user experience."
+          "criterion": "Intents and Triggers Definition",
+          "weight": 4,
+          "novice": "Intents and triggers are poorly defined, leading to confusion in the conversation flow. The definitions lack clarity and do not align well with the task requirements.",
+          "competent": "Intents and triggers are clearly defined and align well with the task requirements, providing a solid foundation for the conversation flow. The definitions are appropriate and functional.",
+          "expert": "Intents and triggers are expertly defined with exceptional clarity and precision, perfectly aligning with the task requirements. The definitions provide a robust foundation for a highly effective conversation flow."
         },
         {
-          "criterion": "Test case creation and evaluation",
-          "novice": "Test cases are created but lack thoroughness, resulting in missed errors.",
-          "competent": "Test cases are comprehensive and identify most errors, ensuring good response accuracy.",
-          "expert": "Test cases are exhaustive, ensuring all potential errors are identified and corrected."
+          "criterion": "Adaptive Conversation Flow Design",
+          "weight": 5,
+          "novice": "The conversation flow is rigid and fails to adapt to user inputs, resulting in a poor user experience. The design lacks flexibility and does not handle variations effectively.",
+          "competent": "The conversation flow is designed to adapt to user inputs, providing a satisfactory user experience. The design is flexible and handles variations in user inputs effectively.",
+          "expert": "The conversation flow is expertly designed to dynamically adapt to a wide range of user inputs, providing an exceptional user experience. The design is highly flexible and handles variations with ease and precision."
         },
         {
-          "criterion": "User engagement analysis",
-          "novice": "User engagement analysis is superficial, providing limited insights for improvement.",
-          "competent": "User engagement analysis is detailed, identifying key areas for improvement.",
-          "expert": "User engagement analysis is in-depth, offering actionable insights that significantly enhance the chatbot's performance."
+          "criterion": "User Feedback Mechanisms Integration",
+          "weight": 3,
+          "novice": "User feedback mechanisms are absent or poorly integrated, limiting the ability to refine the conversation flow. The design does not effectively incorporate user feedback.",
+          "competent": "User feedback mechanisms are integrated into the conversation flow, allowing for refinement based on user interactions. The design effectively incorporates user feedback to improve the flow.",
+          "expert": "User feedback mechanisms are seamlessly integrated into the conversation flow, allowing for continuous refinement and optimization. The design expertly incorporates user feedback to enhance the flow significantly."
+        },
+        {
+          "criterion": "Testing and Refinement",
+          "weight": 4,
+          "novice": "Testing is minimal or ineffective, resulting in a conversation flow that does not handle various scenarios well. The flow lacks refinement and shows limited evidence of testing.",
+          "competent": "The conversation flow is tested across various scenarios, demonstrating effective handling of different user inputs. The flow is refined based on testing results, showing a good level of adaptability.",
+          "expert": "The conversation flow is rigorously tested across a wide range of scenarios, demonstrating exceptional handling of diverse user inputs. The flow is expertly refined based on comprehensive testing results, showing outstanding adaptability and user-friendliness."
         }
       ]
     },
     {
-      "assessment_ref": "Integrate an AI Agent with a CRM System",
+      "assessment_ref": "Integrate AI Agent with CRM System",
       "criteria": [
         {
-          "criterion": "Agent deployment on website",
-          "novice": "Agent is deployed but experiences frequent downtime or accessibility issues.",
-          "competent": "Agent is deployed successfully with minor accessibility issues.",
-          "expert": "Agent is seamlessly deployed, fully accessible and operational at all times."
+          "criterion": "Identification of CRM API Endpoints",
+          "weight": 3,
+          "novice": "The identification of CRM API endpoints is incomplete or incorrect, leading to integration issues. The endpoints selected do not support the required data exchange effectively.",
+          "competent": "The CRM API endpoints are correctly identified and support the required data exchange for integration. The selection of endpoints is appropriate and functional.",
+          "expert": "The CRM API endpoints are expertly identified, ensuring seamless data exchange and integration. The selection of endpoints is strategic and optimizes the integration process."
         },
         {
-          "criterion": "API call setup for CRM integration",
-          "novice": "API calls are set up but often fail or return incorrect data.",
-          "competent": "API calls are correctly set up and function as expected in most cases.",
-          "expert": "API calls are expertly configured, ensuring seamless and accurate data exchange."
+          "criterion": "Configuration of AI Agent for CRM Connection",
+          "weight": 4,
+          "novice": "The AI agent configuration for CRM connection is flawed, resulting in unsuccessful integration. The configuration lacks the necessary settings for effective data exchange.",
+          "competent": "The AI agent is configured to connect with the CRM system successfully, enabling effective data exchange. The configuration meets the necessary requirements for integration.",
+          "expert": "The AI agent is expertly configured for seamless connection with the CRM system, ensuring efficient and accurate data exchange. The configuration exceeds standard requirements and optimizes the integration process."
         },
         {
-          "criterion": "Email notification configuration and testing",
-          "novice": "Email notifications are configured but often fail to send or contain errors.",
-          "competent": "Email notifications are configured correctly and work as expected in most scenarios.",
-          "expert": "Email notifications are flawlessly configured, ensuring timely and accurate delivery."
+          "criterion": "Testing of Integration",
+          "weight": 4,
+          "novice": "Testing of the integration is inadequate, leading to unresolved issues in data exchange. The integration lacks verification and shows limited evidence of successful testing.",
+          "competent": "The integration is tested to verify accurate data exchange between the AI agent and CRM system. The testing is thorough and confirms the functionality of the integration.",
+          "expert": "The integration is rigorously tested, ensuring flawless data exchange and functionality. The testing is comprehensive and confirms the integration's robustness and reliability."
+        },
+        {
+          "criterion": "Documentation of Integration Process",
+          "weight": 3,
+          "novice": "Documentation of the integration process is incomplete or unclear, providing little insight into the steps taken and challenges faced. The documentation lacks detail and coherence.",
+          "competent": "The integration process is well-documented, clearly outlining the steps taken and challenges encountered. The documentation provides a good understanding of the integration process.",
+          "expert": "The integration process is meticulously documented, offering a detailed and coherent account of the steps taken and challenges overcome. The documentation is exceptionally clear and insightful, providing a comprehensive understanding of the integration process."
         }
       ]
     },
     {
-      "assessment_ref": "Implement Security Measures for an AI Agent",
+      "assessment_ref": "Implement Security Measures for AI Agent",
       "criteria": [
         {
-          "criterion": "Agent authentication configuration",
-          "novice": "Authentication settings are configured but are easily bypassed or incomplete.",
-          "competent": "Authentication settings are robust, preventing unauthorized access in most cases.",
-          "expert": "Authentication settings are highly secure, ensuring only authorized access at all times."
+          "criterion": "Advanced Authentication and Encryption Settings",
+          "weight": 5,
+          "novice": "The implementation of authentication and encryption settings is inadequate, leaving the AI agent vulnerable to security threats. The settings do not meet basic security standards.",
+          "competent": "Advanced authentication and encryption settings are implemented to enhance the security of the AI agent. The settings meet standard security requirements and provide adequate protection.",
+          "expert": "Authentication and encryption settings are expertly implemented, providing robust security for the AI agent. The settings exceed standard security requirements and demonstrate a comprehensive understanding of advanced security measures."
         },
         {
-          "criterion": "Data privacy measure implementation",
-          "novice": "Data privacy measures are implemented but do not fully comply with regulations.",
-          "competent": "Data privacy measures are implemented and comply with most regulatory requirements.",
-          "expert": "Data privacy measures are comprehensively implemented, fully complying with all regulations."
+          "criterion": "Monitoring and Threat Identification",
+          "weight": 4,
+          "novice": "Security logs are poorly monitored, resulting in missed potential threats. The monitoring process is ineffective and does not provide adequate threat identification.",
+          "competent": "Security logs are monitored to identify and address potential threats, ensuring the AI agent's security. The monitoring process is effective and provides adequate threat identification.",
+          "expert": "Security logs are meticulously monitored, with potential threats identified and addressed promptly. The monitoring process is highly effective and demonstrates exceptional threat identification and response capabilities."
         },
         {
-          "criterion": "Application of Responsible AI principles",
-          "novice": "Responsible AI principles are acknowledged but not fully applied, leading to ethical concerns.",
-          "competent": "Responsible AI principles are applied, ensuring ethical deployment with minor issues.",
-          "expert": "Responsible AI principles are thoroughly applied, ensuring ethical and responsible deployment."
-        },
-        {
-          "criterion": "Documentation of security and compliance measures",
-          "novice": "Documentation is incomplete or lacks clarity, making it difficult to understand the measures implemented.",
-          "competent": "Documentation is clear and covers most security and compliance measures implemented.",
-          "expert": "Documentation is comprehensive and clearly details all security and compliance measures, facilitating easy understanding and review."
+          "criterion": "Report on Security Measures and Effectiveness",
+          "weight": 3,
+          "novice": "The report on security measures is incomplete or lacks clarity, providing insufficient information on the measures implemented and their effectiveness. The report does not offer a clear understanding of the security enhancements.",
+          "competent": "The report details the security measures implemented and their effectiveness, providing a clear understanding of the enhancements made. The report is well-structured and informative.",
+          "expert": "The report is comprehensive and provides a detailed analysis of the security measures implemented and their effectiveness. The report is exceptionally clear and insightful, offering a thorough understanding of the security enhancements and their impact."
         }
       ]
     }
   ],
   "item_bank": [
     {
-      "stem": "Design a workflow for an AI agent that integrates with an external CRM system to update customer records when a new order is placed. Describe the actions, triggers, and any API calls involved.",
-      "task_type": "performance",
-      "competency_ref": "Agent Creation & Configuration - Action and Workflow Definition",
-      "expected_response_summary": "The response should include a detailed workflow that outlines the actions such as API calls to the CRM system, triggers based on new order events, and the sequence of operations to update customer records.",
-      "scoring_notes": "Evaluate the completeness of the workflow, the appropriateness of the actions and triggers, and the correct use of API calls."
-    },
-    {
-      "stem": "Analyze a conversation flow where users frequently abandon the interaction. Identify potential issues with intent and topic management and propose improvements.",
-      "task_type": "analysis",
-      "competency_ref": "Conversational Design - Intent and Topic Management",
-      "expected_response_summary": "The analysis should identify issues such as unclear intents, missing topics, or inappropriate responses. Proposed improvements might include refining intents, adding new topics, or adjusting responses to better meet user needs.",
-      "scoring_notes": "Assess the ability to identify issues accurately and the feasibility and effectiveness of the proposed improvements."
-    },
-    {
-      "stem": "You are tasked with deploying an AI agent across multiple communication channels. Describe the steps you would take using the Channels tab and Publish tools.",
+      "stem": "You are tasked with designing a conversational flow for an AI agent that will be used by a global customer service team. The agent must handle inquiries in multiple languages and adapt to different cultural contexts. Describe the steps you would take to design this conversation flow, ensuring it is both effective and culturally sensitive.",
       "task_type": "scenario",
-      "competency_ref": "Connectors/Integrations - Channel Deployment",
-      "expected_response_summary": "The response should outline the process of using the Channels tab to select and configure channels, and the Publish tools to deploy the agent. It should include considerations for channel-specific settings and testing.",
-      "scoring_notes": "Check for a clear understanding of the deployment process and the ability to address channel-specific requirements."
+      "competency_ref": "Conversational Design: Conversation Flow Design",
+      "expected_response_summary": "The response should outline a comprehensive approach to designing a multilingual and culturally adaptive conversation flow, including language selection, cultural context consideration, and user feedback incorporation.",
+      "scoring_notes": "Look for a detailed plan that includes language and cultural considerations, user feedback mechanisms, and adaptive flow design. The candidate should demonstrate an understanding of how to create engaging and contextually appropriate interactions.",
+      "model_answer": "To design a conversational flow for a global customer service AI agent, I would begin by identifying the primary languages spoken by the target audience. This involves conducting market research to understand the linguistic needs of the customer base. Once the languages are identified, I would work with native speakers and cultural experts to ensure that the conversation flow is not only linguistically accurate but also culturally appropriate.\n\nNext, I would design the conversation flow to be adaptive, allowing the agent to switch languages seamlessly based on user input. This involves implementing language detection algorithms and ensuring that the agent can handle language-specific nuances, such as idioms and colloquialisms. Additionally, I would incorporate cultural context into the conversation design, ensuring that the agent's responses are respectful and relevant to the user's cultural background.\n\nTo enhance user engagement, I would design the conversation flow to be interactive and dynamic, allowing the agent to adapt to user inputs in real-time. This includes creating multiple conversation paths and using decision trees to guide the interaction based on user responses. I would also incorporate user feedback mechanisms, such as post-interaction surveys, to gather insights on user satisfaction and areas for improvement.\n\nFinally, I would conduct extensive testing of the conversation flow with diverse user groups to ensure its effectiveness and cultural sensitivity. This would involve A/B testing different conversation paths and analyzing user engagement metrics to identify any drop-off points or areas of confusion. Based on the feedback and data collected, I would refine the conversation flow to optimize user experience and ensure that the agent meets the needs of a global audience."
     },
     {
-      "stem": "Evaluate the security measures in place for an AI agent that handles sensitive customer data. Discuss how you would ensure compliance with data privacy regulations.",
+      "stem": "Your enterprise is planning to deploy an AI agent across multiple communication channels, including web, mobile, and social media platforms. Describe the strategic considerations and steps you would take to ensure successful deployment and optimal performance across these channels.",
       "task_type": "analysis",
-      "competency_ref": "Security & Governance - Data Privacy and Compliance",
-      "expected_response_summary": "The evaluation should cover current security measures such as encryption and access controls, and propose additional measures if needed. It should also discuss compliance with relevant data privacy regulations like GDPR or CCPA.",
-      "scoring_notes": "Look for a thorough evaluation of security measures and a clear understanding of data privacy compliance requirements."
+      "competency_ref": "Connectors/Integrations: Channel Deployment",
+      "expected_response_summary": "The response should detail strategic considerations for deploying AI agents across various channels, including customization for each platform, performance monitoring, and alignment with business goals.",
+      "scoring_notes": "Evaluate the candidate's ability to articulate a strategic deployment plan that considers channel-specific features, performance monitoring, and alignment with enterprise objectives. Look for a comprehensive approach that addresses potential challenges and solutions.",
+      "model_answer": "Deploying an AI agent across multiple communication channels requires a strategic approach to ensure optimal performance and user engagement. The first step is to understand the unique features and user expectations of each channel. For instance, web platforms may require a more detailed and visually rich interface, while mobile platforms demand a streamlined and responsive design. Social media platforms, on the other hand, necessitate a conversational and informal tone.\n\nOnce the channel-specific requirements are identified, I would customize the deployment settings for each platform. This involves optimizing the agent's interface and interaction style to align with the channel's characteristics. For example, on mobile platforms, I would ensure that the agent's responses are concise and that the interface is touch-friendly. On social media, I would focus on creating engaging and shareable content that encourages user interaction.\n\nPerformance monitoring is crucial to ensure the agent operates effectively across all channels. I would implement analytics tools to track key performance metrics, such as response time, user engagement, and satisfaction rates. This data would be used to identify any performance issues and make necessary adjustments to improve the agent's functionality.\n\nFinally, I would align the deployment strategy with the enterprise's business goals. This involves setting clear objectives for each channel, such as increasing customer engagement or driving sales, and ensuring that the agent's interactions support these goals. Regular reviews and updates would be conducted to ensure the deployment strategy remains effective and aligned with the enterprise's evolving objectives."
     },
     {
-      "stem": "Create a test case to evaluate the accuracy of an AI agent's responses in a customer support scenario. Include the criteria you would use to measure success.",
+      "stem": "You are responsible for integrating an AI agent with a legacy CRM system that lacks modern API support. Describe the approach you would take to achieve this integration, considering the technical and operational challenges involved.",
       "task_type": "performance",
-      "competency_ref": "Conversational Design - Evaluation and Testing",
-      "expected_response_summary": "The test case should include specific scenarios, expected responses, and criteria such as response accuracy, relevance, and user satisfaction to measure success.",
-      "scoring_notes": "Assess the comprehensiveness of the test case and the appropriateness of the success criteria."
+      "competency_ref": "Connectors/Integrations: Integration with External Systems",
+      "expected_response_summary": "The response should outline a detailed approach to integrating an AI agent with a legacy CRM system, addressing technical challenges and proposing solutions such as middleware or custom connectors.",
+      "scoring_notes": "Assess the candidate's ability to identify and address integration challenges with legacy systems. Look for innovative solutions, such as middleware or custom connectors, and a clear understanding of the technical and operational aspects involved.",
+      "model_answer": "Integrating an AI agent with a legacy CRM system that lacks modern API support presents several challenges, primarily due to the system's outdated architecture and limited interoperability. To address these challenges, I would first conduct a thorough assessment of the CRM system to understand its data structure, communication protocols, and any existing integration points.\n\nGiven the lack of modern API support, I would explore the use of middleware solutions to facilitate communication between the AI agent and the CRM system. Middleware can act as an intermediary layer that translates data and requests between the two systems, enabling seamless integration without requiring extensive modifications to the legacy system. I would evaluate different middleware options to find one that best suits the technical requirements and constraints of the CRM system.\n\nIn cases where middleware is not feasible, I would consider developing custom connectors that can interface with the CRM system's existing data access methods, such as database queries or file-based data exchange. This approach would involve writing scripts or programs that extract data from the CRM system, process it as needed, and then pass it to the AI agent in a compatible format.\n\nThroughout the integration process, I would work closely with the IT and operations teams to ensure that the integration does not disrupt existing workflows or compromise data integrity. Rigorous testing would be conducted to validate the integration's functionality and performance, and any issues would be addressed promptly to ensure a smooth and reliable operation. Additionally, I would establish monitoring and maintenance protocols to ensure the integration remains robust and adaptable to future changes in the CRM system or the AI agent."
     },
     {
-      "stem": "Describe how you would configure agent authentication settings to ensure secure access to an AI agent used in a financial institution.",
-      "task_type": "scenario",
-      "competency_ref": "Security & Governance - Agent Authentication",
-      "expected_response_summary": "The response should include steps to configure authentication settings such as multi-factor authentication, role-based access controls, and secure token management.",
-      "scoring_notes": "Evaluate the security measures proposed and their suitability for a financial institution context."
+      "stem": "Your organization is implementing a new AI agent to handle customer inquiries. As part of the security management team, outline the steps you would take to ensure the AI system is secure and compliant with industry standards.",
+      "task_type": "performance",
+      "competency_ref": "Security/Governance: Security Management",
+      "expected_response_summary": "The response should detail a comprehensive security management plan for an AI system, including authentication, encryption, monitoring, and compliance with industry standards.",
+      "scoring_notes": "Evaluate the candidate's ability to develop a robust security management plan that addresses key security concerns and compliance requirements. Look for a structured approach that includes specific security measures and monitoring protocols.",
+      "model_answer": "To ensure the security of the new AI agent handling customer inquiries, I would begin by implementing robust authentication mechanisms to control access to the system. This includes using multi-factor authentication (MFA) for all users and administrators, ensuring that only authorized personnel can access sensitive data and system functionalities.\n\nNext, I would focus on data encryption, both at rest and in transit, to protect customer information from unauthorized access and breaches. This involves using industry-standard encryption protocols, such as AES-256, to secure data stored within the system and SSL/TLS for data transmitted over networks.\n\nMonitoring and logging are critical components of a comprehensive security management plan. I would set up continuous monitoring of the AI system to detect and respond to potential security threats in real-time. This includes implementing intrusion detection systems (IDS) and regularly reviewing security logs to identify any suspicious activities or anomalies.\n\nCompliance with industry standards and regulations is essential to ensure the AI system meets legal and ethical requirements. I would conduct regular security audits and assessments to verify compliance with relevant standards, such as GDPR, HIPAA, or PCI-DSS, depending on the nature of the data handled by the AI agent. Any identified gaps or vulnerabilities would be addressed promptly to maintain compliance.\n\nFinally, I would establish a security governance framework that includes policies and procedures for incident response, data protection, and user training. This framework would ensure that all stakeholders are aware of their roles and responsibilities in maintaining the security of the AI system and that the organization is prepared to respond effectively to any security incidents."
     },
     {
-      "stem": "Analyze user engagement data from the Analytics tab to identify trends and suggest improvements for an AI agent's conversation design.",
+      "stem": "You are tasked with developing a governance strategy for an AI solution that must comply with multiple international regulations. Describe the key components of your strategy and how you would ensure ongoing compliance.",
       "task_type": "analysis",
-      "competency_ref": "Conversational Design - User Engagement Analysis",
-      "expected_response_summary": "The analysis should identify trends such as common drop-off points or frequently asked questions, and suggest improvements like refining conversation flows or adding new topics.",
-      "scoring_notes": "Check for accurate identification of trends and practical, data-driven suggestions for improvement."
+      "competency_ref": "Security/Governance: Governance and Compliance",
+      "expected_response_summary": "The response should outline a governance strategy that includes policy development, compliance monitoring, and adaptation to regulatory changes, ensuring the AI solution remains compliant with international regulations.",
+      "scoring_notes": "Assess the candidate's ability to develop a comprehensive governance strategy that addresses compliance with multiple international regulations. Look for a structured approach that includes policy development, monitoring, and adaptation to regulatory changes.",
+      "model_answer": "Developing a governance strategy for an AI solution that must comply with multiple international regulations requires a multi-faceted approach. The first key component of the strategy is the development of comprehensive policies and procedures that align with the specific requirements of each applicable regulation. This involves conducting a thorough analysis of the regulatory landscape to identify relevant laws and standards, such as GDPR, CCPA, or PIPEDA, and translating these requirements into actionable policies.\n\nTo ensure ongoing compliance, I would establish a compliance monitoring framework that includes regular audits and assessments of the AI solution's operations. This framework would involve setting up automated compliance checks and manual reviews to verify adherence to regulatory requirements. Any non-compliance issues identified during these assessments would be addressed promptly through corrective actions and process improvements.\n\nAdaptation to regulatory changes is another critical component of the governance strategy. I would implement a process for tracking and analyzing changes in the regulatory environment, ensuring that the AI solution remains compliant as new laws and standards are introduced. This process would involve collaborating with legal and compliance experts to interpret regulatory updates and adjust policies and procedures accordingly.\n\nAdditionally, I would focus on stakeholder engagement and training to ensure that all relevant parties are aware of their roles and responsibilities in maintaining compliance. This includes providing regular training sessions and resources to keep stakeholders informed about regulatory requirements and best practices for compliance.\n\nFinally, I would establish a governance oversight committee to oversee the implementation and effectiveness of the governance strategy. This committee would be responsible for reviewing compliance reports, addressing any compliance challenges, and making strategic decisions to ensure the AI solution aligns with the organization's compliance goals and objectives."
     },
     {
-      "stem": "Outline the steps to integrate an AI agent with a third-party payment processing system to automate transaction confirmations.",
+      "stem": "You are designing an AI agent that will interact with users in a healthcare setting. Describe how you would implement advanced authentication protocols to ensure secure access to the agent, considering the sensitivity of healthcare data.",
       "task_type": "performance",
-      "competency_ref": "Connectors/Integrations - External System Integration",
-      "expected_response_summary": "The response should detail the integration process, including setting up API calls, defining triggers for transaction events, and configuring the agent to send confirmation messages.",
-      "scoring_notes": "Evaluate the clarity and completeness of the integration steps and the correct use of APIs and triggers."
+      "competency_ref": "Agent Creation & Configuration: Agent Configuration",
+      "expected_response_summary": "The response should detail the implementation of advanced authentication protocols for secure access to an AI agent in a healthcare setting, considering data sensitivity and regulatory requirements.",
+      "scoring_notes": "Evaluate the candidate's ability to implement secure authentication protocols that protect sensitive healthcare data. Look for a comprehensive approach that includes multi-factor authentication, encryption, and compliance with healthcare regulations.",
+      "model_answer": "In a healthcare setting, where data sensitivity and privacy are paramount, implementing advanced authentication protocols for an AI agent is crucial. The first step would be to establish a multi-factor authentication (MFA) system to ensure that only authorized users can access the agent. This could involve a combination of something the user knows (password), something the user has (a mobile device for OTP), and something the user is (biometric verification such as fingerprint or facial recognition).\n\nTo further enhance security, I would implement role-based access control (RBAC) to restrict access to sensitive data based on the user's role within the healthcare organization. This ensures that users can only access information necessary for their specific duties, minimizing the risk of unauthorized data exposure.\n\nEncryption is another critical component of the authentication protocol. I would ensure that all data transmitted between the user and the AI agent is encrypted using industry-standard protocols such as TLS. Additionally, sensitive data stored by the agent would be encrypted at rest using AES-256 encryption to protect against data breaches.\n\nCompliance with healthcare regulations, such as HIPAA in the United States, is essential when handling healthcare data. I would ensure that the authentication protocols align with these regulations, conducting regular audits and assessments to verify compliance. This includes maintaining detailed logs of access attempts and monitoring for any unauthorized access attempts.\n\nFinally, I would implement continuous monitoring and incident response protocols to detect and respond to any security threats in real-time. This involves setting up alerts for suspicious activities and having a clear incident response plan in place to address any security breaches promptly, ensuring the ongoing protection of sensitive healthcare data."
     },
     {
-      "stem": "Discuss how you would apply Responsible AI principles to the deployment of an AI agent in a healthcare setting.",
-      "task_type": "scenario",
-      "competency_ref": "Security & Governance - Responsible AI Implementation",
-      "expected_response_summary": "The discussion should cover principles such as fairness, transparency, and accountability, and how they can be applied to ensure ethical AI deployment in healthcare.",
-      "scoring_notes": "Assess the understanding of Responsible AI principles and their application in a sensitive context like healthcare."
+      "stem": "You are tasked with analyzing user engagement data from an AI agent deployed in a retail environment. Describe the process you would follow to identify trends and make recommendations for improving the agent's conversational design.",
+      "task_type": "analysis",
+      "competency_ref": "Conversational Design: User Engagement Analysis",
+      "expected_response_summary": "The response should outline a process for analyzing user engagement data, identifying trends, and making recommendations to improve conversational design in a retail environment.",
+      "scoring_notes": "Assess the candidate's ability to analyze user engagement data and make informed recommendations for improving conversational design. Look for a structured approach that includes data analysis, trend identification, and actionable recommendations.",
+      "model_answer": "To analyze user engagement data from an AI agent deployed in a retail environment, I would begin by collecting comprehensive data on user interactions with the agent. This includes metrics such as session duration, user satisfaction scores, common queries, and drop-off points. I would use analytics tools to aggregate and visualize this data, making it easier to identify patterns and trends.\n\nOnce the data is collected, I would conduct a detailed analysis to identify key trends in user engagement. This involves looking for patterns in user behavior, such as frequently asked questions, common points of confusion, and areas where users tend to disengage. I would also analyze user feedback to gain insights into their satisfaction levels and any specific issues they encountered during interactions with the agent.\n\nBased on the analysis, I would make recommendations for improving the agent's conversational design. This could include refining conversation flows to address common user queries more effectively, simplifying complex interactions, and enhancing the agent's ability to handle ambiguous inputs. I would also consider incorporating user feedback into the design process to ensure that the agent meets the needs and expectations of its users.\n\nAdditionally, I would recommend implementing A/B testing to evaluate the effectiveness of different conversation design changes. This involves testing variations of the conversation flow with different user groups and analyzing the results to determine which design elements lead to improved user engagement and satisfaction.\n\nFinally, I would establish a continuous improvement process to regularly review user engagement data and update the conversational design as needed. This ensures that the AI agent remains effective and relevant in the dynamic retail environment, continuously enhancing the user experience and driving business outcomes."
     },
     {
-      "stem": "Design a conversational flow for an AI agent that assists users in booking travel arrangements. Include intents, triggers, and potential user responses.",
+      "stem": "You are responsible for configuring an AI agent to optimize its performance in a multi-agent environment. Describe the orchestration settings you would adjust and the considerations you would take into account to achieve this optimization.",
       "task_type": "performance",
-      "competency_ref": "Conversational Design - Intent and Topic Management",
-      "expected_response_summary": "The design should include clear intents for booking flights, hotels, and cars, appropriate triggers for user inputs, and a variety of potential user responses to guide the conversation.",
-      "scoring_notes": "Evaluate the clarity and completeness of the conversational flow and the appropriateness of the intents and triggers."
+      "competency_ref": "Agent Creation & Configuration: Agent Configuration",
+      "expected_response_summary": "The response should detail the orchestration settings adjustments for optimizing AI agent performance in a multi-agent environment, considering factors like load balancing, communication protocols, and resource allocation.",
+      "scoring_notes": "Evaluate the candidate's ability to configure orchestration settings for optimal performance in a multi-agent environment. Look for a comprehensive approach that includes load balancing, communication protocols, and resource management.",
+      "model_answer": "Optimizing the performance of an AI agent in a multi-agent environment requires careful configuration of orchestration settings. The first step is to implement effective load balancing to ensure that the workload is evenly distributed across all agents. This involves configuring the system to dynamically allocate tasks based on each agent's current load and processing capacity, preventing any single agent from becoming a bottleneck.\n\nCommunication protocols are another critical consideration in a multi-agent environment. I would ensure that the agents can communicate efficiently and effectively with each other, using standardized protocols that support seamless data exchange and coordination. This may involve configuring message queues or using publish-subscribe models to facilitate real-time communication and collaboration among agents.\n\nResource allocation is also essential for optimizing performance. I would configure the system to allocate computational resources, such as CPU and memory, based on the specific needs of each agent. This ensures that agents have the necessary resources to perform their tasks efficiently, without overloading the system or causing delays.\n\nIn addition to these technical considerations, I would also take into account the specific business requirements and objectives of the multi-agent environment. This involves aligning the orchestration settings with the organization's goals, such as improving response times, enhancing user satisfaction, or increasing operational efficiency.\n\nFinally, I would implement monitoring and analytics tools to continuously assess the performance of the multi-agent environment. This allows for real-time tracking of key performance metrics and enables proactive adjustments to the orchestration settings as needed, ensuring that the system remains optimized and responsive to changing demands."
+    },
+    {
+      "stem": "You are tasked with developing custom triggers for an AI agent to automate unique business processes in a financial services company. Describe the approach you would take to define and implement these triggers, considering the specific needs of the industry.",
+      "task_type": "performance",
+      "competency_ref": "Agent Creation & Configuration: Action and Trigger Management",
+      "expected_response_summary": "The response should outline the approach to defining and implementing custom triggers for automating business processes in a financial services company, considering industry-specific needs and compliance requirements.",
+      "scoring_notes": "Assess the candidate's ability to define and implement custom triggers for automating business processes in a financial services context. Look for a structured approach that considers industry-specific needs and compliance requirements.",
+      "model_answer": "To develop custom triggers for automating business processes in a financial services company, I would begin by conducting a thorough analysis of the company's existing workflows and identifying key processes that could benefit from automation. This involves collaborating with stakeholders from various departments to understand their specific needs and pain points, as well as any regulatory or compliance requirements that must be considered.\n\nOnce the target processes are identified, I would define the specific conditions and events that should trigger the automation. This involves mapping out the process flow and identifying key decision points where automation can enhance efficiency and accuracy. For example, a trigger could be set to automatically initiate a credit risk assessment when a new loan application is submitted, or to generate a compliance report when certain financial thresholds are met.\n\nTo implement these custom triggers, I would leverage the AI agent's capabilities to integrate with the company's existing systems and data sources. This may involve developing custom APIs or connectors to facilitate seamless data exchange and ensure that the triggers are activated based on real-time data inputs. I would also ensure that the triggers are designed to handle exceptions and edge cases, providing fallback mechanisms to maintain process integrity.\n\nCompliance with industry regulations is a critical consideration in the financial services sector. I would work closely with the company's compliance team to ensure that the triggers adhere to relevant laws and standards, such as AML (Anti-Money Laundering) and KYC (Know Your Customer) requirements. This includes implementing robust logging and auditing mechanisms to track trigger activations and ensure transparency.\n\nFinally, I would conduct extensive testing of the custom triggers to validate their functionality and effectiveness. This involves simulating various scenarios to ensure that the triggers perform as expected and do not introduce any unintended consequences. Based on the testing results, I would make any necessary adjustments to optimize the triggers and ensure they align with the company's business objectives and compliance requirements."
+    },
+    {
+      "stem": "You are responsible for ensuring that an AI solution complies with emerging governance policies in the technology sector. Describe how you would advise on policy development to address these challenges and align with enterprise objectives.",
+      "task_type": "analysis",
+      "competency_ref": "Security/Governance: Governance and Compliance",
+      "expected_response_summary": "The response should outline an approach to advising on policy development for AI solutions, addressing emerging governance challenges and aligning with enterprise objectives.",
+      "scoring_notes": "Evaluate the candidate's ability to advise on policy development for AI solutions, considering emerging governance challenges and alignment with enterprise objectives. Look for a strategic approach that includes stakeholder engagement and policy adaptation.",
+      "model_answer": "Advising on policy development for AI solutions in the context of emerging governance challenges requires a strategic and forward-thinking approach. The first step is to conduct a comprehensive analysis of the current governance landscape, identifying key trends and emerging policies that could impact the AI solution. This involves staying informed about regulatory developments, industry standards, and best practices in AI governance.\n\nWith this understanding, I would engage with key stakeholders within the organization, including legal, compliance, and IT teams, to gather insights and perspectives on the potential impact of these governance challenges. This collaborative approach ensures that the policy development process is informed by a diverse range of expertise and aligns with the organization's strategic objectives.\n\nBased on the insights gathered, I would advise on the development of policies that address the specific governance challenges identified. This includes defining clear guidelines for data privacy, ethical AI use, and transparency, as well as establishing processes for monitoring and reporting compliance. The policies should be designed to be flexible and adaptable, allowing the organization to respond effectively to future changes in the governance landscape.\n\nTo ensure alignment with enterprise objectives, I would work with senior leadership to integrate the governance policies into the organization's broader strategic framework. This involves setting clear goals and metrics for compliance and ensuring that the policies support the organization's mission and values.\n\nFinally, I would recommend implementing a continuous improvement process to regularly review and update the governance policies. This ensures that the organization remains proactive in addressing emerging governance challenges and can adapt to new developments in the technology sector. Regular training and communication with stakeholders would also be essential to ensure that the policies are effectively implemented and understood across the organization."
     }
   ],
   "blueprint": {
     "program_title": "AI Champion Certification",
-    "target_audience": "AI professionals, solution architects, and IT managers responsible for implementing AI-driven solutions in enterprise environments.",
+    "target_audience": "AI professionals, enterprise architects, and IT managers responsible for implementing AI solutions in enterprise environments.",
     "prerequisites": "Candidates should have a foundational understanding of AI concepts, basic programming skills, and familiarity with enterprise IT environments.",
-    "program_overview": "The AI Champion Certification is designed to validate the expertise required to design, implement, and manage AI-driven solutions within an enterprise setting. This program focuses on the critical areas of agent creation, conversational design, integration, and security, ensuring that certified professionals can effectively deploy AI technologies to enhance business operations. Participants will gain hands-on experience in configuring AI agents, designing conversational flows, integrating with external systems, and ensuring compliance with security and governance standards.\n\nThe certification program is structured to provide a comprehensive learning path that covers both theoretical knowledge and practical application. Through a series of modules, candidates will develop skills in agent configuration, action and workflow definition, and trigger management. Additionally, the program emphasizes the importance of conversational design, enabling candidates to create intuitive and effective user interactions. Integration skills are honed through practical exercises in deploying agents across various channels and managing API integrations. Finally, the program addresses the critical aspects of security and governance, ensuring that AI solutions are both secure and compliant with industry standards.",
+    "program_overview": "The AI Champion Certification is designed to equip professionals with the skills necessary to design, implement, and manage AI solutions within an enterprise setting. This program focuses on the creation and configuration of AI agents, the design of engaging conversational interfaces, the integration of AI systems with existing enterprise platforms, and the implementation of robust security and governance frameworks. By completing this certification, candidates will demonstrate their ability to leverage AI technologies to drive business innovation and efficiency.\n\nThe certification program is structured around four key domains: Agent Creation & Configuration, Conversational Design, Connectors/Integrations, and Security/Governance. Each domain is crafted to build proficiency from novice to expert levels, ensuring that candidates can progressively develop their skills. The program emphasizes practical, real-world applications of AI technologies, preparing candidates to tackle complex challenges and deliver impactful AI solutions in their organizations.",
     "domain_summary": [
-      "Agent Creation & Configuration: Develops skills in creating and configuring AI agents, including defining actions, triggers, and workflows.",
-      "Conversational Design: Focuses on designing effective conversation flows and managing topics for accurate agent responses.",
-      "Connectors/Integrations: Involves integrating AI agents with various channels and external systems to enhance functionality.",
-      "Security & Governance: Ensures AI solutions are secure, compliant, and adhere to governance standards."
+      "Agent Creation & Configuration: Develops skills in creating and configuring AI agents, focusing on actions, triggers, and settings management.",
+      "Conversational Design: Focuses on designing effective conversational flows to enhance user engagement and interaction.",
+      "Connectors/Integrations: Involves integrating AI agents with various platforms to extend functionality and improve interoperability.",
+      "Security/Governance: Ensures AI solutions adhere to security standards and governance policies, safeguarding systems and data."
     ],
-    "assessment_strategy": "The assessment strategy for the AI Champion Certification is performance-based, focusing on real-world tasks that demonstrate a candidate's ability to apply their knowledge in practical scenarios. Instead of traditional multiple-choice exams, candidates will complete a series of hands-on projects and simulations that mirror the challenges faced in enterprise environments. These assessments are designed to evaluate proficiency across all domains, ensuring that candidates can effectively configure AI agents, design conversational flows, integrate with external systems, and implement security measures. Each assessment is accompanied by a detailed rubric that outlines the criteria for success, providing clear guidance on the expected level of competence.",
+    "assessment_strategy": "The assessment strategy for the AI Champion Certification is performance-based, focusing on the demonstration of real-world skills rather than theoretical knowledge. Candidates will be evaluated through practical assessments that simulate enterprise scenarios, requiring them to configure AI agents, design conversational flows, integrate systems, and implement security measures. This approach ensures that candidates not only understand the concepts but can also apply them effectively in a business context. The assessments are designed to reflect the complexities and challenges faced in actual enterprise environments, providing a robust measure of a candidate's competence and readiness to lead AI initiatives.",
     "estimated_duration_hours": 40.0,
-    "renewal_cadence": "The certification is valid for three years, after which recertification is recommended to ensure that professionals remain current with the latest advancements in AI technology and best practices. This interval reflects the rapid pace of innovation in the AI field and the need for ongoing professional development."
+    "renewal_cadence": "The certification is recommended to be renewed every two years to ensure that professionals remain current with the rapidly evolving AI technologies and industry standards. This renewal cadence allows certified individuals to stay updated with the latest advancements and maintain their competitive edge in the field."
   }
 }

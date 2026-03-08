@@ -1,0 +1,510 @@
+{
+  "competency_framework": {
+    "track": "AI Champion",
+    "description": "The AI Champion certification validates expertise in creating, configuring, and managing AI agents within enterprise environments. It ensures proficiency in conversational design, integration with external systems, and adherence to security and governance standards.",
+    "domains": [
+      {
+        "name": "Agent Creation & Configuration",
+        "description": "Covers the skills required to create and configure AI agents, including defining actions, triggers, and workflows.",
+        "skills": [
+          {
+            "name": "Agent Configuration",
+            "description": "Ability to configure agent settings, including generative AI orchestration and skills management.",
+            "proficiency_levels": [
+              "novice",
+              "competent",
+              "expert"
+            ]
+          },
+          {
+            "name": "Action Definition",
+            "description": "Skill in defining actions such as API calls, email sending, and workflow integration.",
+            "proficiency_levels": [
+              "novice",
+              "competent",
+              "expert"
+            ]
+          },
+          {
+            "name": "Trigger Management",
+            "description": "Expertise in setting up event-based triggers to initiate automated flows.",
+            "proficiency_levels": [
+              "novice",
+              "competent",
+              "expert"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Conversational Design",
+        "description": "Focuses on designing effective conversation flows and managing topics to ensure accurate and relevant agent responses.",
+        "skills": [
+          {
+            "name": "Topic Management",
+            "description": "Ability to manage conversation flows by defining intents, triggers, and responses.",
+            "proficiency_levels": [
+              "novice",
+              "competent",
+              "expert"
+            ]
+          },
+          {
+            "name": "Evaluation and Testing",
+            "description": "Skill in managing test cases to measure the accuracy and quality of agent responses.",
+            "proficiency_levels": [
+              "novice",
+              "competent",
+              "expert"
+            ]
+          },
+          {
+            "name": "User Engagement Analysis",
+            "description": "Expertise in analyzing user interactions to improve conversation design.",
+            "proficiency_levels": [
+              "novice",
+              "competent",
+              "expert"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Connectors/Integrations",
+        "description": "Involves integrating AI agents with external systems and deploying them across various channels.",
+        "skills": [
+          {
+            "name": "Channel Deployment",
+            "description": "Ability to publish and deploy agents to different channels using the Channels tab.",
+            "proficiency_levels": [
+              "novice",
+              "competent",
+              "expert"
+            ]
+          },
+          {
+            "name": "System Integration",
+            "description": "Skill in integrating agents with external systems to trigger workflows and actions.",
+            "proficiency_levels": [
+              "novice",
+              "competent",
+              "expert"
+            ]
+          },
+          {
+            "name": "API Utilization",
+            "description": "Expertise in utilizing APIs for enhanced agent functionality and integration.",
+            "proficiency_levels": [
+              "novice",
+              "competent",
+              "expert"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Security & Governance",
+        "description": "Ensures that AI agents adhere to security protocols and governance standards, including responsible AI practices.",
+        "skills": [
+          {
+            "name": "Security Configuration",
+            "description": "Ability to configure agent authentication and manage security settings.",
+            "proficiency_levels": [
+              "novice",
+              "competent",
+              "expert"
+            ]
+          },
+          {
+            "name": "Governance Adherence",
+            "description": "Skill in ensuring agents comply with governance and responsible AI principles.",
+            "proficiency_levels": [
+              "novice",
+              "competent",
+              "expert"
+            ]
+          },
+          {
+            "name": "Performance Analytics",
+            "description": "Expertise in using analytics to monitor agent performance and ensure compliance.",
+            "proficiency_levels": [
+              "novice",
+              "competent",
+              "expert"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "learning_progression": {
+    "track": "AI Champion",
+    "objectives": [
+      {
+        "order": 1,
+        "title": "Agent Configuration",
+        "description": "Ability to configure agent settings, including generative AI orchestration and skills management.",
+        "domain": "Agent Creation & Configuration",
+        "prerequisites": []
+      },
+      {
+        "order": 2,
+        "title": "Action Definition",
+        "description": "Skill in defining actions such as API calls, email sending, and workflow integration.",
+        "domain": "Agent Creation & Configuration",
+        "prerequisites": [
+          "Agent Configuration"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Trigger Management",
+        "description": "Expertise in setting up event-based triggers to initiate automated flows.",
+        "domain": "Agent Creation & Configuration",
+        "prerequisites": [
+          "Action Definition"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Topic Management",
+        "description": "Ability to manage conversation flows by defining intents, triggers, and responses.",
+        "domain": "Conversational Design",
+        "prerequisites": [
+          "Trigger Management"
+        ]
+      },
+      {
+        "order": 5,
+        "title": "Evaluation and Testing",
+        "description": "Skill in managing test cases to measure the accuracy and quality of agent responses.",
+        "domain": "Conversational Design",
+        "prerequisites": [
+          "Topic Management"
+        ]
+      },
+      {
+        "order": 6,
+        "title": "User Engagement Analysis",
+        "description": "Expertise in analyzing user interactions to improve conversation design.",
+        "domain": "Conversational Design",
+        "prerequisites": [
+          "Evaluation and Testing"
+        ]
+      },
+      {
+        "order": 7,
+        "title": "Channel Deployment",
+        "description": "Ability to publish and deploy agents to different channels using the Channels tab.",
+        "domain": "Connectors/Integrations",
+        "prerequisites": [
+          "User Engagement Analysis"
+        ]
+      },
+      {
+        "order": 8,
+        "title": "System Integration",
+        "description": "Skill in integrating agents with external systems to trigger workflows and actions.",
+        "domain": "Connectors/Integrations",
+        "prerequisites": [
+          "Channel Deployment"
+        ]
+      },
+      {
+        "order": 9,
+        "title": "API Utilization",
+        "description": "Expertise in utilizing APIs for enhanced agent functionality and integration.",
+        "domain": "Connectors/Integrations",
+        "prerequisites": [
+          "System Integration"
+        ]
+      },
+      {
+        "order": 10,
+        "title": "Security Configuration",
+        "description": "Ability to configure agent authentication and manage security settings.",
+        "domain": "Security & Governance",
+        "prerequisites": [
+          "API Utilization"
+        ]
+      },
+      {
+        "order": 11,
+        "title": "Governance Adherence",
+        "description": "Skill in ensuring agents comply with governance and responsible AI principles.",
+        "domain": "Security & Governance",
+        "prerequisites": [
+          "Security Configuration"
+        ]
+      },
+      {
+        "order": 12,
+        "title": "Performance Analytics",
+        "description": "Expertise in using analytics to monitor agent performance and ensure compliance.",
+        "domain": "Security & Governance",
+        "prerequisites": [
+          "Governance Adherence"
+        ]
+      }
+    ]
+  },
+  "assessments": [
+    {
+      "title": "Configure an AI Agent for Customer Support",
+      "scenario": "You are tasked with setting up an AI agent for a retail company to handle customer inquiries about order status, returns, and product information.",
+      "instructions": "1. Access the AI platform and create a new agent.\n2. Configure the agent settings to include generative AI orchestration and manage skills relevant to customer support.\n3. Define actions for checking order status, processing returns, and providing product information.\n4. Set up triggers for common customer inquiries to initiate the appropriate actions.\n5. Document the configuration process and any challenges faced.",
+      "expected_outputs": [
+        "Configured AI agent with appropriate settings and skills",
+        "Defined actions for order status, returns, and product information",
+        "Triggers set up for common inquiries",
+        "Documentation of the configuration process"
+      ],
+      "competency_ref": "Agent Creation & Configuration",
+      "time_estimate_minutes": 120
+    },
+    {
+      "title": "Design a Conversational Flow for a Banking Chatbot",
+      "scenario": "A bank wants to implement a chatbot to assist customers with account balance inquiries, transaction history, and branch locations.",
+      "instructions": "1. Use the Topics tab to define intents for account balance inquiries, transaction history, and branch locations.\n2. Create conversation flows that guide users through these inquiries, ensuring clarity and ease of use.\n3. Test the conversation flows using the Test your agent panel to ensure accuracy and relevance of responses.\n4. Analyze user engagement data from the Activity tab to identify areas for improvement.\n5. Provide a report on the design process and any improvements made based on testing and analysis.",
+      "expected_outputs": [
+        "Defined intents and conversation flows for banking inquiries",
+        "Tested and refined conversation flows",
+        "User engagement analysis report",
+        "Design process documentation"
+      ],
+      "competency_ref": "Conversational Design",
+      "time_estimate_minutes": 150
+    },
+    {
+      "title": "Integrate an AI Agent with a CRM System",
+      "scenario": "A company wants to integrate their AI agent with a CRM system to automate customer data updates and notifications.",
+      "instructions": "1. Access the AI platform and navigate to the Connectors/Integrations section.\n2. Set up the integration with the CRM system to allow the agent to update customer data and send notifications.\n3. Utilize APIs to enhance the agent's functionality and ensure seamless data exchange.\n4. Deploy the agent across multiple channels using the Channels tab.\n5. Document the integration process and any issues encountered.",
+      "expected_outputs": [
+        "Integrated AI agent with CRM system",
+        "API utilization for enhanced functionality",
+        "Agent deployed across multiple channels",
+        "Integration process documentation"
+      ],
+      "competency_ref": "Connectors/Integrations",
+      "time_estimate_minutes": 180
+    },
+    {
+      "title": "Implement Security and Governance for an AI Agent",
+      "scenario": "A healthcare organization needs to ensure their AI agent complies with security protocols and governance standards.",
+      "instructions": "1. Access the AI platform and configure the agent's authentication settings to meet healthcare security standards.\n2. Ensure the agent adheres to governance and responsible AI principles as outlined in the Responsible AI FAQs.\n3. Use the Analytics tab to monitor the agent's performance and compliance with security and governance standards.\n4. Provide a report detailing the security configurations, governance adherence, and performance analytics.",
+      "expected_outputs": [
+        "Configured security settings for healthcare standards",
+        "Governance adherence ensured",
+        "Performance analytics report",
+        "Security and governance documentation"
+      ],
+      "competency_ref": "Security & Governance",
+      "time_estimate_minutes": 120
+    }
+  ],
+  "rubrics": [
+    {
+      "assessment_ref": "Configure an AI Agent for Customer Support",
+      "criteria": [
+        {
+          "criterion": "AI Agent Configuration",
+          "novice": "The AI agent is created but lacks appropriate settings and skills for customer support.",
+          "competent": "The AI agent is configured with basic settings and skills relevant to customer support.",
+          "expert": "The AI agent is fully configured with advanced settings and skills, optimized for customer support."
+        },
+        {
+          "criterion": "Action Definition",
+          "novice": "Actions for order status, returns, and product information are poorly defined or missing.",
+          "competent": "Actions for order status, returns, and product information are defined but may lack detail.",
+          "expert": "Actions for order status, returns, and product information are clearly defined and comprehensive."
+        },
+        {
+          "criterion": "Trigger Setup",
+          "novice": "Triggers for common inquiries are not set up or are ineffective.",
+          "competent": "Triggers for common inquiries are set up but may not cover all scenarios.",
+          "expert": "Triggers for common inquiries are effectively set up, covering a wide range of scenarios."
+        },
+        {
+          "criterion": "Documentation",
+          "novice": "Documentation of the configuration process is incomplete or unclear.",
+          "competent": "Documentation of the configuration process is complete but lacks detail on challenges faced.",
+          "expert": "Documentation is thorough, detailing the configuration process and challenges faced with solutions."
+        }
+      ]
+    },
+    {
+      "assessment_ref": "Design a Conversational Flow for a Banking Chatbot",
+      "criteria": [
+        {
+          "criterion": "Intent and Flow Definition",
+          "novice": "Intents and conversation flows are poorly defined or incomplete.",
+          "competent": "Intents and conversation flows are defined but may lack clarity or completeness.",
+          "expert": "Intents and conversation flows are well-defined, clear, and comprehensive."
+        },
+        {
+          "criterion": "Testing and Refinement",
+          "novice": "Conversation flows are not tested or refined, leading to inaccurate responses.",
+          "competent": "Conversation flows are tested and refined but may still have minor inaccuracies.",
+          "expert": "Conversation flows are thoroughly tested and refined, ensuring accurate and relevant responses."
+        },
+        {
+          "criterion": "User Engagement Analysis",
+          "novice": "User engagement data is not analyzed or used to improve the chatbot.",
+          "competent": "User engagement data is analyzed but improvements are minimal or unclear.",
+          "expert": "User engagement data is thoroughly analyzed, leading to significant improvements in the chatbot."
+        },
+        {
+          "criterion": "Design Documentation",
+          "novice": "Design process documentation is incomplete or lacks detail.",
+          "competent": "Design process documentation is complete but lacks insights from testing and analysis.",
+          "expert": "Design process documentation is comprehensive, including insights and improvements from testing and analysis."
+        }
+      ]
+    },
+    {
+      "assessment_ref": "Integrate an AI Agent with a CRM System",
+      "criteria": [
+        {
+          "criterion": "Integration Setup",
+          "novice": "Integration with the CRM system is incomplete or non-functional.",
+          "competent": "Integration with the CRM system is functional but may lack some features.",
+          "expert": "Integration with the CRM system is fully functional and includes all necessary features."
+        },
+        {
+          "criterion": "API Utilization",
+          "novice": "APIs are not utilized or are used ineffectively, limiting functionality.",
+          "competent": "APIs are utilized but may not fully enhance the agent's functionality.",
+          "expert": "APIs are effectively utilized to significantly enhance the agent's functionality."
+        },
+        {
+          "criterion": "Channel Deployment",
+          "novice": "Agent deployment across channels is incomplete or ineffective.",
+          "competent": "Agent is deployed across channels but may not be optimized for all.",
+          "expert": "Agent is effectively deployed and optimized across multiple channels."
+        },
+        {
+          "criterion": "Integration Documentation",
+          "novice": "Integration process documentation is incomplete or unclear.",
+          "competent": "Integration process documentation is complete but lacks detail on issues encountered.",
+          "expert": "Integration process documentation is thorough, detailing the process and solutions to issues encountered."
+        }
+      ]
+    },
+    {
+      "assessment_ref": "Implement Security and Governance for an AI Agent",
+      "criteria": [
+        {
+          "criterion": "Security Configuration",
+          "novice": "Security settings do not meet healthcare standards or are poorly configured.",
+          "competent": "Security settings meet basic healthcare standards but may lack advanced configurations.",
+          "expert": "Security settings are comprehensively configured to exceed healthcare standards."
+        },
+        {
+          "criterion": "Governance Adherence",
+          "novice": "Governance and responsible AI principles are not adhered to or poorly implemented.",
+          "competent": "Governance and responsible AI principles are adhered to but may lack thorough implementation.",
+          "expert": "Governance and responsible AI principles are fully adhered to and implemented comprehensively."
+        },
+        {
+          "criterion": "Performance Monitoring",
+          "novice": "Performance and compliance are not monitored or poorly analyzed.",
+          "competent": "Performance and compliance are monitored but analysis lacks depth.",
+          "expert": "Performance and compliance are thoroughly monitored and analyzed, with detailed insights."
+        },
+        {
+          "criterion": "Security and Governance Documentation",
+          "novice": "Documentation of security and governance is incomplete or lacks clarity.",
+          "competent": "Documentation of security and governance is complete but lacks detailed analysis.",
+          "expert": "Documentation is comprehensive, detailing security configurations, governance adherence, and performance analytics."
+        }
+      ]
+    }
+  ],
+  "item_bank": [
+    {
+      "stem": "Design a conversation flow for an AI agent that handles customer inquiries about product returns. Include intents, triggers, and responses.",
+      "task_type": "scenario",
+      "competency_ref": "Conversational Design: Topic Management",
+      "expected_response_summary": "The response should include a detailed conversation flow with defined intents such as 'Product Return Inquiry', triggers like 'return policy', and responses that guide the user through the return process.",
+      "scoring_notes": "Evaluate the clarity and completeness of the conversation flow, ensuring all necessary intents, triggers, and responses are included."
+    },
+    {
+      "stem": "Analyze the user engagement data from the Analytics tab to identify areas where the AI agent's conversation design can be improved.",
+      "task_type": "analysis",
+      "competency_ref": "Conversational Design: User Engagement Analysis",
+      "expected_response_summary": "The analysis should identify patterns in user interactions, such as frequent drop-off points or misunderstood intents, and suggest improvements to the conversation design.",
+      "scoring_notes": "Look for a thorough analysis of the data and actionable recommendations for improving user engagement."
+    },
+    {
+      "stem": "Configure an AI agent to authenticate users before providing access to sensitive information. Describe the steps and settings involved.",
+      "task_type": "performance",
+      "competency_ref": "Security & Governance: Security Configuration",
+      "expected_response_summary": "The response should detail the configuration process, including setting up authentication protocols and managing security settings within the agent's platform.",
+      "scoring_notes": "Ensure the response includes all necessary steps and settings for secure user authentication."
+    },
+    {
+      "stem": "Evaluate the effectiveness of a newly integrated API in enhancing the AI agent's functionality. What metrics would you use and why?",
+      "task_type": "analysis",
+      "competency_ref": "Connectors/Integrations: API Utilization",
+      "expected_response_summary": "The evaluation should include metrics such as response time, error rate, and user satisfaction, explaining how each metric relates to the API's effectiveness.",
+      "scoring_notes": "Assess the appropriateness of the chosen metrics and the rationale provided for their selection."
+    },
+    {
+      "stem": "Create a test case to measure the accuracy of an AI agent's responses to frequently asked questions. Include expected outcomes and evaluation criteria.",
+      "task_type": "performance",
+      "competency_ref": "Conversational Design: Evaluation and Testing",
+      "expected_response_summary": "The test case should include sample questions, expected responses, and criteria for evaluating accuracy, such as response relevance and correctness.",
+      "scoring_notes": "Check for comprehensive test cases with clear expected outcomes and evaluation criteria."
+    },
+    {
+      "stem": "Describe how you would deploy an AI agent across multiple communication channels using the Channels tab. What considerations must be taken into account?",
+      "task_type": "scenario",
+      "competency_ref": "Connectors/Integrations: Channel Deployment",
+      "expected_response_summary": "The description should cover the steps for deploying the agent on various channels and considerations such as channel-specific features and user demographics.",
+      "scoring_notes": "Evaluate the completeness of the deployment process and the relevance of the considerations mentioned."
+    },
+    {
+      "stem": "Outline a governance framework to ensure an AI agent adheres to responsible AI principles. What key elements should be included?",
+      "task_type": "analysis",
+      "competency_ref": "Security & Governance: Governance Adherence",
+      "expected_response_summary": "The framework should include elements such as ethical guidelines, compliance checks, and regular audits to ensure adherence to responsible AI principles.",
+      "scoring_notes": "Look for a well-structured framework with clear and relevant elements that promote responsible AI practices."
+    },
+    {
+      "stem": "Configure an AI agent to send an email notification when a specific event is triggered. Detail the configuration process.",
+      "task_type": "performance",
+      "competency_ref": "Agent Creation & Configuration: Action Definition",
+      "expected_response_summary": "The configuration process should include defining the trigger event, setting up the email action, and ensuring the correct parameters are used for the email content.",
+      "scoring_notes": "Ensure the response includes all necessary steps and details for successful email notification setup."
+    },
+    {
+      "stem": "Analyze the performance analytics of an AI agent to determine its compliance with set performance standards. What insights can be drawn?",
+      "task_type": "analysis",
+      "competency_ref": "Security & Governance: Performance Analytics",
+      "expected_response_summary": "The analysis should identify key performance metrics, compare them against standards, and provide insights into areas of compliance or needed improvement.",
+      "scoring_notes": "Assess the depth of analysis and the relevance of insights drawn from the performance data."
+    },
+    {
+      "stem": "Design a workflow for an AI agent that integrates with an external CRM system to update customer records. Include triggers and actions.",
+      "task_type": "scenario",
+      "competency_ref": "Agent Creation & Configuration: Trigger Management",
+      "expected_response_summary": "The workflow should include a trigger such as 'customer inquiry', actions like 'update CRM record', and a clear sequence of steps for integration.",
+      "scoring_notes": "Evaluate the logical flow and completeness of the workflow, ensuring all necessary triggers and actions are included."
+    }
+  ],
+  "blueprint": {
+    "program_title": "AI Champion Certification",
+    "target_audience": "AI developers, system integrators, and IT professionals working in enterprise environments",
+    "prerequisites": "Candidates should have a foundational understanding of AI concepts, basic programming skills, and familiarity with enterprise IT systems.",
+    "program_overview": "The AI Champion Certification is designed to validate the expertise of professionals in the creation, configuration, and management of AI agents within enterprise environments. This certification ensures that candidates possess the necessary skills to design conversational interfaces, integrate AI solutions with external systems, and adhere to stringent security and governance standards. The program is structured to provide a comprehensive understanding of AI agent lifecycle management, from initial configuration to deployment and ongoing optimization.\n\nCandidates will gain proficiency in key areas such as agent creation and configuration, conversational design, and system integration. The certification also emphasizes the importance of security and governance, ensuring that AI solutions are not only effective but also compliant with industry standards. Through a combination of theoretical knowledge and practical application, participants will be equipped to implement AI solutions that enhance business operations and improve user engagement.",
+    "domain_summary": [
+      "Agent Creation & Configuration: Master the skills required to create and configure AI agents, including defining actions, triggers, and workflows.",
+      "Conversational Design: Learn to design effective conversation flows and manage topics for accurate and relevant agent responses.",
+      "Connectors/Integrations: Gain expertise in integrating AI agents with external systems and deploying them across various channels.",
+      "Security & Governance: Ensure AI agents adhere to security protocols and governance standards, including responsible AI practices."
+    ],
+    "assessment_strategy": "The AI Champion Certification employs a performance-based assessment strategy, focusing on real-world application and problem-solving skills. Candidates are evaluated through a series of practical assessments that simulate enterprise scenarios, requiring them to demonstrate their ability to configure AI agents, design conversation flows, and integrate systems. This approach ensures that certified professionals are not only knowledgeable but also capable of applying their skills in practical settings. The assessments are designed to test proficiency across all domains, with rubrics providing clear criteria for performance evaluation.",
+    "estimated_duration_hours": 40.0,
+    "renewal_cadence": "Recertification is recommended every two years to ensure that professionals remain current with evolving AI technologies and industry standards. This interval allows for the incorporation of new skills and knowledge as the field of AI continues to advance."
+  }
+}
