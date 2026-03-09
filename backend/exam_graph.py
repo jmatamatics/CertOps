@@ -28,8 +28,8 @@ def _extract_domain(competency_ref: str) -> str:
 
 
 def _build_domain_rubrics(rubrics: list[dict], assessments: list[dict]) -> dict:
-    """Map domain names to their rubric criteria."""
-    assessment_domain = {}
+    """Map domain names to their rubric criteria via assessments, with fuzzy fallback."""
+    assessment_domain: dict[str, str] = {}
     for a in assessments:
         domain = _extract_domain(a.get("competency_ref", ""))
         assessment_domain[a["title"]] = domain
@@ -37,8 +37,22 @@ def _build_domain_rubrics(rubrics: list[dict], assessments: list[dict]) -> dict:
     domain_rubrics: dict[str, list[dict]] = {}
     for r in rubrics:
         domain = assessment_domain.get(r["assessment_ref"])
-        if domain and domain not in domain_rubrics:
-            domain_rubrics[domain] = r["criteria"]
+        if domain:
+            domain_rubrics.setdefault(domain, []).extend(r["criteria"])
+            continue
+        ref_lower = r["assessment_ref"].lower()
+        for d_name in {_extract_domain(a.get("competency_ref", "")) for a in assessments}:
+            if d_name.lower() in ref_lower or ref_lower in d_name.lower():
+                domain_rubrics.setdefault(d_name, []).extend(r["criteria"])
+                break
+
+    if rubrics and not domain_rubrics:
+        all_criteria = [c for r in rubrics for c in r["criteria"]]
+        for a in assessments:
+            d = _extract_domain(a.get("competency_ref", ""))
+            if d:
+                domain_rubrics[d] = all_criteria
+
     return domain_rubrics
 
 
@@ -168,16 +182,25 @@ def evaluate_response(state: ExamState) -> dict:
     structured_llm = llm.with_structured_output(EvaluationResult)
     result = structured_llm.invoke([
         SystemMessage(content=(
-            "You are an expert certification exam evaluator. Score the learner's response "
-            "against the rubric criteria.\n\n"
+            "You are an expert certification exam evaluator. Score the learner's response.\n\n"
             f"## Item\n{item['stem']}\n\n"
-            f"## Model Answer\n{item['model_answer']}\n\n"
+            f"## Model Answer (reference — not the only correct approach)\n{item['model_answer']}\n\n"
             f"## Scoring Notes\n{item['scoring_notes']}\n\n"
             f"## Rubric Criteria\n{rubric_text}\n\n"
-            "Score each criterion 1 (novice), 2 (competent), or 3 (expert).\n"
+            "## Scoring Guidelines\n"
+            "- **3 (expert)**: Demonstrates deep, specific knowledge. Addresses the core "
+            "of the question with concrete details, tools, or techniques. May use a "
+            "different but equally valid approach from the model answer.\n"
+            "- **2 (competent)**: Shows solid understanding of the domain. Covers the main "
+            "points but may lack some specificity or miss secondary considerations. "
+            "A practitioner could execute based on this answer.\n"
+            "- **1 (novice)**: Vague, superficial, or significantly off-topic. Lacks "
+            "actionable detail or demonstrates fundamental misunderstanding.\n\n"
+            "IMPORTANT: The model answer is a REFERENCE, not a checklist. A response that "
+            "demonstrates equivalent expertise using different specific tools, approaches, "
+            "or examples should still score highly. Evaluate KNOWLEDGE DEPTH, not exact match.\n\n"
             "Set confidence to 'clear' if the level is obvious, or 'borderline' if "
-            "a targeted follow-up question would help disambiguate. If borderline, "
-            "provide a specific probe_question."
+            "a follow-up probe would help disambiguate."
         )),
         HumanMessage(content=f"Learner's response:\n{learner_response}"),
     ])
@@ -213,14 +236,19 @@ def probe_or_score(state: ExamState) -> dict:
     result = structured_llm.invoke([
         SystemMessage(content=(
             "You are an expert certification exam evaluator. The learner gave an initial "
-            "response and then answered a follow-up probe. Re-evaluate holistically.\n\n"
+            "response and then answered a follow-up probe. Re-evaluate holistically, "
+            "considering BOTH responses together.\n\n"
             f"## Item\n{item['stem']}\n\n"
-            f"## Model Answer\n{item['model_answer']}\n\n"
+            f"## Model Answer (reference — not the only correct approach)\n{item['model_answer']}\n\n"
             f"## Scoring Notes\n{item['scoring_notes']}\n\n"
             f"## Rubric Criteria\n{rubric_text}\n\n"
             f"## Original Response\n{original_response}\n\n"
             f"## Follow-up Probe\n{probe_question}\n\n"
-            "Score each criterion 1-3. Set confidence to 'clear' this time."
+            "Score 3 (expert) if the combined responses show deep knowledge, "
+            "2 (competent) if they show solid practical understanding, "
+            "1 (novice) only if fundamentally lacking. "
+            "Evaluate KNOWLEDGE DEPTH, not exact match to the model answer. "
+            "Set confidence to 'clear' this time."
         )),
         HumanMessage(content=f"Follow-up response:\n{follow_up}"),
     ])
