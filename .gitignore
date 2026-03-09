@@ -48,6 +48,9 @@ docs/
 # Project handoff (internal)
 HANDOFF.md
 
+# Transfer archives
+*.zip
+
 # Next.js
 frontend/.next/
 
