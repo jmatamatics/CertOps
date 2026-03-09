@@ -4,19 +4,45 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { ResultsView } from "@/components/results-view";
 import { GuidedTour } from "@/components/guided-tour";
 import { type ArtifactTabsHandle } from "@/components/artifact-tabs";
 import { getExportUrl } from "@/lib/api";
 import type { CertOpsOutput } from "@/lib/types";
 
-function buildTourSteps(tabsRef: React.RefObject<ArtifactTabsHandle | null>) {
+const EXEMPLARS = [
+  {
+    key: "ai_champion",
+    name: "AI Champion",
+    description:
+      "Copilot Studio agent creation, conversational design, integrations, and governance.",
+    file: "/data/certops_ai_champion_output.json",
+  },
+  {
+    key: "user",
+    name: "M365 Copilot User",
+    description:
+      "Copilot across Word, Excel, PowerPoint, Teams, and Outlook — productivity and prompting.",
+    file: "/data/certops_user_output.json",
+  },
+];
+
+function buildTourSteps(
+  tabsRef: React.RefObject<ArtifactTabsHandle | null>,
+  trackKey: string,
+) {
   return [
     {
       target: "[data-tour='summary-card']",
       title: "Program Summary",
       content:
-        "This card shows a high-level snapshot of the AI Champion certification: domains, skills, assessments, items, and estimated duration.",
+        "This card shows a high-level snapshot of the certification: domains, skills, assessments, items, and estimated duration.",
       placement: "bottom" as const,
     },
     {
@@ -52,25 +78,34 @@ function buildTourSteps(tabsRef: React.RefObject<ArtifactTabsHandle | null>) {
     },
     {
       target: "[data-tour='actions']",
-      title: "Export Your Report",
+      title: "View the Final Report",
       content:
-        "Click 'View Certification Report' to get a formatted HTML report you can share with stakeholders. Ready to build your own? Head back to the home page.",
+        "This is the finished product — a formatted HTML certification report ready to share with stakeholders. Let's open it now so you can see the final deliverable.",
       placement: "top" as const,
+      action: () => window.open(getExportUrl(trackKey), "_blank"),
     },
   ];
 }
 
 export default function ExemplarPage() {
   const router = useRouter();
+  const [selectedExemplar, setSelectedExemplar] = useState<
+    (typeof EXEMPLARS)[number] | null
+  >(null);
   const [data, setData] = useState<CertOpsOutput | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
+  const tourShownRef = useRef(false);
   const tabsRef = useRef<ArtifactTabsHandle | null>(null);
-  const tourSteps = buildTourSteps(tabsRef);
+  const tourSteps = buildTourSteps(
+    tabsRef,
+    selectedExemplar?.key ?? "ai_champion",
+  );
 
-  const loadExemplar = useCallback(async () => {
+  const loadExemplar = useCallback(async (file: string) => {
+    setLoading(true);
     try {
-      const res = await fetch("/data/certops_ai_champion_output.json");
+      const res = await fetch(file);
       if (!res.ok) throw new Error("Failed to load exemplar data");
       const json = await res.json();
       setData(json);
@@ -82,25 +117,90 @@ export default function ExemplarPage() {
   }, []);
 
   useEffect(() => {
-    loadExemplar();
-  }, [loadExemplar]);
+    if (selectedExemplar) {
+      tourShownRef.current = false;
+      loadExemplar(selectedExemplar.file);
+    }
+  }, [selectedExemplar, loadExemplar]);
 
   useEffect(() => {
-    if (data && !tourOpen) {
+    if (data && !tourShownRef.current) {
+      tourShownRef.current = true;
       const timer = setTimeout(() => setTourOpen(true), 800);
       return () => clearTimeout(timer);
     }
-  }, [data, tourOpen]);
+  }, [data]);
+
+  function handleSelect(exemplar: (typeof EXEMPLARS)[number]) {
+    setSelectedExemplar(exemplar);
+    setData(null);
+  }
+
+  if (!selectedExemplar) {
+    return (
+      <div className="min-h-screen px-4 py-8 md:px-8 max-w-3xl mx-auto">
+        <header className="mb-8">
+          <button
+            onClick={() => router.push("/")}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors mb-2 block"
+          >
+            &larr; Back to home
+          </button>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Explore Exemplar
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Choose a pre-built certification to explore with a guided
+            walkthrough.
+          </p>
+        </header>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+          className="grid gap-6 md:grid-cols-2"
+        >
+          {EXEMPLARS.map((exemplar, i) => (
+            <motion.div
+              key={exemplar.key}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 * i, duration: 0.4 }}
+            >
+              <Card
+                className="group cursor-pointer border-border/50 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
+                onClick={() => handleSelect(exemplar)}
+              >
+                <CardHeader className="space-y-3">
+                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                    {exemplar.name}
+                  </CardTitle>
+                  <CardDescription className="text-sm leading-relaxed">
+                    {exemplar.description}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen px-4 py-8 md:px-8 max-w-5xl mx-auto">
       <header className="mb-8">
         <div className="flex items-center justify-between">
           <button
-            onClick={() => router.push("/")}
+            onClick={() => {
+              setSelectedExemplar(null);
+              setData(null);
+              setTourOpen(false);
+            }}
             className="text-xs text-muted-foreground hover:text-foreground transition-colors mb-2 block"
           >
-            &larr; Back to home
+            &larr; Choose another exemplar
           </button>
           {data && (
             <Button
@@ -113,7 +213,9 @@ export default function ExemplarPage() {
             </Button>
           )}
         </div>
-        <h1 className="text-3xl font-bold tracking-tight">AI Champion</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {selectedExemplar.name}
+        </h1>
         <p className="text-sm text-muted-foreground mt-1">
           Exemplar certification program — explore every artifact with a guided
           walkthrough.
@@ -155,26 +257,20 @@ export default function ExemplarPage() {
               ref={tabsRef}
               data={data}
               readOnly
-              trackName="AI Champion"
+              trackName={selectedExemplar.name}
               actions={
-                <>
-                  <Button
-                    size="lg"
-                    onClick={() =>
-                      window.open(getExportUrl("ai_champion"), "_blank")
-                    }
-                    className="flex-1"
-                  >
-                    View Certification Report
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="lg"
-                    onClick={() => router.push("/create")}
-                  >
-                    Build Your Own
-                  </Button>
-                </>
+                <Button
+                  size="lg"
+                  onClick={() =>
+                    window.open(
+                      getExportUrl(selectedExemplar.key),
+                      "_blank",
+                    )
+                  }
+                  className="flex-1"
+                >
+                  View Certification Report
+                </Button>
               }
             />
           </motion.div>

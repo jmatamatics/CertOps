@@ -21,7 +21,7 @@ const MODES = [
     key: "exemplar",
     title: "Explore Exemplar",
     description:
-      "See a fully-built AI Champion certification with a guided walkthrough of every artifact.",
+      "Explore pre-built certification programs with a guided walkthrough of every artifact.",
     icon: GraduationCap,
     href: "/exemplar",
     disabled: false,
@@ -30,10 +30,10 @@ const MODES = [
     key: "create",
     title: "Build Your Own",
     description:
-      "Generate a custom certification package from scratch using RAG-powered AI agents.",
+      "Upload your own documents and links to generate a fully custom certification package.",
     icon: Hammer,
     href: "/create",
-    disabled: false,
+    disabled: true,
   },
   {
     key: "saved",
