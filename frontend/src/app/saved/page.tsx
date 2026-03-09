@@ -50,7 +50,7 @@ export default function SavedPage() {
         </button>
         <h1 className="text-3xl font-bold tracking-tight">Saved Programs</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Browse and manage your published certification programs.
+          Browse, view reports, and manage your saved certification programs.
         </p>
       </header>
 

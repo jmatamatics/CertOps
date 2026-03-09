@@ -40,9 +40,13 @@ notebooks/certops_kg.json
 
 # Internal notebooks (not for AIE9 submission)
 notebooks/04_human_in_the_loop.ipynb
+notebooks/06_procedural_memory.ipynb
 
 # Internal design docs (not yet public)
 docs/
+
+# Project handoff (internal)
+HANDOFF.md
 
 # Next.js
 frontend/.next/
