@@ -94,6 +94,11 @@ export function getExportUrl(trackKey: string): string {
   return `/data/certops_${trackKey}_report.html`;
 }
 
+export function getProgramReportUrl(programId: string, download = false): string {
+  const base = `${API_URL}/programs/${programId}/report`;
+  return download ? `${base}?download=true` : base;
+}
+
 // ── Programs CRUD ──
 
 export async function listPrograms(): Promise<SavedProgramSummary[]> {

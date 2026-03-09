@@ -106,10 +106,10 @@ def _extract_artifacts(state: dict, thread_id: str) -> dict:
     return {"thread_id": thread_id, **{k: state[k] for k in ARTIFACT_KEYS}}
 
 
-def _cache_artifacts(artifacts: dict, track: str) -> None:
-    track_key = REVERSE_TRACK_MAP.get(track)
-    if track_key:
-        cache_path = DATA_DIR / f"certops_{track_key}_output.json"
+def _cache_artifacts(artifacts: dict, track: str, cache_key: str | None = None) -> None:
+    key = cache_key or REVERSE_TRACK_MAP.get(track)
+    if key:
+        cache_path = DATA_DIR / f"certops_{key}_output.json"
         to_cache = {k: artifacts[k] for k in ARTIFACT_KEYS}
         cache_path.write_text(json.dumps(to_cache, indent=2))
 
@@ -163,7 +163,8 @@ def edit(req: EditRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
     artifacts = _extract_artifacts(result, req.thread_id)
-    _cache_artifacts(artifacts, result.get("track", ""))
+    track = result.get("track", "")
+    _cache_artifacts(artifacts, track, cache_key=None if REVERSE_TRACK_MAP.get(track) else req.thread_id)
     return EditResponse(**artifacts)
 
 
@@ -206,6 +207,7 @@ async def generate_custom(
         raise HTTPException(status_code=500, detail=str(e))
 
     artifacts = _extract_artifacts(result, thread_id)
+    _cache_artifacts(artifacts, name, cache_key=thread_id)
     return GenerateResponse(**artifacts)
 
 
@@ -353,6 +355,26 @@ def delete_program(program_id: str):
         path.unlink()
 
     return {"status": "deleted"}
+
+
+@app.get("/programs/{program_id}/report", response_class=HTMLResponse)
+def program_report(program_id: str, download: bool = False):
+    """Render an HTML certification report from a saved program's artifacts."""
+    raw = get_program(program_id)
+    artifacts = raw.get("artifacts", raw)
+    program_name = raw.get("name", "certification")
+    template = jinja_env.get_template("certification_report.html")
+    html = template.render(
+        data=artifacts,
+        generated_date=datetime.now().strftime("%B %d, %Y"),
+    )
+    if download:
+        safe_name = "".join(c if c.isalnum() or c in " -_" else "" for c in program_name).strip().replace(" ", "_")
+        return HTMLResponse(
+            content=html,
+            headers={"Content-Disposition": f'attachment; filename="{safe_name}_report.html"'},
+        )
+    return HTMLResponse(content=html)
 
 
 def _row_to_dict(row: dict) -> dict:

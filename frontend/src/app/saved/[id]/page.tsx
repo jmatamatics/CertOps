@@ -9,11 +9,10 @@ import { ResultsView } from "@/components/results-view";
 import { type ArtifactTabsHandle } from "@/components/artifact-tabs";
 import {
   getProgram,
-  updateProgram,
   deleteProgram,
-  getExportUrl,
+  getProgramReportUrl,
 } from "@/lib/api";
-import type { SavedProgram, ArtifactKey, CertOpsOutput } from "@/lib/types";
+import type { SavedProgram } from "@/lib/types";
 
 export default function SavedDetailPage() {
   const router = useRouter();
@@ -22,9 +21,7 @@ export default function SavedDetailPage() {
 
   const [program, setProgram] = useState<SavedProgram | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [dirty, setDirty] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const tabsRef = useRef<ArtifactTabsHandle | null>(null);
 
@@ -45,31 +42,6 @@ export default function SavedDetailPage() {
     load();
   }, [load]);
 
-  function handleEdit(artifactKey: ArtifactKey, updatedData: unknown) {
-    if (!program) return;
-    const updatedArtifacts = {
-      ...program.artifacts,
-      [artifactKey]: updatedData,
-    } as CertOpsOutput;
-    setProgram({ ...program, artifacts: updatedArtifacts });
-    setDirty(true);
-  }
-
-  async function handleSave() {
-    if (!program) return;
-    setSaving(true);
-    setError(null);
-    try {
-      const updated = await updateProgram(program.id, program.artifacts);
-      setProgram(updated);
-      setDirty(false);
-    } catch (err) {
-      setError(String(err));
-    } finally {
-      setSaving(false);
-    }
-  }
-
   async function handleDelete() {
     if (!program) return;
     try {
@@ -85,7 +57,7 @@ export default function SavedDetailPage() {
       ? "AI Champion"
       : program?.track_key === "user"
         ? "M365 Copilot User"
-        : program?.track_key ?? "";
+        : program?.name ?? program?.track_key ?? "";
 
   return (
     <div className="min-h-screen px-4 py-8 md:px-8 max-w-5xl mx-auto">
@@ -102,19 +74,14 @@ export default function SavedDetailPage() {
               <h1 className="text-3xl font-bold tracking-tight">
                 {program.name}
               </h1>
-              <div className="flex items-center gap-2">
-                {dirty && (
-                  <span className="text-xs text-amber-400">Unsaved changes</span>
-                )}
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="text-destructive hover:text-destructive"
-                  onClick={() => setConfirmDelete(true)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-destructive hover:text-destructive"
+                onClick={() => setConfirmDelete(true)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
             <p className="text-sm text-muted-foreground mt-1">
               {trackLabel} &middot; Created{" "}
@@ -195,29 +162,34 @@ export default function SavedDetailPage() {
             <ResultsView
               ref={tabsRef}
               data={program.artifacts}
-              onEdit={handleEdit}
+              readOnly
               trackName={trackLabel}
               actions={
                 <>
                   <Button
                     size="lg"
-                    onClick={handleSave}
-                    disabled={!dirty || saving}
+                    onClick={() =>
+                      window.open(
+                        getProgramReportUrl(program.id),
+                        "_blank",
+                      )
+                    }
                     className="flex-1"
                   >
-                    {saving ? "Saving..." : "Save Changes"}
+                    View Certification Report
                   </Button>
                   <Button
                     variant="outline"
                     size="lg"
                     onClick={() =>
                       window.open(
-                        getExportUrl(program.track_key),
+                        getProgramReportUrl(program.id, true),
                         "_blank",
                       )
                     }
+                    className="flex-1"
                   >
-                    View Report
+                    Download Report
                   </Button>
                 </>
               }

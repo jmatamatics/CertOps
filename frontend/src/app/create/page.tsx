@@ -11,7 +11,7 @@ import { PipelineProgress } from "@/components/pipeline-progress";
 import { ResultsView } from "@/components/results-view";
 import { GuidedTour } from "@/components/guided-tour";
 import { type ArtifactTabsHandle } from "@/components/artifact-tabs";
-import { generateCustom, editArtifact, saveProgram } from "@/lib/api";
+import { generateCustom, editArtifact, saveProgram, getExportUrl } from "@/lib/api";
 import type { CertOpsOutput, ArtifactKey } from "@/lib/types";
 
 type Status = "idle" | "generating" | "done" | "error" | "replaying" | "saving";
@@ -223,8 +223,8 @@ export default function CreatePage() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe the target audience and what this certification should cover..."
-              rows={3}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+              rows={4}
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-y min-h-[100px]"
             />
           </div>
 
@@ -489,6 +489,35 @@ export default function CreatePage() {
                     trackName={name}
                     actions={
                       <>
+                        {data.thread_id && (
+                          <>
+                            <Button
+                              size="lg"
+                              onClick={() =>
+                                window.open(
+                                  getExportUrl(data.thread_id!),
+                                  "_blank",
+                                )
+                              }
+                              className="flex-1"
+                            >
+                              View Certification Report
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="lg"
+                              onClick={() => {
+                                const a = document.createElement("a");
+                                a.href = getExportUrl(data.thread_id!);
+                                a.download = `${name.trim().replace(/\s+/g, "_")}_report.html`;
+                                a.click();
+                              }}
+                              className="flex-1"
+                            >
+                              Download Report
+                            </Button>
+                          </>
+                        )}
                         <Button
                           variant="outline"
                           size="lg"
