@@ -38,6 +38,9 @@ data/docs/*.md
 # Large build artifacts
 notebooks/certops_kg.json
 
+# Internal notebooks (not for AIE9 submission)
+notebooks/04_human_in_the_loop.ipynb
+
 # Internal design docs (not yet public)
 docs/
 
