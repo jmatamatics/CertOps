@@ -59,8 +59,19 @@ export default function AssessPage() {
 
   function applySnapshot(snapshot: ExamSnapshot) {
     setThreadId(snapshot.thread_id);
-    setMessages(snapshot.messages);
+
+    let msgs = [...snapshot.messages];
+    if (snapshot.interrupt?.content && snapshot.status === "awaiting_response") {
+      const alreadyShown = msgs.some(
+        (m) => m.role === "agent" && m.content === snapshot.interrupt!.content,
+      );
+      if (!alreadyShown) {
+        msgs = [...msgs, { role: "agent" as const, content: snapshot.interrupt.content }];
+      }
+    }
+    setMessages(msgs);
     setProgress(snapshot.progress);
+
     if (snapshot.status === "complete") {
       setResult(snapshot.result);
       setPhase("complete");
