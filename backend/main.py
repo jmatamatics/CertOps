@@ -5,13 +5,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from jinja2 import Environment, FileSystemLoader
 
 from backend.graph import graph, CertOpsState, PIPELINE_STEPS, ARTIFACT_TO_NODE, db_conn
+from backend.ingest import process_content
 
 app = FastAPI(title="CertOps API", version="2.0.0")
 
@@ -164,6 +165,48 @@ def edit(req: EditRequest):
     artifacts = _extract_artifacts(result, req.thread_id)
     _cache_artifacts(artifacts, result.get("track", ""))
     return EditResponse(**artifacts)
+
+
+@app.post("/generate-custom", response_model=GenerateResponse)
+async def generate_custom(
+    name: str = Form(...),
+    description: str = Form(...),
+    urls: str = Form("[]"),
+    files: list[UploadFile] = File(default=[]),
+):
+    url_list = json.loads(urls) if urls else []
+
+    file_contents: list[tuple[str, bytes]] = []
+    for f in files:
+        content = await f.read()
+        file_contents.append((f.filename or "upload", content))
+
+    chunks = process_content(url_list, file_contents)
+    if not chunks:
+        raise HTTPException(status_code=400, detail="No content could be extracted from the provided URLs or files.")
+
+    thread_id = str(uuid.uuid4())
+    config = {"configurable": {"thread_id": thread_id}}
+
+    initial_state: CertOpsState = {
+        "track": name,
+        "documents": chunks,
+        "tavily_context": description,
+        "competency_framework": None,
+        "learning_progression": None,
+        "assessments": None,
+        "rubrics": None,
+        "item_bank": None,
+        "blueprint": None,
+    }
+
+    try:
+        result = graph.invoke(initial_state, config=config)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    artifacts = _extract_artifacts(result, thread_id)
+    return GenerateResponse(**artifacts)
 
 
 @app.get("/export/{track_key}/html", response_class=HTMLResponse)

@@ -80,6 +80,9 @@ TRACK_DOMAIN_HINTS = {
 
 
 def retrieve_docs(state: CertOpsState) -> dict:
+    if state.get("documents") and len(state["documents"]) >= 3:
+        return {}
+
     query = f"{state['track']} certification competencies and skills"
     wide_retriever = vector_store.as_retriever(search_kwargs={"k": 20})
     compressor = CohereRerank(model="rerank-v3.5", top_n=5)

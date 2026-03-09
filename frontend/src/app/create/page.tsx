@@ -1,29 +1,20 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
+import { Plus, Trash2, Upload, FileText, Link, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { PipelineProgress } from "@/components/pipeline-progress";
 import { ResultsView } from "@/components/results-view";
 import { GuidedTour } from "@/components/guided-tour";
 import { type ArtifactTabsHandle } from "@/components/artifact-tabs";
-import {
-  fetchCached,
-  generateLive,
-  editArtifact,
-  getExportUrl,
-  saveProgram,
-} from "@/lib/api";
-import {
-  TRACKS,
-  type CertOpsOutput,
-  type TrackInfo,
-  type ArtifactKey,
-} from "@/lib/types";
+import { generateCustom, editArtifact, saveProgram } from "@/lib/api";
+import type { CertOpsOutput, ArtifactKey } from "@/lib/types";
 
-type Status = "idle" | "loading" | "generating" | "done" | "error" | "replaying" | "saving";
+type Status = "idle" | "generating" | "done" | "error" | "replaying" | "saving";
 
 function buildTourSteps(tabsRef: React.RefObject<ArtifactTabsHandle | null>) {
   return [
@@ -31,45 +22,28 @@ function buildTourSteps(tabsRef: React.RefObject<ArtifactTabsHandle | null>) {
       target: "[data-tour='summary-card']",
       title: "Program Summary",
       content:
-        "After generation, this card shows a high-level snapshot of your certification program: domains, skills, assessments, items, and estimated duration.",
+        "Your custom certification program has been generated from your uploaded content. Here's the high-level snapshot.",
       placement: "bottom" as const,
     },
     {
       target: "[data-tour='artifact-tabs']",
       title: "Explore Each Artifact",
       content:
-        "Your program is made up of 6 artifacts. Click any tab to dive into the details: competency framework, learning path, assessments, rubrics, item bank, and blueprint.",
+        "Six artifacts were generated from your content. Click any tab to dive into the details.",
       placement: "top" as const,
     },
     {
       target: "[data-tour='edit-button']",
       title: "Edit Any Artifact",
       content:
-        "See something you want to change? Click the Edit button on any tab. You don't need to regenerate the entire program — just edit the part you want. Let's try it.",
+        "See something you want to change? Click Edit, pick a section, and modify it through form fields. CertOps regenerates downstream artifacts automatically.",
       placement: "bottom" as const,
-      action: () => tabsRef.current?.openPicker("competency_framework"),
-    },
-    {
-      target: "[data-tour='section-picker']",
-      title: "Choose a Section",
-      content:
-        "Here's the drill-down picker. Each domain is shown as a separate card. Instead of scrolling through the entire framework, just click the section you want to edit.",
-      placement: "top" as const,
-      action: () => tabsRef.current?.selectSection("competency_framework", 1),
-    },
-    {
-      target: "[data-tour='form-editor']",
-      title: "Edit With Form Fields",
-      content:
-        "Change a domain name, update a skill description, or add a new behavioral indicator. When done, click 'Save & Replay' and CertOps regenerates all downstream artifacts automatically.",
-      placement: "top" as const,
-      action: () => tabsRef.current?.resetView(),
     },
     {
       target: "[data-tour='actions']",
-      title: "Export, Save, or Regenerate",
+      title: "Save Your Program",
       content:
-        "View a formatted report, save your program for later, or regenerate from scratch.",
+        "When you're happy with the results, save your program to access it later from the Saved Programs page.",
       placement: "top" as const,
     },
   ];
@@ -78,7 +52,10 @@ function buildTourSteps(tabsRef: React.RefObject<ArtifactTabsHandle | null>) {
 export default function CreatePage() {
   const router = useRouter();
 
-  const [selectedTrack, setSelectedTrack] = useState<TrackInfo | null>(null);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [urls, setUrls] = useState<string[]>([""]);
+  const [files, setFiles] = useState<File[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const [data, setData] = useState<CertOpsOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -89,28 +66,48 @@ export default function CreatePage() {
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const stepRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const tabsRef = useRef<ArtifactTabsHandle | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const tourSteps = buildTourSteps(tabsRef);
 
-  const loadCached = useCallback(async () => {
-    if (!selectedTrack) return;
-    setStatus("loading");
-    setError(null);
-    try {
-      const result = await fetchCached(selectedTrack.key);
-      setData(result);
-      setStatus("done");
-      setStep(7);
-    } catch {
-      setStatus("idle");
-    }
-  }, [selectedTrack]);
+  function addUrl() {
+    setUrls((prev) => [...prev, ""]);
+  }
 
-  useEffect(() => {
-    if (selectedTrack) loadCached();
-  }, [selectedTrack, loadCached]);
+  function removeUrl(index: number) {
+    setUrls((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function updateUrl(index: number, value: string) {
+    setUrls((prev) => prev.map((u, i) => (i === index ? value : u)));
+  }
+
+  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const selected = e.target.files;
+    if (!selected) return;
+    setFiles((prev) => [...prev, ...Array.from(selected)]);
+    e.target.value = "";
+  }
+
+  function removeFile(index: number) {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    const dropped = e.dataTransfer.files;
+    if (!dropped.length) return;
+    const accepted = Array.from(dropped).filter((f) => {
+      const ext = f.name.toLowerCase();
+      return ext.endsWith(".pdf") || ext.endsWith(".docx") || ext.endsWith(".txt");
+    });
+    setFiles((prev) => [...prev, ...accepted]);
+  }
+
+  const validUrls = urls.filter((u) => u.trim().length > 0);
+  const canSubmit = name.trim() && description.trim() && (validUrls.length > 0 || files.length > 0);
 
   function startGenerate() {
-    if (!selectedTrack) return;
+    if (!canSubmit) return;
     setStatus("generating");
     setError(null);
     setStep(0);
@@ -119,7 +116,7 @@ export default function CreatePage() {
       setStep((prev) => (prev < 6 ? prev + 1 : prev));
     }, 12000);
 
-    generateLive(selectedTrack.name)
+    generateCustom(name.trim(), description.trim(), validUrls, files)
       .then((result) => {
         if (stepRef.current) clearInterval(stepRef.current);
         setData(result);
@@ -135,13 +132,11 @@ export default function CreatePage() {
 
   function handleEdit(artifactKey: ArtifactKey, updatedData: unknown) {
     if (!data?.thread_id) {
-      setError("No active session. Generate a certification first.");
+      setError("No active session.");
       return;
     }
-
     setStatus("replaying");
     setError(null);
-
     editArtifact(data.thread_id, artifactKey, updatedData)
       .then((result) => {
         setData(result);
@@ -154,11 +149,11 @@ export default function CreatePage() {
   }
 
   async function handleSave() {
-    if (!selectedTrack || !data) return;
-    const name = saveName.trim() || `${selectedTrack.name} — ${new Date().toLocaleDateString()}`;
+    if (!data) return;
+    const programName = saveName.trim() || `${name} — ${new Date().toLocaleDateString()}`;
     setStatus("saving");
     try {
-      const saved = await saveProgram(name, selectedTrack.key, data);
+      const saved = await saveProgram(programName, "custom", data);
       setSaveDialogOpen(false);
       setSaveName("");
       setSaveSuccess(saved.id);
@@ -169,73 +164,17 @@ export default function CreatePage() {
     }
   }
 
-  const showResults = (status === "done" || (status === "idle" && data)) && data;
-
-  if (!selectedTrack) {
-    return (
-      <div className="min-h-screen px-4 py-8 md:px-8 max-w-3xl mx-auto">
-        <header className="mb-8">
-          <button
-            onClick={() => router.push("/")}
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors mb-2 block"
-          >
-            &larr; Back to home
-          </button>
-          <h1 className="text-3xl font-bold tracking-tight">Build Your Own</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Select a certification track to generate a complete package.
-          </p>
-        </header>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.4 }}
-          className="grid gap-6 md:grid-cols-2"
-        >
-          {TRACKS.map((track, i) => (
-            <motion.div
-              key={track.key}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * i, duration: 0.4 }}
-            >
-              <Card
-                className="group cursor-pointer border-border/50 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
-                onClick={() => setSelectedTrack(track)}
-              >
-                <CardHeader className="space-y-3">
-                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                    {track.name}
-                  </CardTitle>
-                  <CardDescription className="text-sm leading-relaxed">
-                    {track.description}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    );
-  }
+  const showResults = (status === "done" || status === "error") && data;
 
   return (
     <div className="min-h-screen px-4 py-8 md:px-8 max-w-5xl mx-auto">
       <header className="mb-8">
         <div className="flex items-center justify-between">
           <button
-            onClick={() => {
-              setSelectedTrack(null);
-              setData(null);
-              setStatus("idle");
-              setStep(0);
-              setError(null);
-              setSaveSuccess(null);
-            }}
+            onClick={() => router.push("/")}
             className="text-xs text-muted-foreground hover:text-foreground transition-colors mb-2 block"
           >
-            &larr; Change track
+            &larr; Back to home
           </button>
           {showResults && (
             <Button
@@ -248,219 +187,341 @@ export default function CreatePage() {
             </Button>
           )}
         </div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {selectedTrack.name}
-        </h1>
+        <h1 className="text-3xl font-bold tracking-tight">Build Your Own</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          {selectedTrack.description}
+          Provide your source material and CertOps will generate a complete
+          certification package.
         </p>
       </header>
 
-      <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
-        <aside>
-          <PipelineProgress
-            currentStep={step}
-            isComplete={status === "done"}
-            isError={status === "error"}
-          />
-          {error && <p className="mt-4 text-xs text-destructive">{error}</p>}
-        </aside>
+      {!data && status !== "generating" && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-6 max-w-2xl"
+        >
+          {/* Program Name */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">
+              Program Name <span className="text-destructive">*</span>
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g., Azure AI Engineer Certification"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
 
-        <main>
-          <AnimatePresence mode="wait">
-            {status === "loading" && (
-              <motion.div
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex items-center justify-center py-20"
+          {/* Description */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">
+              Description <span className="text-destructive">*</span>
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Describe the target audience and what this certification should cover..."
+              rows={3}
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+            />
+          </div>
+
+          <Separator />
+
+          {/* URLs */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium flex items-center gap-2">
+                <Link className="h-4 w-4 text-muted-foreground" />
+                Source URLs
+              </label>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={addUrl}
+                className="text-xs"
               >
-                <p className="text-sm text-muted-foreground animate-pulse">
-                  Loading cached results...
-                </p>
-              </motion.div>
-            )}
-
-            {status === "idle" && !data && (
-              <motion.div
-                key="idle"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col items-center justify-center gap-4 py-20"
-              >
-                <p className="text-sm text-muted-foreground">
-                  No cached results available.
-                </p>
-                <Button onClick={startGenerate}>Generate Certification</Button>
-              </motion.div>
-            )}
-
-            {status === "generating" && (
-              <motion.div
-                key="generating"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex items-center justify-center py-20"
-              >
-                <div className="text-center space-y-2">
-                  <AnimatePresence mode="wait">
-                    <motion.p
-                      key={step}
-                      initial={{ opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -4 }}
-                      transition={{ duration: 0.25 }}
-                      className="text-sm font-medium"
-                    >
-                      {[
-                        "Retrieving relevant documentation from Qdrant...",
-                        "Reranking results with Cohere...",
-                        "Generating competency framework...",
-                        "Building learning progression...",
-                        "Designing assessment tasks...",
-                        "Creating scoring rubrics...",
-                        "Assembling item bank and blueprint...",
-                      ][step] ?? "Finishing up..."}
-                    </motion.p>
-                  </AnimatePresence>
-                  <p className="text-xs text-muted-foreground">
-                    This takes 60-90 seconds. Each step uses GPT-4o with
-                    structured output.
-                  </p>
-                </div>
-              </motion.div>
-            )}
-
-            {status === "replaying" && (
-              <motion.div
-                key="replaying"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex items-center justify-center py-20"
-              >
-                <div className="text-center space-y-2">
-                  <p className="text-sm font-medium animate-pulse">
-                    Replaying downstream artifacts...
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Only the affected artifacts are regenerating. This is faster
-                    than a full run.
-                  </p>
-                </div>
-              </motion.div>
-            )}
-
-            {status === "saving" && (
-              <motion.div
-                key="saving"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex items-center justify-center py-20"
-              >
-                <p className="text-sm text-muted-foreground animate-pulse">
-                  Saving program...
-                </p>
-              </motion.div>
-            )}
-
-            {showResults && (
-              <motion.div key="done">
-                {saveSuccess && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-400 flex items-center justify-between"
-                  >
-                    <span>Program saved successfully!</span>
+                <Plus className="h-3 w-3 mr-1" /> Add URL
+              </Button>
+            </div>
+            <div className="space-y-2">
+              {urls.map((url, i) => (
+                <div key={i} className="flex gap-2">
+                  <input
+                    type="url"
+                    value={url}
+                    onChange={(e) => updateUrl(i, e.target.value)}
+                    placeholder="https://learn.microsoft.com/..."
+                    className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                  {urls.length > 1 && (
                     <Button
                       size="sm"
                       variant="ghost"
-                      className="text-xs text-green-400 hover:text-green-300"
-                      onClick={() => router.push(`/saved/${saveSuccess}`)}
+                      onClick={() => removeUrl(i)}
+                      className="text-muted-foreground hover:text-destructive px-2"
                     >
-                      View in Saved Programs
+                      <Trash2 className="h-4 w-4" />
                     </Button>
-                  </motion.div>
-                )}
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
 
-                {saveDialogOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mb-4 rounded-lg border border-border bg-card px-4 py-4 space-y-3"
+          {/* File Upload */}
+          <div className="space-y-3">
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Upload className="h-4 w-4 text-muted-foreground" />
+              Upload Files
+              <span className="text-xs text-muted-foreground font-normal">
+                (PDF, DOCX)
+              </span>
+            </label>
+            <div
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className="border-2 border-dashed border-border rounded-lg p-8 text-center cursor-pointer transition-colors hover:border-primary/50 hover:bg-primary/5"
+            >
+              <Upload className="h-8 w-8 text-muted-foreground/50 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">
+                Drag and drop files here, or click to browse
+              </p>
+              <p className="text-xs text-muted-foreground/60 mt-1">
+                Accepts PDF, DOCX, and TXT files
+              </p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept=".pdf,.docx,.txt"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+            </div>
+
+            {files.length > 0 && (
+              <div className="space-y-1">
+                {files.map((file, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between rounded-md border border-border px-3 py-2 text-sm"
                   >
-                    <h4 className="text-sm font-medium">Save Program</h4>
-                    <input
-                      type="text"
-                      placeholder={`${selectedTrack.name} — ${new Date().toLocaleDateString()}`}
-                      value={saveName}
-                      onChange={(e) => setSaveName(e.target.value)}
-                      className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                    />
-                    <div className="flex gap-2 justify-end">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <span className="truncate">{file.name}</span>
+                      <span className="text-xs text-muted-foreground shrink-0">
+                        ({(file.size / 1024).toFixed(0)} KB)
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => removeFile(i)}
+                      className="text-muted-foreground hover:text-destructive ml-2 shrink-0"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <Separator />
+
+          {error && <p className="text-xs text-destructive">{error}</p>}
+
+          <Button
+            size="lg"
+            onClick={startGenerate}
+            disabled={!canSubmit}
+            className="w-full"
+          >
+            Generate Certification
+          </Button>
+
+          {!canSubmit && name.trim() && description.trim() && (
+            <p className="text-xs text-muted-foreground text-center">
+              Add at least one URL or upload a file to continue.
+            </p>
+          )}
+        </motion.div>
+      )}
+
+      {(status === "generating" || (data && status !== "idle")) && (
+        <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
+          <aside>
+            <PipelineProgress
+              currentStep={step}
+              isComplete={status === "done"}
+              isError={status === "error"}
+            />
+            {error && <p className="mt-4 text-xs text-destructive">{error}</p>}
+          </aside>
+
+          <main>
+            <AnimatePresence mode="wait">
+              {status === "generating" && (
+                <motion.div
+                  key="generating"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex items-center justify-center py-20"
+                >
+                  <div className="text-center space-y-2">
+                    <AnimatePresence mode="wait">
+                      <motion.p
+                        key={step}
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{ duration: 0.25 }}
+                        className="text-sm font-medium"
+                      >
+                        {[
+                          "Processing your uploaded content...",
+                          "Extracting key topics and themes...",
+                          "Generating competency framework...",
+                          "Building learning progression...",
+                          "Designing assessment tasks...",
+                          "Creating scoring rubrics...",
+                          "Assembling item bank and blueprint...",
+                        ][step] ?? "Finishing up..."}
+                      </motion.p>
+                    </AnimatePresence>
+                    <p className="text-xs text-muted-foreground">
+                      This takes 60-90 seconds. Each step uses GPT-4o with
+                      structured output.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+
+              {status === "replaying" && (
+                <motion.div
+                  key="replaying"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex items-center justify-center py-20"
+                >
+                  <div className="text-center space-y-2">
+                    <p className="text-sm font-medium animate-pulse">
+                      Replaying downstream artifacts...
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Only the affected artifacts are regenerating.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+
+              {status === "saving" && (
+                <motion.div
+                  key="saving"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex items-center justify-center py-20"
+                >
+                  <p className="text-sm text-muted-foreground animate-pulse">
+                    Saving program...
+                  </p>
+                </motion.div>
+              )}
+
+              {showResults && (
+                <motion.div key="done">
+                  {saveSuccess && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-400 flex items-center justify-between"
+                    >
+                      <span>Program saved successfully!</span>
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => setSaveDialogOpen(false)}
+                        className="text-xs text-green-400 hover:text-green-300"
+                        onClick={() => router.push(`/saved/${saveSuccess}`)}
                       >
-                        Cancel
+                        View in Saved Programs
                       </Button>
-                      <Button size="sm" onClick={handleSave}>
-                        Save
-                      </Button>
-                    </div>
-                  </motion.div>
-                )}
+                    </motion.div>
+                  )}
 
-                <ResultsView
-                  ref={tabsRef}
-                  data={data}
-                  onEdit={data.thread_id ? handleEdit : undefined}
-                  trackName={selectedTrack.name}
-                  actions={
-                    <>
-                      <Button
-                        size="lg"
-                        onClick={() =>
-                          window.open(
-                            getExportUrl(selectedTrack.key),
-                            "_blank",
-                          )
-                        }
-                        className="flex-1"
-                      >
-                        View Certification Report
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        onClick={() => {
-                          setSaveDialogOpen(true);
-                          setSaveSuccess(null);
-                        }}
-                      >
-                        Save Program
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="lg"
-                        onClick={startGenerate}
-                      >
-                        Regenerate
-                      </Button>
-                    </>
-                  }
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </main>
-      </div>
+                  {saveDialogOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-4 rounded-lg border border-border bg-card px-4 py-4 space-y-3"
+                    >
+                      <h4 className="text-sm font-medium">Save Program</h4>
+                      <input
+                        type="text"
+                        placeholder={`${name} — ${new Date().toLocaleDateString()}`}
+                        value={saveName}
+                        onChange={(e) => setSaveName(e.target.value)}
+                        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <div className="flex gap-2 justify-end">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setSaveDialogOpen(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button size="sm" onClick={handleSave}>
+                          Save
+                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  <ResultsView
+                    ref={tabsRef}
+                    data={data}
+                    onEdit={data.thread_id ? handleEdit : undefined}
+                    trackName={name}
+                    actions={
+                      <>
+                        <Button
+                          variant="outline"
+                          size="lg"
+                          onClick={() => {
+                            setSaveDialogOpen(true);
+                            setSaveSuccess(null);
+                          }}
+                          className="flex-1"
+                        >
+                          Save Program
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="lg"
+                          onClick={() => {
+                            setData(null);
+                            setStatus("idle");
+                            setStep(0);
+                            setError(null);
+                            setSaveSuccess(null);
+                          }}
+                        >
+                          Start Over
+                        </Button>
+                      </>
+                    }
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </main>
+        </div>
+      )}
 
       <GuidedTour
         steps={tourSteps}

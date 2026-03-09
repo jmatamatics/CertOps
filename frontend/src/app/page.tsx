@@ -33,7 +33,7 @@ const MODES = [
       "Upload your own documents and links to generate a fully custom certification package.",
     icon: Hammer,
     href: "/create",
-    disabled: true,
+    disabled: false,
   },
   {
     key: "saved",

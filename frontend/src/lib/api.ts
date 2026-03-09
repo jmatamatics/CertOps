@@ -62,6 +62,33 @@ export async function editArtifact(
   return res.json();
 }
 
+export async function generateCustom(
+  name: string,
+  description: string,
+  urls: string[],
+  files: File[],
+): Promise<CertOpsOutput> {
+  if (!API_URL) throw new Error("Backend not configured. Set NEXT_PUBLIC_API_URL.");
+
+  const form = new FormData();
+  form.append("name", name);
+  form.append("description", description);
+  form.append("urls", JSON.stringify(urls));
+  for (const file of files) {
+    form.append("files", file);
+  }
+
+  const res = await fetch(`${API_URL}/generate-custom`, {
+    method: "POST",
+    body: form,
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
 export function getExportUrl(trackKey: string): string {
   if (API_URL) return `${API_URL}/export/${trackKey}/html`;
   return `/data/certops_${trackKey}_report.html`;
