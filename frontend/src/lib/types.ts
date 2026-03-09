@@ -139,3 +139,39 @@ export interface SavedProgram {
   created_at: string;
   updated_at: string;
 }
+
+// ── Adaptive Exam ──
+
+export interface DomainProficiency {
+  score: number;
+  items_count: number;
+  level: string;
+}
+
+export interface ExamProgress {
+  items_completed: number;
+  total_items: number;
+  domain_proficiency: Record<string, DomainProficiency>;
+}
+
+export interface ExamMessage {
+  role: "agent" | "learner";
+  content: string;
+}
+
+export interface ExamResult {
+  passed: boolean;
+  overall_score: number;
+  domain_breakdown: Record<string, DomainProficiency>;
+  summary: string;
+  recommendation: string;
+}
+
+export interface ExamSnapshot {
+  thread_id: string;
+  status: "awaiting_response" | "complete" | "processing";
+  interrupt: { type: string; content: string; [key: string]: unknown } | null;
+  messages: ExamMessage[];
+  progress: ExamProgress;
+  result: ExamResult | null;
+}

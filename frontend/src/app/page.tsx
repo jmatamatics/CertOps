@@ -39,7 +39,7 @@ const MODES = [
     key: "saved",
     title: "Saved Programs",
     description:
-      "Browse, edit, and manage your published certification programs.",
+      "Browse, view reports, and manage your saved certification programs.",
     icon: FolderOpen,
     href: "/saved",
     disabled: false,
@@ -51,7 +51,7 @@ const MODES = [
       "AI-driven adaptive certification assessments powered by a second LangGraph agent.",
     icon: BrainCircuit,
     href: "/assess",
-    disabled: true,
+    disabled: false,
   },
 ];
 

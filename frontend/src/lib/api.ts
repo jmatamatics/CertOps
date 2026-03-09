@@ -160,3 +160,51 @@ export async function deleteProgram(id: string): Promise<void> {
   const res = await fetch(`${API_URL}/programs/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error("Failed to delete program");
 }
+
+// ── Adaptive Exam ──
+
+import type { ExamSnapshot } from "./types";
+
+export async function startExam(
+  programId: string,
+  learnerId: string,
+): Promise<ExamSnapshot> {
+  if (!API_URL) throw new Error("Backend not configured.");
+
+  const res = await fetch(`${API_URL}/exam/start`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ program_id: programId, learner_id: learnerId }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
+export async function respondExam(
+  threadId: string,
+  message: string,
+): Promise<ExamSnapshot> {
+  if (!API_URL) throw new Error("Backend not configured.");
+
+  const res = await fetch(`${API_URL}/exam/respond`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ thread_id: threadId, message }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
+export async function getExamStatus(threadId: string): Promise<ExamSnapshot> {
+  if (!API_URL) throw new Error("Backend not configured.");
+
+  const res = await fetch(`${API_URL}/exam/status/${threadId}`);
+  if (!res.ok) throw new Error("Exam session not found");
+  return res.json();
+}

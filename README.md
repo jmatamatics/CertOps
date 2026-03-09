@@ -23,7 +23,7 @@ CertOps is an agentic RAG application built with LangGraph. It offers four modes
 1. **Explore Exemplar** — Browse pre-built certifications (AI Champion, M365 Copilot User) with an interactive guided tour that walks through every artifact
 2. **Build Your Own** — Upload URLs, PDFs, or DOCX files and CertOps generates a complete certification package from your content. Edit any artifact with form-based editors and LangGraph replays downstream artifacts automatically (Express Mode).
 3. **Saved Programs** — Browse, view, download HTML reports, and manage previously generated certifications. Saved artifacts are pipeline-validated and internally consistent.
-4. **Adaptive Exam** *(Coming Soon)* — A second LangGraph agent that delivers adaptive assessments using the generated item banks and rubrics.
+4. **Adaptive Exam** — A second LangGraph agent that delivers adaptive assessments. It loads a saved program's item bank and rubrics, adaptively selects items across domains, evaluates free-text responses conversationally using LLM-as-judge, and determines pass/fail with per-domain proficiency tracking.
 
 The generation pipeline:
 
@@ -95,7 +95,7 @@ flowchart TB
 | Component | Choice | Why |
 |-----------|--------|-----|
 | **LLM** | OpenAI GPT-4o | Best-in-class structured output via `with_structured_output()` |
-| **Orchestration** | LangGraph | Stateful graph with checkpointing enables Express Mode editing and selective replay |
+| **Orchestration** | LangGraph (2 agents) | Builder graph for certification generation + Adaptive Exam agent with `interrupt()` for conversational assessment |
 | **Embeddings** | OpenAI text-embedding-3-small | High quality at low cost; 1536-dim vectors |
 | **Vector DB** | Qdrant Cloud | Production-grade managed vector DB with metadata filtering |
 | **Retriever** | Cohere Rerank v3.5 | Winner from RAGAS evaluation — retrieve top 20, rerank to top 5 |
@@ -104,7 +104,7 @@ flowchart TB
 | **Monitoring** | LangSmith | Full tracing of every LLM call, retrieval, and tool use |
 | **Evaluation** | RAGAS | Measures faithfulness, context precision, and context recall |
 | **Frontend** | Next.js 16 + React 19 + Tailwind + shadcn/ui + Motion | Polished dashboard with animated pipeline progress and guided tour |
-| **Backend** | FastAPI + Jinja2 | Python API with HTML report rendering and programs CRUD |
+| **Backend** | FastAPI + Jinja2 | Python API with HTML report rendering, programs CRUD, and adaptive exam endpoints |
 | **Deployment** | Vercel (frontend) + Render (backend + PostgreSQL) | Auto-deploy from GitHub |
 | **Dependencies** | uv | Fast, reproducible Python dependency management |
 
@@ -163,7 +163,7 @@ This approach gives architects the full picture before making changes, avoids de
 
 ## Portfolio Notebooks
 
-The `notebooks/` directory contains four notebooks that walk through the full engineering process:
+The `notebooks/` directory contains five notebooks that walk through the full engineering process:
 
 | Notebook | What It Covers |
 |----------|---------------|
@@ -171,6 +171,7 @@ The `notebooks/` directory contains four notebooks that walk through the full en
 | **02_retrieval_evaluation** | Synthetic test set generation (RAGAS SDG), baseline retriever evaluation, Cohere reranker, domain-filtered retriever, full RAGAS comparison table |
 | **03_certification_engine** | Pydantic schemas, LangGraph node definitions, complete `StateGraph` pipeline, end-to-end runs for both tracks |
 | **04_express_mode** | LangGraph checkpointing with `MemorySaver`, full pipeline without pauses, selective editing via `update_state()`, downstream replay, comparison of original vs. edited artifacts — the pattern used in production |
+| **05_adaptive_exam** | Second LangGraph agent for adaptive assessment — `interrupt()` for learner input, LLM-as-judge evaluation against rubrics, conversational probing, per-domain proficiency tracking, pass/fail determination |
 
 ## Quickstart
 
@@ -217,7 +218,7 @@ Open [http://localhost:3000](http://localhost:3000) to access the four-mode land
 # Launch Jupyter
 uv run jupyter notebook
 
-# Open notebooks/ and run 01 → 02 → 03 → 04 in order
+# Open notebooks/ and run 01 → 02 → 03 → 04 → 05 in order
 ```
 
 ## Deployment
@@ -245,8 +246,10 @@ The frontend auto-deploys from `main` via Vercel (root directory: `frontend`). T
 CertOps/
 ├── backend/                  # FastAPI application
 │   ├── graph.py              # LangGraph pipeline (7 nodes) + PostgresSaver checkpointer
-│   ├── main.py               # API endpoints, programs CRUD, HTML export
-│   ├── schemas.py            # Pydantic models for all artifacts
+│   ├── main.py               # API endpoints, programs CRUD, HTML export, exam endpoints
+│   ├── schemas.py            # Pydantic models for certification artifacts
+│   ├── exam_schemas.py       # Pydantic models and state for the adaptive exam
+│   ├── exam_graph.py         # Adaptive exam LangGraph (7 nodes)
 │   ├── ingest.py             # URL fetching, PDF/DOCX parsing, text chunking
 │   └── templates/
 │       └── certification_report.html
@@ -264,44 +267,75 @@ CertOps/
 │   ├── 01_data_pipeline.ipynb
 │   ├── 02_retrieval_evaluation.ipynb
 │   ├── 03_certification_engine.ipynb
-│   └── 04_express_mode.ipynb
+│   ├── 04_express_mode.ipynb
+│   └── 05_adaptive_exam.ipynb
 ├── Dockerfile
 ├── docker-compose.yml        # Local Qdrant
 ├── pyproject.toml
 └── uv.lock
 ```
 
-## Future Work: Adaptive Assessment Engine (Phase 3)
+## Adaptive Exam Engine
 
-The fourth card on the CertOps landing page — **Adaptive Exam** — is a placeholder for a second LangGraph agent that will consume the saved certification artifacts to deliver adaptive assessments in real time.
+The fourth mode on the CertOps landing page — **Adaptive Exam** — is a second LangGraph agent that consumes saved program artifacts to deliver adaptive certification assessments.
 
-### Planned Architecture
+### Architecture
 
 ```mermaid
-flowchart LR
-    subgraph CertOps ["CertOps Builder (Current)"]
-        Pipeline["LangGraph Pipeline"]
-        DB[("Saved Programs<br/>PostgreSQL")]
-        Pipeline --> DB
+flowchart TB
+    subgraph frontend ["Frontend — Vercel"]
+        ExamUI["Exam Chat Interface"]
     end
 
-    subgraph AdaptiveEngine ["Adaptive Assessment Engine (Phase 3)"]
-        Selector["Item Selector"]
-        Evaluator["LLM-as-Judge<br/>Evaluator"]
-        Profiler["Learner Profiler"]
-        Selector --> Evaluator --> Profiler --> Selector
+    subgraph examAgent ["Adaptive Exam Agent"]
+        LoadProgram["load_program"]
+        SelectItem["select_item"]
+        PresentItem["present_item"]
+        EvalResponse["evaluate_response"]
+        ProbeOrScore["probe_or_score"]
+        UpdateProf["update_proficiency"]
+        FinalResult["determine_result"]
     end
 
-    DB -->|"Item Bank + Rubrics +<br/>Model Answers"| Selector
-    Profiler -->|"Session State"| Store[("LangGraph Store<br/>Learner Profiles")]
+    subgraph storage ["Storage"]
+        Programs[("Programs Table<br/>Render PostgreSQL")]
+        Checkpointer["PostgresSaver<br/>Session State"]
+        Learners["learner_profiles table"]
+    end
+
+    ExamUI -->|"Start / respond"| examAgent
+    LoadProgram --> Programs
+    EvalResponse --> ProbeOrScore
+    examAgent --> Checkpointer
+    FinalResult --> Learners
+    LoadProgram --> SelectItem --> PresentItem
+    PresentItem -->|"learner responds"| EvalResponse
+    EvalResponse -->|"clear"| UpdateProf
+    ProbeOrScore --> UpdateProf
+    UpdateProf -->|"more items"| SelectItem
+    UpdateProf -->|"done"| FinalResult
 ```
 
 **How it works:**
 
-1. **Item Selection** — The engine loads the item bank from a saved program and selects an initial question based on the learner's current estimated proficiency level.
-2. **Response Evaluation** — Free-text learner responses are evaluated against the rubrics and model answers using an LLM-as-judge pattern. The rubric's weighted criteria provide consistent, explainable scoring.
-3. **Adaptive Routing** — Based on the evaluation, the engine updates the learner's proficiency estimate and selects the next item. High performers get harder items; struggling learners get scaffolded questions targeting their weakest domains.
-4. **Session Persistence** — LangGraph checkpointing manages in-session state. Long-term learner profiles persist in a LangGraph Store keyed by user ID, enabling the system to resume across sessions.
-5. **Copilot Studio Integration** — The adaptive engine is designed as the backend for a future Copilot Studio agent, bringing the assessment experience into Microsoft Teams where learners already work.
+1. **Load & Prepare** — `load_program` enriches each item with a difficulty estimate based on `task_type` (performance > scenario > analysis) and builds a domain → rubric mapping.
+2. **Adaptive Selection** — `select_item` prioritises untested domains first, then weak domains (score < 2.0), choosing items at the appropriate difficulty.
+3. **Conversational Presentation** — `present_item` formats the question and uses `interrupt()` to pause the graph, waiting for the learner's free-text response.
+4. **LLM-as-Judge Evaluation** — `evaluate_response` scores the response against rubric criteria (novice/competent/expert) with structured output. If the score is borderline, it routes to `probe_or_score` for a targeted follow-up.
+5. **Proficiency Tracking** — `update_proficiency` maintains a running weighted average per domain. Conditional routing loops back for more items or exits to `determine_result`.
+6. **Pass/Fail** — `determine_result` checks that all domains meet the competent threshold (2.0) and generates a narrative summary with recommendations.
 
-All the structured artifacts CertOps already generates — item bank with model answers, rubrics with weighted criteria, proficiency levels with behavioral indicators — serve as the evaluation backbone for this engine.
+### API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/exam/start` | Start a new exam (program_id, learner_id) → thread_id + first question |
+| POST | `/exam/respond` | Submit a response → evaluation + next question or probe |
+| GET | `/exam/status/{thread_id}` | Current exam state and progress |
+| GET | `/learners/{learner_id}/history` | Past exam attempts |
+
+## Future Work
+
+- **Copilot Studio Integration** — Expose the adaptive exam as a backend for a Copilot Studio agent in Microsoft Teams.
+- **Cron-based Retrieval Testing** — Scheduled jobs to re-evaluate retrieval quality as the document corpus grows.
+- **LangGraph Cloud Migration** — Swap `PostgresSaver` for LangGraph Cloud for managed hosting and cron support; the `BaseStore` interface is the same.

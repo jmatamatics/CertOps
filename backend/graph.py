@@ -313,6 +313,19 @@ if DATABASE_URL and PostgresSaver is not None:
                     updated_at TIMESTAMPTZ DEFAULT NOW()
                 );
             """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS learner_profiles (
+                    learner_id TEXT NOT NULL,
+                    program_id TEXT NOT NULL,
+                    thread_id TEXT NOT NULL,
+                    passed BOOLEAN,
+                    overall_score REAL,
+                    domain_breakdown JSONB,
+                    summary TEXT,
+                    created_at TIMESTAMPTZ DEFAULT NOW(),
+                    PRIMARY KEY (learner_id, program_id, created_at)
+                );
+            """)
         print("Checkpointer: PostgresSaver (persistent)")
     except Exception as e:
         print(f"PostgreSQL connection failed, using MemorySaver: {e}")

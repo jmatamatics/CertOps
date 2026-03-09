@@ -11,7 +11,10 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from jinja2 import Environment, FileSystemLoader
 
+from langgraph.types import Command
+
 from backend.graph import graph, CertOpsState, PIPELINE_STEPS, ARTIFACT_TO_NODE, db_conn
+from backend.exam_graph import exam_graph
 from backend.ingest import process_content
 
 app = FastAPI(title="CertOps API", version="2.0.0")
@@ -387,3 +390,162 @@ def _row_to_dict(row: dict) -> dict:
         if val and not isinstance(val, str):
             result[key] = val.isoformat()
     return result
+
+
+# ── Adaptive Exam ──
+
+class ExamStartRequest(BaseModel):
+    program_id: str
+    learner_id: str
+
+
+class ExamRespondRequest(BaseModel):
+    thread_id: str
+    message: str
+
+
+def _exam_snapshot(config: dict) -> dict:
+    """Read the exam graph state and return a serialisable response."""
+    state_snapshot = exam_graph.get_state(config)
+    values = state_snapshot.values
+    is_waiting = bool(state_snapshot.next)
+
+    interrupt_value = None
+    if is_waiting and state_snapshot.tasks:
+        for task in state_snapshot.tasks:
+            if hasattr(task, "interrupts") and task.interrupts:
+                interrupt_value = task.interrupts[0].value
+                break
+
+    return {
+        "thread_id": config["configurable"]["thread_id"],
+        "status": "awaiting_response" if is_waiting else ("complete" if values.get("exam_complete") else "processing"),
+        "interrupt": interrupt_value,
+        "messages": values.get("messages", []),
+        "progress": {
+            "items_completed": len(values.get("items_administered", [])),
+            "total_items": len(values.get("items_administered", [])) + len(values.get("items_remaining", [])) + (1 if values.get("current_item") else 0),
+            "domain_proficiency": values.get("domain_proficiency", {}),
+        },
+        "result": values.get("result_summary") if values.get("exam_complete") else None,
+    }
+
+
+@app.post("/exam/start")
+def exam_start(req: ExamStartRequest):
+    """Start a new adaptive exam session."""
+    raw = get_program(req.program_id)
+    artifacts = raw.get("artifacts", raw)
+
+    thread_id = str(uuid.uuid4())
+    config = {"configurable": {"thread_id": thread_id}}
+
+    initial_state = {
+        "program_id": req.program_id,
+        "learner_id": req.learner_id,
+        "program_name": raw.get("name", "Certification Exam"),
+        "item_bank": artifacts.get("item_bank", []),
+        "rubrics": artifacts.get("rubrics", []),
+        "framework": artifacts.get("competency_framework", {}),
+        "assessments": artifacts.get("assessments", []),
+        "items_remaining": [],
+        "domain_rubrics": {},
+        "current_item": None,
+        "current_domain": "",
+        "current_evaluation": None,
+        "probed": False,
+        "messages": [],
+        "items_administered": [],
+        "domain_proficiency": {},
+        "exam_complete": False,
+        "passed": None,
+        "result_summary": None,
+    }
+
+    try:
+        exam_graph.invoke(initial_state, config=config)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    return _exam_snapshot(config)
+
+
+@app.post("/exam/respond")
+def exam_respond(req: ExamRespondRequest):
+    """Submit a learner response and continue the exam."""
+    config = {"configurable": {"thread_id": req.thread_id}}
+
+    try:
+        exam_graph.invoke(Command(resume=req.message), config=config)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    snapshot = _exam_snapshot(config)
+
+    if snapshot["status"] == "complete" and snapshot["result"]:
+        _save_exam_result(
+            learner_id=req.thread_id,
+            config=config,
+            result=snapshot["result"],
+        )
+
+    return snapshot
+
+
+def _save_exam_result(learner_id: str, config: dict, result: dict):
+    """Persist exam result to the learner_profiles table."""
+    values = exam_graph.get_state(config).values
+    if not _programs_use_db():
+        return
+    try:
+        with db_conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO learner_profiles (learner_id, program_id, thread_id, passed, overall_score, domain_breakdown, summary) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                (
+                    values.get("learner_id", learner_id),
+                    values.get("program_id", ""),
+                    config["configurable"]["thread_id"],
+                    result.get("passed", False),
+                    result.get("overall_score", 0),
+                    json.dumps(result.get("domain_breakdown", {})),
+                    result.get("summary", ""),
+                ),
+            )
+    except Exception:
+        pass
+
+
+@app.get("/exam/status/{thread_id}")
+def exam_status(thread_id: str):
+    """Get current exam session state."""
+    config = {"configurable": {"thread_id": thread_id}}
+    try:
+        return _exam_snapshot(config)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@app.get("/learners/{learner_id}/history")
+def learner_history(learner_id: str):
+    """Get a learner's past exam attempts."""
+    if not _programs_use_db():
+        return []
+    try:
+        with db_conn.cursor() as cur:
+            cur.execute(
+                "SELECT learner_id, program_id, thread_id, passed, overall_score, "
+                "domain_breakdown, summary, created_at "
+                "FROM learner_profiles WHERE learner_id = %s ORDER BY created_at DESC",
+                (learner_id,),
+            )
+            cols = [desc[0] for desc in cur.description]
+            rows = [dict(zip(cols, row)) for row in cur.fetchall()]
+        for r in rows:
+            if isinstance(r.get("domain_breakdown"), str):
+                r["domain_breakdown"] = json.loads(r["domain_breakdown"])
+            if r.get("created_at") and not isinstance(r["created_at"], str):
+                r["created_at"] = r["created_at"].isoformat()
+        return rows
+    except Exception:
+        return []
