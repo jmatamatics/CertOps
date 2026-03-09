@@ -254,6 +254,7 @@ ARTIFACT_TO_NODE = {
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 checkpointer = MemorySaver()
+db_conn = None
 
 if DATABASE_URL and PostgresSaver is not None:
     try:
@@ -297,6 +298,16 @@ if DATABASE_URL and PostgresSaver is not None:
                     type TEXT,
                     blob BYTEA NOT NULL,
                     PRIMARY KEY (thread_id, checkpoint_ns, checkpoint_id, task_id, idx)
+                );
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS programs (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    track_key TEXT NOT NULL,
+                    artifacts JSONB NOT NULL,
+                    created_at TIMESTAMPTZ DEFAULT NOW(),
+                    updated_at TIMESTAMPTZ DEFAULT NOW()
                 );
             """)
         print("Checkpointer: PostgresSaver (persistent)")

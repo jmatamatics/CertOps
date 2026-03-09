@@ -18,6 +18,7 @@ import type { CertOpsOutput, ArtifactKey } from "@/lib/types";
 interface ArtifactTabsProps {
   data: CertOpsOutput;
   onEdit?: (artifactKey: ArtifactKey, updatedData: unknown) => void;
+  readOnly?: boolean;
 }
 
 const TAB_CONFIG: { key: ArtifactKey; label: string }[] = [
@@ -247,7 +248,7 @@ export interface ArtifactTabsHandle {
 }
 
 export const ArtifactTabs = forwardRef<ArtifactTabsHandle, ArtifactTabsProps>(
-  function ArtifactTabs({ data, onEdit }, ref) {
+  function ArtifactTabs({ data, onEdit, readOnly }, ref) {
   const [editState, setEditState] = useState<EditState>({ mode: "view" });
 
   useImperativeHandle(ref, () => ({
@@ -287,7 +288,7 @@ export const ArtifactTabs = forwardRef<ArtifactTabsHandle, ArtifactTabsProps>(
         return (
           <TabsContent key={key} value={key} className="mt-4">
             {/* Edit button - visible on any tab not currently being edited */}
-            {onEdit && !isEditingThisTab && (
+            {onEdit && !readOnly && !isEditingThisTab && (
               <div data-tour="edit-button" className="flex justify-end mb-3">
                 <Button
                   size="sm"

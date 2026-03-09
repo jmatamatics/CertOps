@@ -1,4 +1,9 @@
-import type { CertOpsOutput, ArtifactKey } from "./types";
+import type {
+  CertOpsOutput,
+  ArtifactKey,
+  SavedProgram,
+  SavedProgramSummary,
+} from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 
@@ -60,4 +65,66 @@ export async function editArtifact(
 export function getExportUrl(trackKey: string): string {
   if (API_URL) return `${API_URL}/export/${trackKey}/html`;
   return `/data/certops_${trackKey}_report.html`;
+}
+
+// ── Programs CRUD ──
+
+export async function listPrograms(): Promise<SavedProgramSummary[]> {
+  if (!API_URL) return [];
+
+  const res = await fetch(`${API_URL}/programs`);
+  if (!res.ok) throw new Error("Failed to load saved programs");
+  return res.json();
+}
+
+export async function getProgram(id: string): Promise<SavedProgram> {
+  if (!API_URL) throw new Error("Backend not configured.");
+
+  const res = await fetch(`${API_URL}/programs/${id}`);
+  if (!res.ok) throw new Error("Program not found");
+  return res.json();
+}
+
+export async function saveProgram(
+  name: string,
+  trackKey: string,
+  artifacts: CertOpsOutput,
+): Promise<SavedProgram> {
+  if (!API_URL) throw new Error("Backend not configured.");
+
+  const res = await fetch(`${API_URL}/programs`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, track_key: trackKey, artifacts }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
+export async function updateProgram(
+  id: string,
+  artifacts: CertOpsOutput,
+): Promise<SavedProgram> {
+  if (!API_URL) throw new Error("Backend not configured.");
+
+  const res = await fetch(`${API_URL}/programs/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ artifacts }),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
+export async function deleteProgram(id: string): Promise<void> {
+  if (!API_URL) throw new Error("Backend not configured.");
+
+  const res = await fetch(`${API_URL}/programs/${id}`, { method: "DELETE" });
+  if (!res.ok) throw new Error("Failed to delete program");
 }

@@ -121,3 +121,21 @@ export const TRACKS: TrackInfo[] = [
       "For everyday users leveraging Copilot across Word, Excel, PowerPoint, Teams, and Outlook — covering productivity, communication, and prompting.",
   },
 ];
+
+export interface SavedProgramSummary {
+  id: string;
+  name: string;
+  track_key: string;
+  created_at: string;
+  domain_count: number;
+  skill_count: number;
+}
+
+export interface SavedProgram {
+  id: string;
+  name: string;
+  track_key: string;
+  artifacts: CertOpsOutput;
+  created_at: string;
+  updated_at: string;
+}

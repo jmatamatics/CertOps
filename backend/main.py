@@ -1,6 +1,7 @@
 import json
+import os
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -10,7 +11,7 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from jinja2 import Environment, FileSystemLoader
 
-from backend.graph import graph, CertOpsState, PIPELINE_STEPS, ARTIFACT_TO_NODE
+from backend.graph import graph, CertOpsState, PIPELINE_STEPS, ARTIFACT_TO_NODE, db_conn
 
 app = FastAPI(title="CertOps API", version="2.0.0")
 
@@ -63,6 +64,16 @@ class EditResponse(BaseModel):
     rubrics: list[dict]
     item_bank: list[dict]
     blueprint: dict
+
+
+class SaveProgramRequest(BaseModel):
+    name: str
+    track_key: str
+    artifacts: dict
+
+
+class UpdateProgramRequest(BaseModel):
+    artifacts: dict
 
 
 @app.get("/health")
@@ -169,3 +180,145 @@ def export_html(track_key: str):
         generated_date=datetime.now().strftime("%B %d, %Y"),
     )
     return HTMLResponse(content=html)
+
+
+# ── Programs CRUD ──
+
+PROGRAMS_DIR = DATA_DIR / "programs"
+PROGRAMS_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _programs_use_db() -> bool:
+    return db_conn is not None
+
+
+def _program_summary(row: dict) -> dict:
+    artifacts = row["artifacts"] if isinstance(row["artifacts"], dict) else json.loads(row["artifacts"])
+    fw = artifacts.get("competency_framework", {})
+    domains = fw.get("domains", [])
+    return {
+        "id": row["id"],
+        "name": row["name"],
+        "track_key": row["track_key"],
+        "created_at": row["created_at"],
+        "domain_count": len(domains),
+        "skill_count": sum(len(d.get("skills", [])) for d in domains),
+    }
+
+
+@app.get("/programs")
+def list_programs():
+    if _programs_use_db():
+        with db_conn.cursor() as cur:
+            cur.execute(
+                "SELECT id, name, track_key, artifacts, created_at FROM programs ORDER BY created_at DESC"
+            )
+            cols = [desc[0] for desc in cur.description]
+            rows = [dict(zip(cols, row)) for row in cur.fetchall()]
+        return [_program_summary(_row_to_dict(r)) for r in rows]
+    else:
+        programs = []
+        for f in sorted(PROGRAMS_DIR.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True):
+            data = json.loads(f.read_text())
+            programs.append(_program_summary(data))
+        return programs
+
+
+@app.get("/programs/{program_id}")
+def get_program(program_id: str):
+    if _programs_use_db():
+        with db_conn.cursor() as cur:
+            cur.execute("SELECT * FROM programs WHERE id = %s", (program_id,))
+            row = cur.fetchone()
+            if not row:
+                raise HTTPException(status_code=404, detail="Program not found")
+            cols = [desc[0] for desc in cur.description]
+            data = dict(zip(cols, row))
+        return _row_to_dict(data)
+    else:
+        path = PROGRAMS_DIR / f"{program_id}.json"
+        if not path.exists():
+            raise HTTPException(status_code=404, detail="Program not found")
+        return json.loads(path.read_text())
+
+
+@app.post("/programs")
+def create_program(req: SaveProgramRequest):
+    program_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc).isoformat()
+    program = {
+        "id": program_id,
+        "name": req.name,
+        "track_key": req.track_key,
+        "artifacts": req.artifacts,
+        "created_at": now,
+        "updated_at": now,
+    }
+
+    if _programs_use_db():
+        with db_conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO programs (id, name, track_key, artifacts, created_at, updated_at) "
+                "VALUES (%s, %s, %s, %s, %s, %s)",
+                (program_id, req.name, req.track_key, json.dumps(req.artifacts), now, now),
+            )
+    else:
+        (PROGRAMS_DIR / f"{program_id}.json").write_text(json.dumps(program, indent=2))
+
+    return program
+
+
+@app.put("/programs/{program_id}")
+def update_program(program_id: str, req: UpdateProgramRequest):
+    now = datetime.now(timezone.utc).isoformat()
+
+    if _programs_use_db():
+        with db_conn.cursor() as cur:
+            cur.execute("SELECT id FROM programs WHERE id = %s", (program_id,))
+            if not cur.fetchone():
+                raise HTTPException(status_code=404, detail="Program not found")
+            cur.execute(
+                "UPDATE programs SET artifacts = %s, updated_at = %s WHERE id = %s",
+                (json.dumps(req.artifacts), now, program_id),
+            )
+            cur.execute("SELECT * FROM programs WHERE id = %s", (program_id,))
+            cols = [desc[0] for desc in cur.description]
+            row = dict(zip(cols, cur.fetchone()))
+        return _row_to_dict(row)
+    else:
+        path = PROGRAMS_DIR / f"{program_id}.json"
+        if not path.exists():
+            raise HTTPException(status_code=404, detail="Program not found")
+        program = json.loads(path.read_text())
+        program["artifacts"] = req.artifacts
+        program["updated_at"] = now
+        path.write_text(json.dumps(program, indent=2))
+        return program
+
+
+@app.delete("/programs/{program_id}")
+def delete_program(program_id: str):
+    if _programs_use_db():
+        with db_conn.cursor() as cur:
+            cur.execute("DELETE FROM programs WHERE id = %s RETURNING id", (program_id,))
+            if not cur.fetchone():
+                raise HTTPException(status_code=404, detail="Program not found")
+    else:
+        path = PROGRAMS_DIR / f"{program_id}.json"
+        if not path.exists():
+            raise HTTPException(status_code=404, detail="Program not found")
+        path.unlink()
+
+    return {"status": "deleted"}
+
+
+def _row_to_dict(row: dict) -> dict:
+    """Normalize a database row so artifacts is always a dict and datetimes are strings."""
+    result = dict(row)
+    if isinstance(result.get("artifacts"), str):
+        result["artifacts"] = json.loads(result["artifacts"])
+    for key in ("created_at", "updated_at"):
+        val = result.get(key)
+        if val and not isinstance(val, str):
+            result[key] = val.isoformat()
+    return result
