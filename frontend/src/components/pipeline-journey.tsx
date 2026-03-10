@@ -65,7 +65,7 @@ const STEPS = [
   },
 ];
 
-const spring = { type: "spring", stiffness: 100, damping: 18 };
+const spring = { type: "spring" as const, stiffness: 100, damping: 18 };
 
 export function PipelineJourney() {
   const router = useRouter();
