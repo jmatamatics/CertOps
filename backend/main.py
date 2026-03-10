@@ -86,7 +86,8 @@ class SaveProgramRequest(BaseModel):
 
 
 class UpdateProgramRequest(BaseModel):
-    artifacts: dict
+    artifacts: dict | None = None
+    name: str | None = None
 
 
 @app.get("/health")
@@ -336,9 +337,17 @@ def update_program(program_id: str, req: UpdateProgramRequest):
             cur.execute("SELECT id FROM programs WHERE id = %s", (program_id,))
             if not cur.fetchone():
                 raise HTTPException(status_code=404, detail="Program not found")
+            updates, params = ["updated_at = %s"], [now]
+            if req.artifacts is not None:
+                updates.append("artifacts = %s")
+                params.append(json.dumps(req.artifacts))
+            if req.name is not None:
+                updates.append("name = %s")
+                params.append(req.name)
+            params.append(program_id)
             cur.execute(
-                "UPDATE programs SET artifacts = %s, updated_at = %s WHERE id = %s",
-                (json.dumps(req.artifacts), now, program_id),
+                f"UPDATE programs SET {', '.join(updates)} WHERE id = %s",
+                tuple(params),
             )
             cur.execute("SELECT * FROM programs WHERE id = %s", (program_id,))
             cols = [desc[0] for desc in cur.description]
@@ -349,7 +358,10 @@ def update_program(program_id: str, req: UpdateProgramRequest):
         if not path.exists():
             raise HTTPException(status_code=404, detail="Program not found")
         program = json.loads(path.read_text())
-        program["artifacts"] = req.artifacts
+        if req.artifacts is not None:
+            program["artifacts"] = req.artifacts
+        if req.name is not None:
+            program["name"] = req.name
         program["updated_at"] = now
         path.write_text(json.dumps(program, indent=2))
         return program

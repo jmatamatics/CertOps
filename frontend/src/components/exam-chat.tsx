@@ -168,7 +168,7 @@ export function ExamChat({
           placeholder={placeholder}
           disabled={disabled}
           rows={choices ? 1 : 3}
-          className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-y min-h-[40px] disabled:opacity-50"
+          className="flex-1 rounded-lg border border-border/50 bg-muted/30 px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-0 resize-y min-h-[40px] disabled:opacity-50"
         />
         <Button
           size="icon"
