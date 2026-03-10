@@ -17,11 +17,16 @@ from backend.exam_schemas import (
     DIFFICULTY_MAP,
 )
 from backend.graph import checkpointer
+from backend.procedural_memory import get_default_memories
 
 llm = ChatOpenAI(model="gpt-4o", temperature=0)
 
 
 # ── Helper ──
+
+def _pm(state: ExamState) -> dict:
+    return state.get("procedural_memory") or get_default_memories()
+
 
 def _extract_domain(competency_ref: str) -> str:
     return competency_ref.split(":")[0].strip()
@@ -138,17 +143,26 @@ def present_item(state: ExamState) -> dict:
     if item is None:
         return {"exam_complete": True}
 
+    pm = _pm(state)
     n_done = len(state.get("items_administered", []))
     n_total = n_done + len(state["items_remaining"]) + 1
-    question = (
-        f"**Question {n_done + 1} of {n_total}** — _{state['current_domain']}_\n\n"
-        f"{item['stem']}"
+
+    template = pm.get("question_format_template", "**Question {number} of {total}** — _{domain}_\n\n{stem}")
+    question = template.format(
+        number=n_done + 1,
+        total=n_total,
+        domain=state["current_domain"],
+        stem=item["stem"],
     )
 
+    is_mc = item.get("question_type") == "multiple_choice"
+    choices = item.get("choices") or []
+
     learner_response = interrupt({
-        "type": "question",
+        "type": "multiple_choice" if is_mc else "question",
         "content": question,
         "domain": state["current_domain"],
+        "choices": choices if is_mc else None,
         "progress": {
             "items_completed": n_done,
             "total_items": n_total,
@@ -165,11 +179,9 @@ def present_item(state: ExamState) -> dict:
 
 
 def evaluate_response(state: ExamState) -> dict:
-    """LLM-as-judge evaluation of the learner's response."""
+    """LLM-as-judge evaluation of the learner's response (or deterministic for MC)."""
     item = state["current_item"]
     domain = state["current_domain"]
-    domain_rubrics = state.get("domain_rubrics", {})
-    criteria = domain_rubrics.get(domain, [])
 
     learner_response = ""
     for msg in reversed(state.get("messages", [])):
@@ -177,30 +189,40 @@ def evaluate_response(state: ExamState) -> dict:
             learner_response = msg["content"]
             break
 
+    if item.get("question_type") == "multiple_choice" and item.get("correct_choice"):
+        answer = learner_response.strip().upper()[:1]
+        correct = item["correct_choice"].strip().upper()[:1]
+        is_correct = answer == correct
+
+        correct_text = ""
+        for c in (item.get("choices") or []):
+            if c.strip().upper().startswith(correct):
+                correct_text = c
+                break
+
+        return {"current_evaluation": {
+            "criterion_scores": [{"criterion": "correctness", "score": 3 if is_correct else 1, "justification": "Correct" if is_correct else f"Incorrect — the correct answer is {correct_text}"}],
+            "weighted_score": 3.0 if is_correct else 1.0,
+            "confidence": "clear",
+            "feedback": f"Correct!" if is_correct else f"Incorrect. The correct answer is {correct_text}.",
+            "probe_question": None,
+        }}
+
+    domain_rubrics = state.get("domain_rubrics", {})
+    criteria = domain_rubrics.get(domain, [])
     rubric_text = _format_rubric_criteria(criteria) if criteria else "Use general assessment criteria for quality, depth, and accuracy."
+
+    pm = _pm(state)
+    base_prompt = pm.get("evaluator_system_prompt", get_default_memories()["evaluator_system_prompt"])
 
     structured_llm = llm.with_structured_output(EvaluationResult)
     result = structured_llm.invoke([
         SystemMessage(content=(
-            "You are an expert certification exam evaluator. Score the learner's response.\n\n"
+            f"{base_prompt}\n\n"
             f"## Item\n{item['stem']}\n\n"
             f"## Model Answer (reference — not the only correct approach)\n{item['model_answer']}\n\n"
             f"## Scoring Notes\n{item['scoring_notes']}\n\n"
-            f"## Rubric Criteria\n{rubric_text}\n\n"
-            "## Scoring Guidelines\n"
-            "- **3 (expert)**: Demonstrates deep, specific knowledge. Addresses the core "
-            "of the question with concrete details, tools, or techniques. May use a "
-            "different but equally valid approach from the model answer.\n"
-            "- **2 (competent)**: Shows solid understanding of the domain. Covers the main "
-            "points but may lack some specificity or miss secondary considerations. "
-            "A practitioner could execute based on this answer.\n"
-            "- **1 (novice)**: Vague, superficial, or significantly off-topic. Lacks "
-            "actionable detail or demonstrates fundamental misunderstanding.\n\n"
-            "IMPORTANT: The model answer is a REFERENCE, not a checklist. A response that "
-            "demonstrates equivalent expertise using different specific tools, approaches, "
-            "or examples should still score highly. Evaluate KNOWLEDGE DEPTH, not exact match.\n\n"
-            "Set confidence to 'clear' if the level is obvious, or 'borderline' if "
-            "a follow-up probe would help disambiguate."
+            f"## Rubric Criteria\n{rubric_text}"
         )),
         HumanMessage(content=f"Learner's response:\n{learner_response}"),
     ])
@@ -216,7 +238,6 @@ def probe_or_score(state: ExamState) -> dict:
     follow_up = interrupt({
         "type": "probe",
         "content": probe_question,
-        "feedback": evaluation.get("feedback", ""),
     })
 
     item = state["current_item"]
@@ -232,23 +253,19 @@ def probe_or_score(state: ExamState) -> dict:
 
     rubric_text = _format_rubric_criteria(criteria) if criteria else "Use general assessment criteria."
 
+    pm = _pm(state)
+    probe_prompt = pm.get("probe_evaluator_prompt", get_default_memories()["probe_evaluator_prompt"])
+
     structured_llm = llm.with_structured_output(EvaluationResult)
     result = structured_llm.invoke([
         SystemMessage(content=(
-            "You are an expert certification exam evaluator. The learner gave an initial "
-            "response and then answered a follow-up probe. Re-evaluate holistically, "
-            "considering BOTH responses together.\n\n"
+            f"{probe_prompt}\n\n"
             f"## Item\n{item['stem']}\n\n"
             f"## Model Answer (reference — not the only correct approach)\n{item['model_answer']}\n\n"
             f"## Scoring Notes\n{item['scoring_notes']}\n\n"
             f"## Rubric Criteria\n{rubric_text}\n\n"
             f"## Original Response\n{original_response}\n\n"
-            f"## Follow-up Probe\n{probe_question}\n\n"
-            "Score 3 (expert) if the combined responses show deep knowledge, "
-            "2 (competent) if they show solid practical understanding, "
-            "1 (novice) only if fundamentally lacking. "
-            "Evaluate KNOWLEDGE DEPTH, not exact match to the model answer. "
-            "Set confidence to 'clear' this time."
+            f"## Follow-up Probe\n{probe_question}"
         )),
         HumanMessage(content=f"Follow-up response:\n{follow_up}"),
     ])
@@ -275,7 +292,11 @@ def update_proficiency(state: ExamState) -> dict:
     new_count = current["items_count"] + 1
     new_score = ((current["score"] * current["items_count"]) + score) / new_count
 
-    level = "novice" if new_score < 1.7 else ("competent" if new_score < 2.5 else "expert")
+    pm = _pm(state)
+    scale = pm.get("scoring_scale", get_default_memories()["scoring_scale"])
+    expert_min = scale.get("expert", {}).get("min_score", 2.5)
+    competent_min = scale.get("competent", {}).get("min_score", 1.7)
+    level = "novice" if new_score < competent_min else ("competent" if new_score < expert_min else "expert")
     proficiency[domain] = {"score": round(new_score, 2), "items_count": new_count, "level": level}
 
     feedback_msg = evaluation.get("feedback", "")
@@ -284,13 +305,13 @@ def update_proficiency(state: ExamState) -> dict:
         "domain": domain,
         "score": score,
         "feedback": feedback_msg,
+        "source_url": item.get("source_url"),
         "probed": state.get("probed", False),
     }
 
     return {
         "domain_proficiency": proficiency,
         "items_administered": [administered_entry],
-        "messages": [{"role": "agent", "content": f"**Feedback:** {feedback_msg}"}],
     }
 
 
@@ -306,22 +327,29 @@ def determine_result(state: ExamState) -> dict:
             "result_summary": {"passed": False, "overall_score": 0, "summary": "No items administered.", "recommendation": "Please retake the exam.", "domain_breakdown": {}},
         }
 
+    pm = _pm(state)
+    thresholds = pm.get("pass_thresholds", get_default_memories()["pass_thresholds"])
+    overall_min = thresholds.get("overall_min", 2.0)
+    domain_min = thresholds.get("domain_min", 2.0)
+    weak_floor = thresholds.get("weak_domain_floor", 1.5)
+
     overall = sum(p["score"] for p in tested.values()) / len(tested)
-    all_competent = all(p["score"] >= 2.0 for p in tested.values())
-    none_failing = all(p["score"] >= 1.5 for p in tested.values())
-    passed = all_competent or (overall >= 2.0 and none_failing)
+    all_competent = all(p["score"] >= domain_min for p in tested.values())
+    none_failing = all(p["score"] >= weak_floor for p in tested.values())
+    passed = all_competent or (overall >= overall_min and none_failing)
 
     domain_breakdown = {d: {**p} for d, p in proficiency.items()}
+
+    result_prompt = pm.get("result_analyst_prompt", get_default_memories()["result_analyst_prompt"])
 
     structured_llm = llm.with_structured_output(ExamResultSummary)
     result = structured_llm.invoke([
         SystemMessage(content=(
-            "You are a certification exam results analyst. Generate a clear, "
-            "encouraging but honest summary of the learner's performance.\n\n"
+            f"{result_prompt}\n\n"
             f"## Domain Scores\n{json.dumps(domain_breakdown, indent=2)}\n\n"
             f"## Overall Score: {overall:.2f} / 3.00\n"
             f"## Passed: {passed}\n"
-            f"## Pass Threshold: 2.0 (competent) in all domains, or 2.0 overall with no domain below 1.5"
+            f"## Pass Threshold: {overall_min} (competent) in all domains, or {overall_min} overall with no domain below {weak_floor}"
         )),
         HumanMessage(content="Generate the exam result summary."),
     ])
@@ -331,11 +359,31 @@ def determine_result(state: ExamState) -> dict:
     result_dict["passed"] = passed
     result_dict["domain_breakdown"] = domain_breakdown
 
+    question_review = []
+    for entry in state.get("items_administered", []):
+        item = entry.get("item", {})
+        question_review.append({
+            "stem": item.get("stem", ""),
+            "question_type": item.get("question_type", "open_ended"),
+            "correct_choice": item.get("correct_choice"),
+            "domain": entry.get("domain", ""),
+            "score": entry.get("score", 0),
+            "feedback": entry.get("feedback", ""),
+            "source_url": entry.get("source_url"),
+            "model_answer": item.get("model_answer", ""),
+        })
+    result_dict["question_review"] = question_review
+
+    farewell = pm.get("farewell_message", "")
+    summary_text = f"## Exam Complete\n\n{result.summary}\n\n**Recommendation:** {result.recommendation}"
+    if farewell:
+        summary_text += f"\n\n{farewell}"
+
     return {
         "exam_complete": True,
         "passed": passed,
         "result_summary": result_dict,
-        "messages": [{"role": "agent", "content": f"## Exam Complete\n\n{result.summary}\n\n**Recommendation:** {result.recommendation}"}],
+        "messages": [{"role": "agent", "content": summary_text}],
     }
 
 

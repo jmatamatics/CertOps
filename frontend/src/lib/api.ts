@@ -163,7 +163,7 @@ export async function deleteProgram(id: string): Promise<void> {
 
 // ── Adaptive Exam ──
 
-import type { ExamSnapshot } from "./types";
+import type { ExamSnapshot, AgentConfig } from "./types";
 
 export async function startExam(
   programId: string,
@@ -206,5 +206,48 @@ export async function getExamStatus(threadId: string): Promise<ExamSnapshot> {
 
   const res = await fetch(`${API_URL}/exam/status/${threadId}`);
   if (!res.ok) throw new Error("Exam session not found");
+  return res.json();
+}
+
+// ── Agent Configuration (Procedural Memory) ──
+
+export async function getAgentConfigDefaults(): Promise<AgentConfig> {
+  if (!API_URL) throw new Error("Backend not configured.");
+
+  const res = await fetch(`${API_URL}/agent-config/defaults`);
+  if (!res.ok) throw new Error("Failed to load defaults");
+  return res.json();
+}
+
+export async function getAgentConfig(programId: string): Promise<AgentConfig> {
+  if (!API_URL) throw new Error("Backend not configured.");
+
+  const res = await fetch(`${API_URL}/agent-config/${programId}`);
+  if (!res.ok) throw new Error("Failed to load agent config");
+  return res.json();
+}
+
+export async function updateAgentConfig(
+  programId: string,
+  memories: AgentConfig,
+): Promise<AgentConfig> {
+  if (!API_URL) throw new Error("Backend not configured.");
+
+  const res = await fetch(`${API_URL}/agent-config/${programId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ memories }),
+  });
+  if (!res.ok) throw new Error("Failed to update agent config");
+  return res.json();
+}
+
+export async function resetAgentConfig(programId: string): Promise<AgentConfig> {
+  if (!API_URL) throw new Error("Backend not configured.");
+
+  const res = await fetch(`${API_URL}/agent-config/${programId}/reset`, {
+    method: "POST",
+  });
+  if (!res.ok) throw new Error("Failed to reset agent config");
   return res.json();
 }

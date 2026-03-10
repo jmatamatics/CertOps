@@ -33,6 +33,7 @@ COLLECTION_NAME = "certops_docs"
 class CertOpsState(TypedDict):
     track: str
     documents: list[str]
+    document_sources: list[str]
     tavily_context: str
     competency_framework: Optional[dict]
     learning_progression: Optional[dict]
@@ -92,6 +93,7 @@ def retrieve_docs(state: CertOpsState) -> dict:
     )
     docs = reranked_retriever.invoke(query)
     doc_texts = [doc.page_content for doc in docs]
+    doc_sources = [doc.metadata.get("source", "") for doc in docs]
 
     tavily = TavilySearch(max_results=3)
     try:
@@ -101,7 +103,7 @@ def retrieve_docs(state: CertOpsState) -> dict:
     except Exception:
         tavily_context = ""
 
-    return {"documents": doc_texts, "tavily_context": tavily_context}
+    return {"documents": doc_texts, "document_sources": doc_sources, "tavily_context": tavily_context}
 
 
 def check_documents(state: CertOpsState) -> str:
@@ -202,20 +204,37 @@ def generate_rubrics(state: CertOpsState) -> dict:
 def generate_item_bank(state: CertOpsState) -> dict:
     structured_llm = llm.with_structured_output(ItemBank)
     fw_str = json.dumps(state["competency_framework"], indent=2)
-    context = "\n\n".join(state["documents"][:5])
+
+    docs = state["documents"][:5]
+    sources = (state.get("document_sources") or [])[:5]
+    context_parts = []
+    for i, doc in enumerate(docs):
+        url = sources[i] if i < len(sources) else ""
+        header = f"[Source: {url}]\n" if url else ""
+        context_parts.append(f"{header}{doc}")
+    context = "\n\n---\n\n".join(context_parts)
+
+    source_list = "\n".join(f"- {s}" for s in sources if s)
+
     response = structured_llm.invoke([
         SystemMessage(content=(
-            "You are an expert item writer for enterprise technology certifications. "
-            "Generate performance/scenario/analysis items (NOT multiple choice).\n\n"
-            "For EACH item, you MUST include:\n"
+            "You are an expert item writer for enterprise technology certifications.\n\n"
+            "Generate a MIX of question types:\n"
+            "- **8 multiple choice items** (question_type='multiple_choice'): each must have "
+            "exactly 4 choices formatted as 'A) ...', 'B) ...', 'C) ...', 'D) ...' and a "
+            "correct_choice letter (e.g. 'B'). Include plausible distractors.\n"
+            "- **2 open-ended scenario items** (question_type='open_ended'): performance or "
+            "scenario tasks requiring a written response. Set choices and correct_choice to null.\n\n"
+            "For ALL items, you MUST include:\n"
             "- A detailed stem (the question or task prompt) — at least 2-3 sentences\n"
             "- Scoring notes for evaluators\n"
-            "- A complete MODEL ANSWER (3-5 paragraphs) that demonstrates what an expert-level "
-            "response looks like. This model answer should be detailed enough that an evaluator "
-            "can use it as a reference when scoring candidate responses.\n\n"
-            f"Framework:\n{fw_str}\n\nContext:\n{context}"
+            "- A complete MODEL ANSWER that demonstrates an expert-level response\n"
+            "- A source_url: you MUST pick the most relevant URL from the source list below "
+            "for each question. Every question must have a source_url.\n\n"
+            f"## Available Source URLs\n{source_list}\n\n"
+            f"## Framework\n{fw_str}\n\n## Context Documents\n{context}"
         )),
-        HumanMessage(content="Generate 10 item bank entries spanning all domains."),
+        HumanMessage(content="Generate 10 item bank entries (8 multiple choice + 2 open-ended) spanning all domains."),
     ])
     return {"item_bank": [item.model_dump() for item in response.items]}
 

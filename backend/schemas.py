@@ -94,6 +94,18 @@ class RubricList(BaseModel):
 class ItemBankEntry(BaseModel):
     stem: str = Field(description="The question or task prompt")
     task_type: str = Field(description="performance, scenario, or analysis")
+    question_type: str = Field(
+        default="open_ended",
+        description="'multiple_choice' or 'open_ended'",
+    )
+    choices: list[str] | None = Field(
+        default=None,
+        description="Four answer choices for multiple_choice items, e.g. ['A) ...', 'B) ...', 'C) ...', 'D) ...']",
+    )
+    correct_choice: str | None = Field(
+        default=None,
+        description="The correct choice letter for multiple_choice items, e.g. 'B'",
+    )
     competency_ref: str = Field(description="Skill/domain this item assesses")
     expected_response_summary: str = Field(description="Brief summary of correct response")
     scoring_notes: str = Field(description="Notes for evaluators")
@@ -102,6 +114,10 @@ class ItemBankEntry(BaseModel):
             "Complete model answer (3-5 paragraphs) demonstrating "
             "an expert-level response to this item"
         )
+    )
+    source_url: str | None = Field(
+        default=None,
+        description="URL of the source document this question is based on",
     )
 
 

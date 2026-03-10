@@ -16,6 +16,13 @@ from langgraph.types import Command
 from backend.graph import graph, CertOpsState, PIPELINE_STEPS, ARTIFACT_TO_NODE, db_conn
 from backend.exam_graph import exam_graph
 from backend.ingest import process_content
+from backend.procedural_memory import (
+    get_user_namespace,
+    get_default_memories,
+    load_memories,
+    save_memories,
+    reset_memories,
+)
 
 app = FastAPI(title="CertOps API", version="2.0.0")
 
@@ -31,6 +38,8 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
 
 jinja_env = Environment(loader=FileSystemLoader(str(TEMPLATE_DIR)))
+
+DEFAULT_USER_EMAIL = "default@certops.local"
 
 TRACK_MAP = {
     "ai_champion": "AI Champion",
@@ -125,6 +134,7 @@ def generate(req: GenerateRequest):
     initial_state: CertOpsState = {
         "track": req.track,
         "documents": [],
+        "document_sources": [],
         "tavily_context": "",
         "competency_framework": None,
         "learning_progression": None,
@@ -195,6 +205,7 @@ async def generate_custom(
     initial_state: CertOpsState = {
         "track": name,
         "documents": chunks,
+        "document_sources": url_list,
         "tavily_context": description,
         "competency_framework": None,
         "learning_progression": None,
@@ -432,10 +443,13 @@ def _exam_snapshot(config: dict) -> dict:
 
 
 @app.post("/exam/start")
-def exam_start(req: ExamStartRequest):
+def exam_start(req: ExamStartRequest, user: str = DEFAULT_USER_EMAIL):
     """Start a new adaptive exam session."""
     raw = get_program(req.program_id)
     artifacts = raw.get("artifacts", raw)
+
+    namespace = get_user_namespace(user)
+    pm = load_memories(namespace, req.program_id)
 
     thread_id = str(uuid.uuid4())
     config = {"configurable": {"thread_id": thread_id}}
@@ -457,6 +471,7 @@ def exam_start(req: ExamStartRequest):
         "messages": [],
         "items_administered": [],
         "domain_proficiency": {},
+        "procedural_memory": pm,
         "exam_complete": False,
         "passed": None,
         "result_summary": None,
@@ -549,3 +564,33 @@ def learner_history(learner_id: str):
         return rows
     except Exception:
         return []
+
+
+# ── Agent Configuration (Procedural Memory) ──
+
+
+class AgentConfigRequest(BaseModel):
+    memories: dict
+
+
+@app.get("/agent-config/defaults")
+def agent_config_defaults():
+    return get_default_memories()
+
+
+@app.get("/agent-config/{program_id}")
+def get_agent_config(program_id: str, user: str = DEFAULT_USER_EMAIL):
+    namespace = get_user_namespace(user)
+    return load_memories(namespace, program_id)
+
+
+@app.put("/agent-config/{program_id}")
+def update_agent_config(program_id: str, req: AgentConfigRequest, user: str = DEFAULT_USER_EMAIL):
+    namespace = get_user_namespace(user)
+    return save_memories(namespace, program_id, req.memories)
+
+
+@app.post("/agent-config/{program_id}/reset")
+def reset_agent_config(program_id: str, user: str = DEFAULT_USER_EMAIL):
+    namespace = get_user_namespace(user)
+    return reset_memories(namespace, program_id)

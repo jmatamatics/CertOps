@@ -64,10 +64,14 @@ export interface Rubric {
 export interface ItemBankEntry {
   stem: string;
   task_type: string;
+  question_type: "multiple_choice" | "open_ended";
+  choices?: string[] | null;
+  correct_choice?: string | null;
   competency_ref: string;
   expected_response_summary: string;
   scoring_notes: string;
   model_answer: string;
+  source_url?: string | null;
 }
 
 export interface CertificationBlueprint {
@@ -159,12 +163,24 @@ export interface ExamMessage {
   content: string;
 }
 
+export interface QuestionReview {
+  stem: string;
+  question_type: "multiple_choice" | "open_ended";
+  correct_choice?: string | null;
+  domain: string;
+  score: number;
+  feedback: string;
+  source_url?: string | null;
+  model_answer: string;
+}
+
 export interface ExamResult {
   passed: boolean;
   overall_score: number;
   domain_breakdown: Record<string, DomainProficiency>;
   summary: string;
   recommendation: string;
+  question_review?: QuestionReview[];
 }
 
 export interface ExamSnapshot {
@@ -174,4 +190,34 @@ export interface ExamSnapshot {
   messages: ExamMessage[];
   progress: ExamProgress;
   result: ExamResult | null;
+}
+
+// ── Procedural Memory / Agent Config ──
+
+export interface PassThresholds {
+  overall_min: number;
+  domain_min: number;
+  weak_domain_floor: number;
+}
+
+export interface ScoringTier {
+  min_score: number;
+  label: string;
+}
+
+export interface ScoringScale {
+  expert: ScoringTier;
+  competent: ScoringTier;
+  novice: ScoringTier;
+}
+
+export interface AgentConfig {
+  evaluator_system_prompt: string;
+  probe_evaluator_prompt: string;
+  result_analyst_prompt: string;
+  question_format_template: string;
+  welcome_message: string;
+  farewell_message: string;
+  pass_thresholds: PassThresholds;
+  scoring_scale: ScoringScale;
 }

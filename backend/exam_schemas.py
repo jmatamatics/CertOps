@@ -63,6 +63,8 @@ class ExamState(TypedDict):
     items_administered: Annotated[list[dict], operator.add]
     domain_proficiency: dict
 
+    procedural_memory: Optional[dict]
+
     exam_complete: bool
     passed: Optional[bool]
     result_summary: Optional[dict]

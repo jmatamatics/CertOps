@@ -48,6 +48,8 @@ interface ExamChatProps {
   inputValue: string;
   onInputChange: (value: string) => void;
   onSend: () => void;
+  onChoiceSelect?: (letter: string) => void;
+  choices?: string[] | null;
   disabled?: boolean;
   placeholder?: string;
 }
@@ -57,6 +59,8 @@ export function ExamChat({
   inputValue,
   onInputChange,
   onSend,
+  onChoiceSelect,
+  choices,
   disabled,
   placeholder = "Type your response...",
 }: ExamChatProps) {
@@ -85,7 +89,7 @@ export function ExamChat({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto space-y-4 pb-4 pr-1">
+      <div className="max-h-[420px] overflow-y-auto space-y-4 pb-4 pr-1 scroll-smooth">
         <AnimatePresence initial={false}>
           {messages.map((msg, i) => (
             <motion.div
@@ -102,7 +106,7 @@ export function ExamChat({
                     : "bg-card border border-border"
                 }`}
               >
-                {msg.role === "agent" && i === animatingIndex ? (
+                {msg.role === "agent" && i === animatingIndex && !choices?.length ? (
                   <TypewriterMarkdown content={msg.content} />
                 ) : msg.role === "agent" ? (
                   <MarkdownBubble content={msg.content} />
@@ -134,6 +138,28 @@ export function ExamChat({
         <div ref={bottomRef} />
       </div>
 
+      {choices && choices.length > 0 && !disabled && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="border-t border-border pt-3 pb-1 grid grid-cols-1 sm:grid-cols-2 gap-2"
+        >
+          {choices.map((choice) => {
+            const letter = choice.trim()[0];
+            return (
+              <Button
+                key={letter}
+                variant="outline"
+                className="justify-start text-left h-auto py-3 px-4 text-sm whitespace-normal hover:border-primary hover:bg-primary/5"
+                onClick={() => onChoiceSelect?.(letter)}
+              >
+                {choice}
+              </Button>
+            );
+          })}
+        </motion.div>
+      )}
+
       <div className="border-t border-border pt-3 flex gap-2 items-end">
         <textarea
           value={inputValue}
@@ -141,8 +167,8 @@ export function ExamChat({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
-          rows={3}
-          className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-y min-h-[60px] disabled:opacity-50"
+          rows={choices ? 1 : 3}
+          className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-y min-h-[40px] disabled:opacity-50"
         />
         <Button
           size="icon"

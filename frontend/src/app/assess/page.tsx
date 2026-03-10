@@ -40,6 +40,7 @@ export default function AssessPage() {
   const [error, setError] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
   const [sending, setSending] = useState(false);
+  const [currentChoices, setCurrentChoices] = useState<string[] | null>(null);
 
   const loadPrograms = useCallback(async () => {
     setLoadingPrograms(true);
@@ -75,8 +76,11 @@ export default function AssessPage() {
     if (snapshot.status === "complete") {
       setResult(snapshot.result);
       setPhase("complete");
+      setCurrentChoices(null);
     } else {
       setPhase("exam");
+      const choices = (snapshot.interrupt as Record<string, unknown>)?.choices as string[] | null;
+      setCurrentChoices(choices ?? null);
     }
   }
 
@@ -93,11 +97,12 @@ export default function AssessPage() {
     }
   }
 
-  async function handleSend() {
-    if (!inputValue.trim() || !threadId || sending) return;
-    const text = inputValue.trim();
+  async function handleSend(overrideText?: string) {
+    const text = (overrideText ?? inputValue).trim();
+    if (!text || !threadId || sending) return;
     setInputValue("");
     setSending(true);
+    setCurrentChoices(null);
     setMessages((prev) => [...prev, { role: "learner", content: text }]);
     try {
       const snapshot = await respondExam(threadId, text);
@@ -117,6 +122,7 @@ export default function AssessPage() {
     setResult(null);
     setError(null);
     setInputValue("");
+    setCurrentChoices(null);
   }
 
   const selectedProgramName = programs.find((p) => p.id === selectedProgram)?.name ?? "";
@@ -246,7 +252,7 @@ export default function AssessPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="grid gap-6 lg:grid-cols-[240px_1fr]"
+            className="grid gap-6 lg:grid-cols-[240px_1fr] max-w-full overflow-hidden"
           >
             <aside className="space-y-4">
               <Card>
@@ -263,7 +269,7 @@ export default function AssessPage() {
               </div>
             </aside>
 
-            <main className="min-h-[500px] flex flex-col">
+            <main className="min-h-[500px] min-w-0 flex flex-col">
               {phase === "complete" && result ? (
                 <div className="space-y-6">
                   <ExamResultsCard result={result} />
@@ -281,12 +287,16 @@ export default function AssessPage() {
                   messages={messages}
                   inputValue={inputValue}
                   onInputChange={setInputValue}
-                  onSend={handleSend}
+                  onSend={() => handleSend()}
+                  onChoiceSelect={(letter) => handleSend(letter)}
+                  choices={currentChoices}
                   disabled={sending || phase === "complete"}
                   placeholder={
                     sending
                       ? "Evaluating your response..."
-                      : "Type your response and press Enter..."
+                      : currentChoices
+                        ? "Click a choice above, or type the letter..."
+                        : "Type your response and press Enter..."
                   }
                 />
               )}

@@ -34,6 +34,7 @@ Thumbs.db
 # Data (large files - keep structure, ignore content)
 data/docs/*.md
 !data/docs/.gitkeep
+data/programs/
 
 # Large build artifacts
 notebooks/certops_kg.json
