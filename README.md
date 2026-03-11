@@ -167,16 +167,18 @@ All artifacts are delivered as a single downloadable HTML certification report s
 
 ## Adaptive Exam Engine
 
-The **Test** step in the pipeline delivers adaptive certification assessments powered by a second LangGraph agent.
+The **Test** step in the pipeline delivers adaptive certification assessments powered by a second LangGraph agent with **domain + difficulty adaptation**.
 
 **How it works:**
 
-1. **Load & Prepare** — `load_program` loads a saved program's item bank and rubrics, enriches each item with a difficulty estimate, and injects per-user procedural memory from Qdrant.
-2. **Adaptive Selection** — `select_item` prioritizes untested domains first, then weak domains (score < 2.0), choosing items at the appropriate difficulty.
-3. **Presentation** — `present_item` formats the question. For multiple choice items, clickable A/B/C/D buttons appear in the chat UI. For open-ended items, the learner types a free-text response with a typewriter streaming effect.
-4. **Evaluation** — `evaluate_response` handles both question types. MC questions are scored deterministically (correct = 3, incorrect = 1). Open-ended responses are evaluated by LLM-as-judge against rubric criteria with structured output.
-5. **Deferred Feedback** — No per-question feedback during the exam. All feedback, model answers, and source links are accumulated and presented in the final review.
-6. **Results** — `determine_result` checks that all domains meet the competent threshold (2.0) and generates a narrative summary. The frontend renders a per-question review section where each item can be expanded to see feedback, the correct answer, the model answer, and a "Learn more" link to the source documentation.
+1. **Load & Prepare** — `load_program` loads a saved program's item bank (15 items/domain across easy/medium/hard tiers), rubrics, and per-user procedural memory from Qdrant. Each domain's difficulty cursor is initialized to `medium`.
+2. **Domain Selection** — `select_item` prioritizes untested domains first, then weak domains (score < 2.0).
+3. **Difficulty Selection (Staircase)** — Within the chosen domain, the exam matches the difficulty cursor. Strong performance bumps the cursor up (medium → hard), weak performance drops it down (medium → easy). Items are tagged at generation time using Bloom's taxonomy tiers.
+4. **Presentation** — `present_item` formats the question. For multiple choice items, clickable A/B/C/D buttons appear in the chat UI. For open-ended items, the learner types a free-text response.
+5. **Evaluation** — `evaluate_response` handles both question types. MC questions are scored deterministically (correct = 3, incorrect = 1). Open-ended responses are evaluated by LLM-as-judge against rubric criteria with structured output. Borderline answers trigger a follow-up probe.
+6. **Cursor Adjustment** — `update_proficiency` updates the domain running score and adjusts the difficulty cursor based on the item score, creating a staircase that finds each learner's true level.
+7. **Termination** — The exam ends when all domains are sufficiently tested (≥2 items each, no uncertain domains), 20 items are reached, or items are exhausted.
+8. **Results** — `determine_result` checks pass/fail thresholds and generates a narrative summary. The frontend renders a per-question review with feedback, difficulty level, model answers, and source links.
 
 ### API Endpoints
 
@@ -229,6 +231,7 @@ The `notebooks/` directory contains five notebooks that walk through the full en
 | **03_certification_engine** | Pydantic schemas, LangGraph node definitions, complete `StateGraph` pipeline, end-to-end runs for both tracks |
 | **04_express_mode** | LangGraph checkpointing with `MemorySaver`, full pipeline without pauses, selective editing via `update_state()`, downstream replay, comparison of original vs. edited artifacts |
 | **05_adaptive_exam** | Second LangGraph agent for adaptive assessment — `interrupt()` for learner input, LLM-as-judge evaluation against rubrics, conversational probing, per-domain proficiency tracking, pass/fail determination |
+| **07_adaptive_testing** | Adaptive testing design — staircase algorithm, Bloom's taxonomy difficulty tiers, domain + difficulty selection walkthrough, LangSmith observability, cost analysis |
 
 ## Quickstart
 
@@ -331,7 +334,8 @@ CertOps/
 │   ├── 02_retrieval_evaluation.ipynb
 │   ├── 03_certification_engine.ipynb
 │   ├── 04_express_mode.ipynb
-│   └── 05_adaptive_exam.ipynb
+│   ├── 05_adaptive_exam.ipynb
+│   └── 07_adaptive_testing.ipynb
 ├── Dockerfile
 ├── docker-compose.yml
 ├── pyproject.toml

@@ -94,6 +94,10 @@ class RubricList(BaseModel):
 class ItemBankEntry(BaseModel):
     stem: str = Field(description="The question or task prompt")
     task_type: str = Field(description="performance, scenario, or analysis")
+    difficulty: str = Field(
+        default="medium",
+        description="'easy' (recall/recognize), 'medium' (apply/analyze), or 'hard' (evaluate/synthesize)",
+    )
     question_type: str = Field(
         default="open_ended",
         description="'multiple_choice' or 'open_ended'",

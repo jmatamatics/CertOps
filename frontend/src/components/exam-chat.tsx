@@ -73,12 +73,12 @@ export function ExamChat({
 
     if (messages.length > prevCountRef.current) {
       const lastIdx = messages.length - 1;
-      if (messages[lastIdx]?.role === "agent") {
+      if (messages[lastIdx]?.role === "agent" && !choices?.length) {
         setAnimatingIndex(lastIdx);
       }
     }
     prevCountRef.current = messages.length;
-  }, [messages]);
+  }, [messages, choices]);
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {

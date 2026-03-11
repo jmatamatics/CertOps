@@ -201,9 +201,36 @@ def generate_rubrics(state: CertOpsState) -> dict:
     return {"rubrics": [r.model_dump() for r in response.rubrics]}
 
 
+_DIFFICULTY_TIER_PROMPTS = {
+    "easy": (
+        "All items in this batch MUST have difficulty='easy'.\n"
+        "Easy items test RECALL and RECOGNITION — facts, definitions, identifying features.\n"
+        "Example stem style: 'Which of the following is...?', 'What is the primary purpose of...?'\n"
+        "Distractors should be clearly wrong to someone who studied the material."
+    ),
+    "medium": (
+        "All items in this batch MUST have difficulty='medium'.\n"
+        "Medium items test APPLICATION and ANALYSIS — applying knowledge to scenarios.\n"
+        "Example stem style: 'Given this scenario, which approach would...?', "
+        "'A team needs to accomplish X. What is the best strategy?'\n"
+        "Distractors should be plausible to someone with surface-level knowledge."
+    ),
+    "hard": (
+        "All items in this batch MUST have difficulty='hard'.\n"
+        "Hard items test EVALUATION and SYNTHESIS — trade-offs, edge cases, multi-step reasoning.\n"
+        "Example stem style: 'Given these conflicting requirements, which configuration best balances...?', "
+        "'What is the most significant limitation of approach X when applied to Y?'\n"
+        "Distractors should be tempting even to experienced practitioners."
+    ),
+}
+
+
 def generate_item_bank(state: CertOpsState) -> dict:
     structured_llm = llm.with_structured_output(ItemBank)
     fw_str = json.dumps(state["competency_framework"], indent=2)
+
+    domains = [d["name"] for d in state["competency_framework"].get("domains", [])]
+    num_domains = len(domains)
 
     docs = state["documents"][:5]
     sources = (state.get("document_sources") or [])[:5]
@@ -216,27 +243,40 @@ def generate_item_bank(state: CertOpsState) -> dict:
 
     source_list = "\n".join(f"- {s}" for s in sources if s)
 
-    response = structured_llm.invoke([
-        SystemMessage(content=(
-            "You are an expert item writer for enterprise technology certifications.\n\n"
-            "Generate a MIX of question types:\n"
-            "- **8 multiple choice items** (question_type='multiple_choice'): each must have "
-            "exactly 4 choices formatted as 'A) ...', 'B) ...', 'C) ...', 'D) ...' and a "
-            "correct_choice letter (e.g. 'B'). Include plausible distractors.\n"
-            "- **2 open-ended scenario items** (question_type='open_ended'): performance or "
-            "scenario tasks requiring a written response. Set choices and correct_choice to null.\n\n"
-            "For ALL items, you MUST include:\n"
-            "- A detailed stem (the question or task prompt) — at least 2-3 sentences\n"
-            "- Scoring notes for evaluators\n"
-            "- A complete MODEL ANSWER that demonstrates an expert-level response\n"
-            "- A source_url: you MUST pick the most relevant URL from the source list below "
-            "for each question. Every question must have a source_url.\n\n"
-            f"## Available Source URLs\n{source_list}\n\n"
-            f"## Framework\n{fw_str}\n\n## Context Documents\n{context}"
-        )),
-        HumanMessage(content="Generate 10 item bank entries (8 multiple choice + 2 open-ended) spanning all domains."),
-    ])
-    return {"item_bank": [item.model_dump() for item in response.items]}
+    all_items: list[dict] = []
+
+    for tier, tier_prompt in _DIFFICULTY_TIER_PROMPTS.items():
+        mcq_per_domain = 4
+        oe_per_domain = 1
+        total_mcq = mcq_per_domain * num_domains
+        total_oe = oe_per_domain * num_domains
+        total = total_mcq + total_oe
+
+        response = structured_llm.invoke([
+            SystemMessage(content=(
+                "You are an expert item writer for enterprise technology certifications.\n\n"
+                f"{tier_prompt}\n\n"
+                f"Generate items for ALL {num_domains} domains: {', '.join(domains)}.\n"
+                f"For each domain, generate {mcq_per_domain} multiple choice + {oe_per_domain} open-ended.\n\n"
+                "**Multiple choice items** (question_type='multiple_choice'): each must have "
+                "exactly 4 choices formatted as 'A) ...', 'B) ...', 'C) ...', 'D) ...' and a "
+                "correct_choice letter (e.g. 'B'). Include plausible distractors.\n"
+                "**Open-ended items** (question_type='open_ended'): performance or "
+                "scenario tasks requiring a written response. Set choices and correct_choice to null.\n\n"
+                "For ALL items, you MUST include:\n"
+                "- A detailed stem (the question or task prompt) — at least 2-3 sentences\n"
+                "- Scoring notes for evaluators\n"
+                "- A complete MODEL ANSWER that demonstrates an expert-level response\n"
+                "- A source_url: pick the most relevant URL from the source list below. "
+                "Every question must have a source_url.\n\n"
+                f"## Available Source URLs\n{source_list}\n\n"
+                f"## Framework\n{fw_str}\n\n## Context Documents\n{context}"
+            )),
+            HumanMessage(content=f"Generate {total} items ({total_mcq} MCQ + {total_oe} open-ended) at difficulty='{tier}' spanning all {num_domains} domains."),
+        ])
+        all_items.extend(item.model_dump() for item in response.items)
+
+    return {"item_bank": all_items}
 
 
 def generate_blueprint(state: CertOpsState) -> dict:

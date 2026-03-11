@@ -47,7 +47,7 @@ function QuestionReviewItem({ item, index }: { item: QuestionReview; index: numb
         <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${item.score >= 2.5 ? "bg-green-500" : item.score >= 1.7 ? "bg-amber-500" : "bg-red-500"}`} />
         <span className="text-sm truncate flex-1 min-w-0">{item.stem}</span>
         <span className="text-[10px] uppercase text-muted-foreground shrink-0">
-          {isMC ? "MC" : "Open"}
+          {isMC ? "MC" : "Open"}{item.difficulty ? ` · ${item.difficulty}` : ""}
         </span>
         <ScoreBadge score={item.score} />
         <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform shrink-0 ${open ? "rotate-180" : ""}`} />

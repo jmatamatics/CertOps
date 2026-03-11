@@ -168,6 +168,7 @@ export interface QuestionReview {
   question_type: "multiple_choice" | "open_ended";
   correct_choice?: string | null;
   domain: string;
+  difficulty?: "easy" | "medium" | "hard";
   score: number;
   feedback: string;
   source_url?: string | null;

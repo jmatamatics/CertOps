@@ -38,7 +38,10 @@ class ExamResultSummary(BaseModel):
 
 # ── Graph state ──
 
-DIFFICULTY_MAP = {"analysis": 1, "scenario": 2, "performance": 3}
+DIFFICULTY_LEVELS = ("easy", "medium", "hard")
+
+DIFFICULTY_UP = {"easy": "medium", "medium": "hard", "hard": "hard"}
+DIFFICULTY_DOWN = {"hard": "medium", "medium": "easy", "easy": "easy"}
 
 
 class ExamState(TypedDict):
@@ -53,6 +56,7 @@ class ExamState(TypedDict):
 
     items_remaining: list[dict]
     domain_rubrics: dict
+    domain_difficulty_cursor: dict
 
     current_item: Optional[dict]
     current_domain: str

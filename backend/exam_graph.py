@@ -14,7 +14,8 @@ from backend.exam_schemas import (
     ExamState,
     EvaluationResult,
     ExamResultSummary,
-    DIFFICULTY_MAP,
+    DIFFICULTY_UP,
+    DIFFICULTY_DOWN,
 )
 from backend.graph import checkpointer
 from backend.procedural_memory import get_default_memories
@@ -76,23 +77,27 @@ def _format_rubric_criteria(criteria: list[dict]) -> str:
 # ── Nodes ──
 
 def load_program(state: ExamState) -> dict:
-    """Prepare items with difficulty estimates, domain-rubric mapping, initial proficiency."""
-    items_with_difficulty = []
+    """Prepare items with difficulty, domain-rubric mapping, initial proficiency, and difficulty cursors."""
+    items_with_index = []
     for i, item in enumerate(state["item_bank"]):
-        enriched = {**item, "index": i, "difficulty": DIFFICULTY_MAP.get(item.get("task_type", ""), 2)}
-        items_with_difficulty.append(enriched)
+        enriched = {**item, "index": i}
+        if "difficulty" not in enriched or enriched["difficulty"] not in ("easy", "medium", "hard"):
+            enriched["difficulty"] = "medium"
+        items_with_index.append(enriched)
 
-    random.shuffle(items_with_difficulty)
+    random.shuffle(items_with_index)
 
     domain_rubrics = _build_domain_rubrics(state["rubrics"], state["assessments"])
 
     domains = [d["name"] for d in state["framework"].get("domains", [])]
     domain_proficiency = {d: {"score": 0.0, "items_count": 0, "level": "untested"} for d in domains}
+    domain_difficulty_cursor = {d: "medium" for d in domains}
 
     return {
-        "items_remaining": items_with_difficulty,
+        "items_remaining": items_with_index,
         "domain_rubrics": domain_rubrics,
         "domain_proficiency": domain_proficiency,
+        "domain_difficulty_cursor": domain_difficulty_cursor,
         "current_item": None,
         "current_domain": "",
         "current_evaluation": None,
@@ -103,30 +108,61 @@ def load_program(state: ExamState) -> dict:
     }
 
 
+def _pick_from_domain(remaining: list[dict], domain: str, target_difficulty: str) -> dict | None:
+    """Pick an item from a domain at the target difficulty, falling back to adjacent tiers."""
+    by_diff: dict[str, list[dict]] = {"easy": [], "medium": [], "hard": []}
+    for item in remaining:
+        if _extract_domain(item["competency_ref"]) == domain:
+            by_diff.get(item.get("difficulty", "medium"), by_diff["medium"]).append(item)
+
+    if by_diff.get(target_difficulty):
+        return by_diff[target_difficulty][0]
+    for fallback in ("medium", "easy", "hard"):
+        if fallback != target_difficulty and by_diff.get(fallback):
+            return by_diff[fallback][0]
+    return None
+
+
 def select_item(state: ExamState) -> dict:
-    """Adaptively pick the next item: prioritise untested/weak domains."""
+    """Adaptively pick the next item: prioritise untested/weak domains, then match difficulty cursor."""
     remaining = list(state["items_remaining"])
     proficiency = state["domain_proficiency"]
+    cursors = state.get("domain_difficulty_cursor", {})
 
     untested = [d for d, p in proficiency.items() if p["items_count"] == 0]
     weak = [d for d, p in proficiency.items() if p["items_count"] > 0 and p["score"] < 2.0]
     priority_domains = untested or weak
 
     chosen = None
+    chosen_domain = None
+
     if priority_domains:
-        for item in remaining:
-            if _extract_domain(item["competency_ref"]) in priority_domains:
-                chosen = item
+        for domain in priority_domains:
+            target_diff = cursors.get(domain, "medium")
+            candidate = _pick_from_domain(remaining, domain, target_diff)
+            if candidate:
+                chosen = candidate
+                chosen_domain = domain
                 break
 
     if chosen is None and remaining:
-        chosen = remaining[0]
+        all_domains = list(proficiency.keys())
+        for domain in all_domains:
+            target_diff = cursors.get(domain, "medium")
+            candidate = _pick_from_domain(remaining, domain, target_diff)
+            if candidate:
+                chosen = candidate
+                chosen_domain = domain
+                break
+        if chosen is None:
+            chosen = remaining[0]
+            chosen_domain = _extract_domain(chosen["competency_ref"])
 
     if chosen is None:
         return {"exam_complete": True, "current_item": None}
 
     remaining.remove(chosen)
-    domain = _extract_domain(chosen["competency_ref"])
+    domain = chosen_domain or _extract_domain(chosen["competency_ref"])
 
     return {
         "current_item": chosen,
@@ -281,7 +317,7 @@ def probe_or_score(state: ExamState) -> dict:
 
 
 def update_proficiency(state: ExamState) -> dict:
-    """Update domain proficiency with the current item's evaluation."""
+    """Update domain proficiency and adjust the difficulty cursor (staircase)."""
     evaluation = state["current_evaluation"]
     domain = state["current_domain"]
     item = state["current_item"]
@@ -299,6 +335,13 @@ def update_proficiency(state: ExamState) -> dict:
     level = "novice" if new_score < competent_min else ("competent" if new_score < expert_min else "expert")
     proficiency[domain] = {"score": round(new_score, 2), "items_count": new_count, "level": level}
 
+    cursors = dict(state.get("domain_difficulty_cursor", {}))
+    current_cursor = cursors.get(domain, "medium")
+    if score >= 2.5:
+        cursors[domain] = DIFFICULTY_UP[current_cursor]
+    elif score < 1.7:
+        cursors[domain] = DIFFICULTY_DOWN[current_cursor]
+
     feedback_msg = evaluation.get("feedback", "")
     administered_entry = {
         "item": item,
@@ -307,10 +350,12 @@ def update_proficiency(state: ExamState) -> dict:
         "feedback": feedback_msg,
         "source_url": item.get("source_url"),
         "probed": state.get("probed", False),
+        "difficulty": item.get("difficulty", "medium"),
     }
 
     return {
         "domain_proficiency": proficiency,
+        "domain_difficulty_cursor": cursors,
         "items_administered": [administered_entry],
     }
 
@@ -367,6 +412,7 @@ def determine_result(state: ExamState) -> dict:
             "question_type": item.get("question_type", "open_ended"),
             "correct_choice": item.get("correct_choice"),
             "domain": entry.get("domain", ""),
+            "difficulty": entry.get("difficulty", item.get("difficulty", "medium")),
             "score": entry.get("score", 0),
             "feedback": entry.get("feedback", ""),
             "source_url": entry.get("source_url"),
@@ -396,16 +442,26 @@ def after_evaluate(state: ExamState) -> str:
     return "update_proficiency"
 
 
+MAX_EXAM_ITEMS = 20
+MIN_ITEMS_PER_DOMAIN = 2
+
+
 def after_update(state: ExamState) -> str:
     if not state["items_remaining"]:
         return "determine_result"
+
+    administered_count = len(state.get("items_administered", []))
+    if administered_count >= MAX_EXAM_ITEMS:
+        return "determine_result"
+
     proficiency = state["domain_proficiency"]
     domains = list(proficiency.keys())
     all_tested = all(proficiency[d]["items_count"] > 0 for d in domains)
-    if all_tested and len(state.get("items_administered", [])) >= len(domains):
+
+    if all_tested and administered_count >= len(domains) * MIN_ITEMS_PER_DOMAIN:
         uncertain = [
             d for d in domains
-            if proficiency[d]["items_count"] < 2
+            if proficiency[d]["items_count"] < MIN_ITEMS_PER_DOMAIN
             and any(_extract_domain(it["competency_ref"]) == d for it in state["items_remaining"])
         ]
         if not uncertain:
