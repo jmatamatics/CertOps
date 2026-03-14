@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CertOps — AI-Native Certification Builder",
+  title: "CertOps Studio — AI-Native Certification Builder",
   description:
     "Generate enterprise certification frameworks, assessments, rubrics, and item banks powered by RAG and LangGraph.",
 };

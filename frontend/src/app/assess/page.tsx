@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useCallback, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,8 +21,10 @@ import type { SavedProgramSummary, ExamSnapshot, ExamMessage, ExamProgress } fro
 
 type Phase = "setup" | "loading" | "exam" | "complete";
 
-export default function AssessPage() {
+function AssessContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const programParam = searchParams.get("program");
 
   const [programs, setPrograms] = useState<SavedProgramSummary[]>([]);
   const [loadingPrograms, setLoadingPrograms] = useState(true);
@@ -57,6 +60,13 @@ export default function AssessPage() {
   useEffect(() => {
     loadPrograms();
   }, [loadPrograms]);
+
+  useEffect(() => {
+    if (programParam && programs.length > 0 && !selectedProgram) {
+      const match = programs.find((p) => p.id === programParam);
+      if (match) setSelectedProgram(match.id);
+    }
+  }, [programParam, programs, selectedProgram]);
 
   function applySnapshot(snapshot: ExamSnapshot) {
     setThreadId(snapshot.thread_id);
@@ -281,6 +291,12 @@ export default function AssessPage() {
                       Back to Home
                     </Button>
                   </div>
+                  <div className="border-t border-border mt-4 pt-6 flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">Step 3 of 4</span>
+                    <Button onClick={() => router.push("/saved")}>
+                      Next: Deploy &amp; Share <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <ExamChat
@@ -305,5 +321,19 @@ export default function AssessPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function AssessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+        </div>
+      }
+    >
+      <AssessContent />
+    </Suspense>
   );
 }

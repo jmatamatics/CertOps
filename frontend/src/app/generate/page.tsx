@@ -50,7 +50,7 @@ function buildTourSteps(tabsRef: React.RefObject<ArtifactTabsHandle | null>) {
       target: "[data-tour='form-editor']",
       title: "Edit With Form Fields",
       content:
-        "Change a domain name, update a skill description, or add a new behavioral indicator. When you're done, click 'Save & Replay' and CertOps regenerates all downstream artifacts automatically.",
+        "Change a domain name, update a skill description, or add a new behavioral indicator. When you're done, click 'Save & Replay' and CertOps Studio regenerates all downstream artifacts automatically.",
       placement: "top" as const,
       action: () => tabsRef.current?.resetView(),
     },

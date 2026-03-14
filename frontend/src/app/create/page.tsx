@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, Trash2, Upload, FileText, Link, X } from "lucide-react";
+import { Plus, Trash2, Upload, FileText, Link, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -36,7 +36,7 @@ function buildTourSteps(tabsRef: React.RefObject<ArtifactTabsHandle | null>) {
       target: "[data-tour='edit-button']",
       title: "Edit Any Artifact",
       content:
-        "See something you want to change? Click Edit, pick a section, and modify it through form fields. CertOps regenerates downstream artifacts automatically.",
+        "See something you want to change? Click Edit, pick a section, and modify it through form fields. CertOps Studio regenerates downstream artifacts automatically.",
       placement: "bottom" as const,
     },
     {
@@ -189,7 +189,7 @@ export default function CreatePage() {
         </div>
         <h1 className="text-3xl font-bold tracking-tight">Build Your Own</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Provide your source material and CertOps will generate a complete
+          Provide your source material and CertOps Studio will generate a complete
           certification package.
         </p>
       </header>
@@ -545,6 +545,15 @@ export default function CreatePage() {
                       </>
                     }
                   />
+
+                  {saveSuccess && (
+                    <div className="border-t border-border mt-8 pt-6 flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">Step 1 of 4</span>
+                      <Button onClick={() => router.push(`/configure?program=${saveSuccess}`)}>
+                        Next: Configure Exam Agent <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>

@@ -99,6 +99,10 @@ export function getProgramReportUrl(programId: string, download = false): string
   return download ? `${base}?download=true` : base;
 }
 
+export function getProgramPdfUrl(programId: string): string {
+  return `${API_URL}/programs/${programId}/report/pdf`;
+}
+
 // ── Programs CRUD ──
 
 export async function listPrograms(): Promise<SavedProgramSummary[]> {

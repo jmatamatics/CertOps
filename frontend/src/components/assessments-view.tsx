@@ -24,11 +24,11 @@ export function AssessmentsView({ assessments }: AssessmentsViewProps) {
             <CardHeader className="p-4 pb-2">
               <div className="flex items-start justify-between gap-2">
                 <CardTitle className="text-sm">{task.title}</CardTitle>
-                <Badge variant="secondary" className="shrink-0 text-[10px]">
+                <Badge variant="outline" className="shrink-0 text-[10px] bg-amber-500/10 text-amber-400 border-amber-500/20">
                   {task.time_estimate_minutes} min
                 </Badge>
               </div>
-              <Badge variant="outline" className="w-fit text-[10px]">
+              <Badge variant="outline" className="w-fit text-[10px] bg-blue-500/10 text-blue-400 border-blue-500/20">
                 {task.competency_ref}
               </Badge>
             </CardHeader>

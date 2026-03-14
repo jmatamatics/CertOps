@@ -27,10 +27,10 @@ export function BlueprintView({ blueprint }: BlueprintViewProps) {
 
       {/* Quick stats */}
       <div className="flex gap-3">
-        <Badge variant="secondary" className="text-xs">
+        <Badge variant="outline" className="text-xs bg-amber-500/10 text-amber-400 border-amber-500/20">
           {blueprint.estimated_duration_hours}h estimated
         </Badge>
-        <Badge variant="outline" className="text-xs">
+        <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-400 border-blue-500/20">
           {blueprint.domain_summary.length} domains
         </Badge>
       </div>
@@ -69,7 +69,7 @@ export function BlueprintView({ blueprint }: BlueprintViewProps) {
         <CardContent className="p-4 pt-0 space-y-2">
           {blueprint.domain_summary.map((summary, i) => (
             <div key={i} className="flex items-start gap-2">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary mt-0.5">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-500/20 text-[10px] font-bold text-blue-400 mt-0.5">
                 {i + 1}
               </span>
               <p className="text-xs text-muted-foreground">{summary}</p>

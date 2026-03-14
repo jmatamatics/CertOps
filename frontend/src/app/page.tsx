@@ -13,7 +13,7 @@ export default function Home() {
         transition={{ duration: 0.6 }}
       >
         <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
-          Cert<span className="text-primary">Ops</span>
+          Cert<span className="text-blue-500">Ops</span> Studio
         </h1>
         <p className="mt-4 max-w-xl text-lg text-muted-foreground">
           AI-Native Certification Builder for Enterprise AI Platforms.

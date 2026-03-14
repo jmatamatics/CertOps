@@ -21,12 +21,12 @@ export function LearningPathView({ progression }: LearningPathViewProps) {
         >
           <Card className="border-border/50">
             <CardHeader className="flex flex-row items-start gap-3 p-4 pb-2">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-500/20 text-xs font-bold text-blue-400">
                 {obj.order}
               </span>
               <div className="space-y-1">
                 <CardTitle className="text-sm">{obj.title}</CardTitle>
-                <Badge variant="outline" className="text-[10px]">
+                <Badge variant="outline" className="text-[10px] bg-blue-500/10 text-blue-400 border-blue-500/20">
                   {obj.domain}
                 </Badge>
               </div>

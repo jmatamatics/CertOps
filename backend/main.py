@@ -24,7 +24,7 @@ from backend.procedural_memory import (
     reset_memories,
 )
 
-app = FastAPI(title="CertOps API", version="2.0.0")
+app = FastAPI(title="CertOps Studio API", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -401,6 +401,7 @@ def program_report(program_id: str, download: bool = False):
             headers={"Content-Disposition": f'attachment; filename="{safe_name}_report.html"'},
         )
     return HTMLResponse(content=html)
+
 
 
 def _row_to_dict(row: dict) -> dict:

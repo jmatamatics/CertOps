@@ -16,6 +16,12 @@ const TYPE_COLORS: Record<string, string> = {
   analysis: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
 };
 
+const DIFFICULTY_COLORS: Record<string, string> = {
+  easy: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  medium: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  hard: "bg-red-500/10 text-red-400 border-red-500/20",
+};
+
 export function ItemBankView({ items }: ItemBankViewProps) {
   return (
     <div className="space-y-3">
@@ -28,18 +34,28 @@ export function ItemBankView({ items }: ItemBankViewProps) {
         >
           <Card className="border-border/50">
             <CardHeader className="flex flex-row items-start gap-3 p-4 pb-2">
-              <Badge
-                variant="outline"
-                className={`shrink-0 text-[10px] ${TYPE_COLORS[item.task_type] ?? ""}`}
-              >
-                {item.task_type}
-              </Badge>
+              <div className="flex gap-1.5 shrink-0">
+                <Badge
+                  variant="outline"
+                  className={`text-[10px] ${TYPE_COLORS[item.task_type] ?? ""}`}
+                >
+                  {item.task_type}
+                </Badge>
+                {item.difficulty && (
+                  <Badge
+                    variant="outline"
+                    className={`text-[10px] ${DIFFICULTY_COLORS[item.difficulty] ?? ""}`}
+                  >
+                    {item.difficulty}
+                  </Badge>
+                )}
+              </div>
               <CardTitle className="text-sm leading-snug">
                 {item.stem}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 p-4 pt-0">
-              <Badge variant="outline" className="text-[10px]">
+              <Badge variant="outline" className="text-[10px] bg-blue-500/10 text-blue-400 border-blue-500/20">
                 {item.competency_ref}
               </Badge>
               <Separator />

@@ -56,7 +56,7 @@ function buildTourSteps(
       target: "[data-tour='artifact-tabs']",
       title: "Edit Any Artifact",
       content:
-        "When you build your own program, each tab has an Edit button. You can drill into a specific section and change it using form fields — no JSON editing needed. CertOps then regenerates all downstream artifacts automatically.",
+        "When you build your own program, each tab has an Edit button. You can drill into a specific section and change it using form fields — no JSON editing needed. CertOps Studio then regenerates all downstream artifacts automatically.",
       placement: "top" as const,
       action: () => tabsRef.current?.openPicker("competency_framework"),
     },

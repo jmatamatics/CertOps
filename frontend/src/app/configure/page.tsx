@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
-import { ArrowLeft, Settings2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -167,7 +167,16 @@ function ConfigureContent() {
             )}
           </motion.div>
         ) : (
-          <AgentConfigurator programId={selectedId} programName={selectedName} />
+          <div>
+            <AgentConfigurator programId={selectedId} programName={selectedName} />
+
+            <div className="border-t border-border mt-8 pt-6 flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">Step 2 of 4</span>
+              <Button onClick={() => router.push(`/assess?program=${selectedId}`)}>
+                Next: Test Your Exam <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         )}
       </div>
     </div>

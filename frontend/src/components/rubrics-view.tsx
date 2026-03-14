@@ -33,13 +33,13 @@ export function RubricsView({ rubrics }: RubricsViewProps) {
                       <th className="py-2 px-2 text-center font-medium w-12">
                         Wt
                       </th>
-                      <th className="py-2 px-4 text-left font-medium">
+                      <th className="py-2 px-4 text-left font-medium text-red-400">
                         Novice
                       </th>
-                      <th className="py-2 px-4 text-left font-medium">
+                      <th className="py-2 px-4 text-left font-medium text-amber-400">
                         Competent
                       </th>
-                      <th className="py-2 pl-4 text-left font-medium">
+                      <th className="py-2 pl-4 text-left font-medium text-emerald-400">
                         Expert
                       </th>
                     </tr>
@@ -48,7 +48,7 @@ export function RubricsView({ rubrics }: RubricsViewProps) {
                     {rubric.criteria.map((c) => (
                       <tr key={c.criterion} className="border-b last:border-0">
                         <td className="py-2 pr-4 font-medium">{c.criterion}</td>
-                        <td className="py-2 px-2 text-center text-primary font-semibold">
+                        <td className="py-2 px-2 text-center text-blue-400 font-semibold">
                           {c.weight}
                         </td>
                         <td className="py-2 px-4 text-muted-foreground">
