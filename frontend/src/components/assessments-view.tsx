@@ -59,6 +59,19 @@ export function AssessmentsView({ assessments }: AssessmentsViewProps) {
                   ))}
                 </ul>
               </div>
+              {task.evaluator_guide && (
+                <>
+                  <Separator />
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">
+                      Evaluator Guide
+                    </p>
+                    <div className="rounded-md border border-blue-500/20 bg-blue-500/5 p-3 text-xs whitespace-pre-wrap">
+                      {task.evaluator_guide}
+                    </div>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </motion.div>

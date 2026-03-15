@@ -31,12 +31,41 @@ export function LearningPathView({ progression }: LearningPathViewProps) {
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent className="px-4 pb-4 pl-14">
+            <CardContent className="px-4 pb-4 pl-14 space-y-3">
               <p className="text-xs text-muted-foreground">{obj.description}</p>
+
               {obj.prerequisites.length > 0 && (
-                <p className="mt-1 text-[10px] text-muted-foreground/70">
-                  Prereqs: {obj.prerequisites.join(", ")}
+                <p className="text-[11px] text-muted-foreground/70">
+                  Prerequisites: {obj.prerequisites.join(", ")}
                 </p>
+              )}
+
+              {obj.suggested_activities.length > 0 && (
+                <div>
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground mb-1">
+                    Suggested Activities
+                  </p>
+                  <ul className="list-disc pl-4 space-y-0.5">
+                    {obj.suggested_activities.map((activity, j) => (
+                      <li key={j} className="text-xs text-muted-foreground">
+                        {activity}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <p className="text-[11px] text-muted-foreground/70">
+                Estimated: {obj.estimated_hours} hours
+              </p>
+
+              {obj.success_criteria && (
+                <div>
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground mb-1">
+                    Success Criteria
+                  </p>
+                  <p className="text-xs text-muted-foreground">{obj.success_criteria}</p>
+                </div>
               )}
             </CardContent>
           </Card>

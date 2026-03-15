@@ -8,61 +8,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PipelineProgress } from "@/components/pipeline-progress";
 import { ArtifactTabs, type ArtifactTabsHandle } from "@/components/artifact-tabs";
-import { GuidedTour } from "@/components/guided-tour";
 import { fetchCached, generateLive, editArtifact, getExportUrl } from "@/lib/api";
 import { TRACKS, type CertOpsOutput, type TrackKey, type ArtifactKey } from "@/lib/types";
 
 type Status = "idle" | "loading" | "generating" | "done" | "error" | "replaying";
-
-function buildTourSteps(tabsRef: React.RefObject<ArtifactTabsHandle | null>) {
-  return [
-    {
-      target: "[data-tour='summary-card']",
-      title: "Program Summary",
-      content:
-        "After generation, this card shows a high-level snapshot of your certification program: how many domains, skills, assessments, and items were created, plus the estimated duration.",
-      placement: "bottom" as const,
-    },
-    {
-      target: "[data-tour='artifact-tabs']",
-      title: "Explore Each Artifact",
-      content:
-        "Your program is made up of 6 artifacts. Click any tab to dive into the details: the competency framework, learning path, assessments, rubrics, item bank, and blueprint.",
-      placement: "top" as const,
-    },
-    {
-      target: "[data-tour='edit-button']",
-      title: "Edit Any Artifact",
-      content:
-        "See something you want to change? Click the Edit button on any tab. You don't need to regenerate the entire program - just edit the part you want. Let's try it.",
-      placement: "bottom" as const,
-      action: () => tabsRef.current?.openPicker("competency_framework"),
-    },
-    {
-      target: "[data-tour='section-picker']",
-      title: "Choose a Section",
-      content:
-        "Here's the drill-down picker. Each domain is shown as a separate card. Instead of scrolling through the entire framework, just click the section you want to edit. Let's pick the first domain.",
-      placement: "top" as const,
-      action: () => tabsRef.current?.selectSection("competency_framework", 1),
-    },
-    {
-      target: "[data-tour='form-editor']",
-      title: "Edit With Form Fields",
-      content:
-        "Change a domain name, update a skill description, or add a new behavioral indicator. When you're done, click 'Save & Replay' and CertOps Studio regenerates all downstream artifacts automatically.",
-      placement: "top" as const,
-      action: () => tabsRef.current?.resetView(),
-    },
-    {
-      target: "[data-tour='actions']",
-      title: "Export or Regenerate",
-      content:
-        "When you're happy with the results, click 'View Certification Report' to get a formatted HTML report. Or click 'Regenerate' to start fresh with a new pipeline run.",
-      placement: "top" as const,
-    },
-  ];
-}
 
 function GenerateContent() {
   const searchParams = useSearchParams();
@@ -74,10 +23,9 @@ function GenerateContent() {
   const [data, setData] = useState<CertOpsOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState(0);
-  const [tourOpen, setTourOpen] = useState(false);
+  const [replayingFrom, setReplayingFrom] = useState<ArtifactKey | null>(null);
   const stepRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const tabsRef = useRef<ArtifactTabsHandle | null>(null);
-  const tourSteps = buildTourSteps(tabsRef);
 
   const loadCached = useCallback(async () => {
     setStatus("loading");
@@ -121,21 +69,29 @@ function GenerateContent() {
 
   function handleEdit(artifactKey: ArtifactKey, updatedData: unknown) {
     if (!data?.thread_id) {
-      setError("No active session. Generate a certification first.");
+      setError("No active session — edits require a live backend connection.");
       return;
     }
 
     setStatus("replaying");
+    setReplayingFrom(artifactKey);
     setError(null);
 
     editArtifact(data.thread_id, artifactKey, updatedData)
       .then((result) => {
         setData(result);
         setStatus("done");
+        setReplayingFrom(null);
       })
       .catch((err) => {
-        setError(String(err));
+        const msg = String(err);
+        if (msg.includes("Failed to fetch")) {
+          setError("Could not reach the backend. Make sure the API server is running to replay downstream artifacts.");
+        } else {
+          setError(`Replay failed: ${msg}`);
+        }
         setStatus("done");
+        setReplayingFrom(null);
       });
   }
 
@@ -160,16 +116,6 @@ function GenerateContent() {
           >
             &larr; Back to tracks
           </button>
-          {showResults && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setTourOpen(true)}
-              className="text-xs"
-            >
-              Take a Tour
-            </Button>
-          )}
         </div>
         <h1 className="text-3xl font-bold tracking-tight">
           {track.name}
@@ -183,6 +129,7 @@ function GenerateContent() {
             currentStep={step}
             isComplete={status === "done"}
             isError={status === "error"}
+            replayingFrom={replayingFrom}
           />
           {error && (
             <p className="mt-4 text-xs text-destructive">{error}</p>
@@ -243,15 +190,14 @@ function GenerateContent() {
                         "Reranking results with Cohere...",
                         "Generating competency framework...",
                         "Building learning progression...",
-                        "Designing assessment tasks...",
+                        "Designing performance tasks...",
                         "Creating scoring rubrics...",
                         "Assembling item bank and blueprint...",
                       ][step] ?? "Finishing up..."}
                     </motion.p>
                   </AnimatePresence>
                   <p className="text-xs text-muted-foreground">
-                    This takes 60-90 seconds. Each step uses GPT-4o with
-                    structured output.
+                    Generating your certification program — this may take a minute.
                   </p>
                 </div>
               </motion.div>
@@ -312,7 +258,7 @@ function GenerateContent() {
                         <div className="text-2xl font-bold text-primary">
                           {data.assessments.length}
                         </div>
-                        <div className="text-xs text-muted-foreground">Assessments</div>
+                        <div className="text-xs text-muted-foreground">Tasks</div>
                       </div>
                       <div>
                         <div className="text-2xl font-bold text-primary">
@@ -354,9 +300,10 @@ function GenerateContent() {
                     View Certification Report
                   </Button>
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="lg"
                     onClick={startGenerate}
+                    className="flex-1"
                   >
                     Regenerate
                   </Button>
@@ -367,14 +314,6 @@ function GenerateContent() {
         </main>
       </div>
 
-      <GuidedTour
-        steps={tourSteps}
-        isOpen={tourOpen}
-        onClose={() => {
-          setTourOpen(false);
-          tabsRef.current?.resetView();
-        }}
-      />
     </div>
   );
 }

@@ -35,8 +35,7 @@ export default function Home() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
       >
-        Powered by LangGraph &middot; OpenAI GPT-4o &middot; Qdrant &middot;
-        Cohere Rerank
+        Design. Assess. Certify. &mdash; All AI-powered.
       </motion.p>
     </div>
   );

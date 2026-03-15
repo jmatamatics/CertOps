@@ -283,16 +283,13 @@ function AssessContent() {
               {phase === "complete" && result ? (
                 <div className="space-y-6">
                   <ExamResultsCard result={result} />
-                  <div className="flex gap-3">
+                  <div className="flex flex-wrap gap-3">
                     <Button variant="outline" onClick={handleReset}>
                       Take Another Exam
                     </Button>
-                    <Button variant="ghost" onClick={() => router.push("/")}>
+                    <Button variant="outline" onClick={() => router.push("/")}>
                       Back to Home
                     </Button>
-                  </div>
-                  <div className="border-t border-border mt-4 pt-6 flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Step 3 of 4</span>
                     <Button onClick={() => router.push("/saved")}>
                       Next: Deploy &amp; Share <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>

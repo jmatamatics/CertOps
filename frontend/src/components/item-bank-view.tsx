@@ -10,12 +10,6 @@ interface ItemBankViewProps {
   items: ItemBankEntry[];
 }
 
-const TYPE_COLORS: Record<string, string> = {
-  performance: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  scenario: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  analysis: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-};
-
 const DIFFICULTY_COLORS: Record<string, string> = {
   easy: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
   medium: "bg-amber-500/10 text-amber-400 border-amber-500/20",
@@ -37,9 +31,12 @@ export function ItemBankView({ items }: ItemBankViewProps) {
               <div className="flex gap-1.5 shrink-0">
                 <Badge
                   variant="outline"
-                  className={`text-[10px] ${TYPE_COLORS[item.task_type] ?? ""}`}
+                  className="text-[10px] bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                 >
                   {item.task_type}
+                </Badge>
+                <Badge variant="outline" className="text-[10px] bg-blue-500/10 text-blue-400 border-blue-500/20">
+                  {item.competency_ref}
                 </Badge>
                 {item.difficulty && (
                   <Badge
@@ -50,27 +47,34 @@ export function ItemBankView({ items }: ItemBankViewProps) {
                   </Badge>
                 )}
               </div>
+            </CardHeader>
+            <CardContent className="space-y-2 p-4 pt-0">
               <CardTitle className="text-sm leading-snug">
                 {item.stem}
               </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 p-4 pt-0">
-              <Badge variant="outline" className="text-[10px] bg-blue-500/10 text-blue-400 border-blue-500/20">
-                {item.competency_ref}
-              </Badge>
               <Separator />
               <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1">
+                <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground mb-1">
                   Expected Response
                 </p>
-                <p className="text-xs">{item.expected_response_summary}</p>
+                <p className="text-xs text-muted-foreground">{item.expected_response_summary}</p>
               </div>
               <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1">
+                <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground mb-1">
                   Scoring Notes
                 </p>
-                <p className="text-xs">{item.scoring_notes}</p>
+                <p className="text-xs text-muted-foreground">{item.scoring_notes}</p>
               </div>
+              {item.model_answer && (
+                <div>
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground mb-1">
+                    Model Answer
+                  </p>
+                  <div className="rounded-r-md border-l-[3px] border-blue-500 bg-muted/50 p-3 text-xs whitespace-pre-wrap">
+                    {item.model_answer}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </motion.div>

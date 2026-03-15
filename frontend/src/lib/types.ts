@@ -68,6 +68,7 @@ export interface ItemBankEntry {
   choices?: string[] | null;
   correct_choice?: string | null;
   competency_ref: string;
+  difficulty?: "easy" | "medium" | "hard";
   expected_response_summary: string;
   scoring_notes: string;
   model_answer: string;

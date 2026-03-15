@@ -9,45 +9,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PipelineProgress } from "@/components/pipeline-progress";
 import { ResultsView } from "@/components/results-view";
-import { GuidedTour } from "@/components/guided-tour";
 import { type ArtifactTabsHandle } from "@/components/artifact-tabs";
 import { generateCustom, editArtifact, saveProgram, getExportUrl } from "@/lib/api";
 import type { CertOpsOutput, ArtifactKey } from "@/lib/types";
 
 type Status = "idle" | "generating" | "done" | "error" | "replaying" | "saving";
-
-function buildTourSteps(tabsRef: React.RefObject<ArtifactTabsHandle | null>) {
-  return [
-    {
-      target: "[data-tour='summary-card']",
-      title: "Program Summary",
-      content:
-        "Your custom certification program has been generated from your uploaded content. Here's the high-level snapshot.",
-      placement: "bottom" as const,
-    },
-    {
-      target: "[data-tour='artifact-tabs']",
-      title: "Explore Each Artifact",
-      content:
-        "Six artifacts were generated from your content. Click any tab to dive into the details.",
-      placement: "top" as const,
-    },
-    {
-      target: "[data-tour='edit-button']",
-      title: "Edit Any Artifact",
-      content:
-        "See something you want to change? Click Edit, pick a section, and modify it through form fields. CertOps Studio regenerates downstream artifacts automatically.",
-      placement: "bottom" as const,
-    },
-    {
-      target: "[data-tour='actions']",
-      title: "Save Your Program",
-      content:
-        "When you're happy with the results, save your program to access it later from the Saved Programs page.",
-      placement: "top" as const,
-    },
-  ];
-}
 
 export default function CreatePage() {
   const router = useRouter();
@@ -60,14 +26,13 @@ export default function CreatePage() {
   const [data, setData] = useState<CertOpsOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState(0);
-  const [tourOpen, setTourOpen] = useState(false);
+  const [replayingFrom, setReplayingFrom] = useState<ArtifactKey | null>(null);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [saveName, setSaveName] = useState("");
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const stepRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const tabsRef = useRef<ArtifactTabsHandle | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const tourSteps = buildTourSteps(tabsRef);
 
   function addUrl() {
     setUrls((prev) => [...prev, ""]);
@@ -132,19 +97,27 @@ export default function CreatePage() {
 
   function handleEdit(artifactKey: ArtifactKey, updatedData: unknown) {
     if (!data?.thread_id) {
-      setError("No active session.");
+      setError("No active session — edits require a live backend connection.");
       return;
     }
     setStatus("replaying");
+    setReplayingFrom(artifactKey);
     setError(null);
     editArtifact(data.thread_id, artifactKey, updatedData)
       .then((result) => {
         setData(result);
         setStatus("done");
+        setReplayingFrom(null);
       })
       .catch((err) => {
-        setError(String(err));
+        const msg = String(err);
+        if (msg.includes("Failed to fetch")) {
+          setError("Could not reach the backend. Make sure the API server is running to replay downstream artifacts.");
+        } else {
+          setError(`Replay failed: ${msg}`);
+        }
         setStatus("done");
+        setReplayingFrom(null);
       });
   }
 
@@ -176,16 +149,6 @@ export default function CreatePage() {
           >
             &larr; Back to home
           </button>
-          {showResults && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setTourOpen(true)}
-              className="text-xs"
-            >
-              Take a Tour
-            </Button>
-          )}
         </div>
         <h1 className="text-3xl font-bold tracking-tight">Build Your Own</h1>
         <p className="text-sm text-muted-foreground mt-1">
@@ -209,7 +172,7 @@ export default function CreatePage() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Azure AI Engineer Certification"
+              placeholder="e.g., Data Analytics Professional Certification"
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
@@ -253,7 +216,7 @@ export default function CreatePage() {
                     type="url"
                     value={url}
                     onChange={(e) => updateUrl(i, e.target.value)}
-                    placeholder="https://learn.microsoft.com/..."
+                    placeholder="https://docs.example.com/training/..."
                     className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                   {urls.length > 1 && (
@@ -357,11 +320,29 @@ export default function CreatePage() {
               currentStep={step}
               isComplete={status === "done"}
               isError={status === "error"}
+              replayingFrom={replayingFrom}
             />
             {error && <p className="mt-4 text-xs text-destructive">{error}</p>}
           </aside>
 
           <main>
+            {error && status === "done" && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive flex items-center justify-between"
+              >
+                <span>{error}</span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-xs text-destructive hover:text-destructive/80"
+                  onClick={() => setError(null)}
+                >
+                  Dismiss
+                </Button>
+              </motion.div>
+            )}
             <AnimatePresence mode="wait">
               {status === "generating" && (
                 <motion.div
@@ -386,15 +367,14 @@ export default function CreatePage() {
                           "Extracting key topics and themes...",
                           "Generating competency framework...",
                           "Building learning progression...",
-                          "Designing assessment tasks...",
+                          "Designing performance tasks...",
                           "Creating scoring rubrics...",
                           "Assembling item bank and blueprint...",
                         ][step] ?? "Finishing up..."}
                       </motion.p>
                     </AnimatePresence>
                     <p className="text-xs text-muted-foreground">
-                      This takes 60-90 seconds. Each step uses GPT-4o with
-                      structured output.
+                      Generating your certification program — this may take a minute.
                     </p>
                   </div>
                 </motion.div>
@@ -435,53 +415,6 @@ export default function CreatePage() {
 
               {showResults && (
                 <motion.div key="done">
-                  {saveSuccess && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-400 flex items-center justify-between"
-                    >
-                      <span>Program saved successfully!</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="text-xs text-green-400 hover:text-green-300"
-                        onClick={() => router.push(`/saved/${saveSuccess}`)}
-                      >
-                        View in Saved Programs
-                      </Button>
-                    </motion.div>
-                  )}
-
-                  {saveDialogOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mb-4 rounded-lg border border-border bg-card px-4 py-4 space-y-3"
-                    >
-                      <h4 className="text-sm font-medium">Save Program</h4>
-                      <input
-                        type="text"
-                        placeholder={`${name} — ${new Date().toLocaleDateString()}`}
-                        value={saveName}
-                        onChange={(e) => setSaveName(e.target.value)}
-                        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                      />
-                      <div className="flex gap-2 justify-end">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => setSaveDialogOpen(false)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button size="sm" onClick={handleSave}>
-                          Save
-                        </Button>
-                      </div>
-                    </motion.div>
-                  )}
-
                   <ResultsView
                     ref={tabsRef}
                     data={data}
@@ -518,19 +451,29 @@ export default function CreatePage() {
                             </Button>
                           </>
                         )}
+                        {!saveSuccess ? (
+                          <Button
+                            variant="outline"
+                            size="lg"
+                            onClick={() => {
+                              setSaveDialogOpen(true);
+                              setSaveSuccess(null);
+                            }}
+                            className="flex-1"
+                          >
+                            Save Program
+                          </Button>
+                        ) : (
+                          <Button
+                            size="lg"
+                            onClick={() => router.push(`/configure?program=${saveSuccess}`)}
+                            className="flex-1"
+                          >
+                            Next: Configure Exam Agent <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        )}
                         <Button
                           variant="outline"
-                          size="lg"
-                          onClick={() => {
-                            setSaveDialogOpen(true);
-                            setSaveSuccess(null);
-                          }}
-                          className="flex-1"
-                        >
-                          Save Program
-                        </Button>
-                        <Button
-                          variant="ghost"
                           size="lg"
                           onClick={() => {
                             setData(null);
@@ -539,6 +482,7 @@ export default function CreatePage() {
                             setError(null);
                             setSaveSuccess(null);
                           }}
+                          className="flex-1"
                         >
                           Start Over
                         </Button>
@@ -546,13 +490,51 @@ export default function CreatePage() {
                     }
                   />
 
+                  {saveDialogOpen && !saveSuccess && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-4 rounded-lg border border-border bg-card px-4 py-4 space-y-3"
+                    >
+                      <h4 className="text-sm font-medium">Save Program</h4>
+                      <input
+                        type="text"
+                        placeholder={`${name} — ${new Date().toLocaleDateString()}`}
+                        value={saveName}
+                        onChange={(e) => setSaveName(e.target.value)}
+                        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <div className="flex gap-2 justify-end">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setSaveDialogOpen(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button size="sm" onClick={handleSave}>
+                          Save
+                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+
                   {saveSuccess && (
-                    <div className="border-t border-border mt-8 pt-6 flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">Step 1 of 4</span>
-                      <Button onClick={() => router.push(`/configure?program=${saveSuccess}`)}>
-                        Next: Configure Exam Agent <ArrowRight className="ml-2 h-4 w-4" />
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-4 rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-400 flex items-center justify-between"
+                    >
+                      <span>Program saved successfully!</span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-xs text-green-400 hover:text-green-300"
+                        onClick={() => router.push(`/saved/${saveSuccess}`)}
+                      >
+                        View in Saved Programs
                       </Button>
-                    </div>
+                    </motion.div>
                   )}
                 </motion.div>
               )}
@@ -561,14 +543,6 @@ export default function CreatePage() {
         </div>
       )}
 
-      <GuidedTour
-        steps={tourSteps}
-        isOpen={tourOpen}
-        onClose={() => {
-          setTourOpen(false);
-          tabsRef.current?.resetView();
-        }}
-      />
     </div>
   );
 }

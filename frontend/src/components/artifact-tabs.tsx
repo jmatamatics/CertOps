@@ -22,12 +22,12 @@ interface ArtifactTabsProps {
 }
 
 const TAB_CONFIG: { key: ArtifactKey; label: string }[] = [
+  { key: "blueprint", label: "Blueprint" },
   { key: "competency_framework", label: "Framework" },
-  { key: "learning_progression", label: "Learning Path" },
-  { key: "assessments", label: "Assessments" },
+  { key: "learning_progression", label: "Progression" },
+  { key: "assessments", label: "Performance Tasks" },
   { key: "rubrics", label: "Rubrics" },
   { key: "item_bank", label: "Item Bank" },
-  { key: "blueprint", label: "Blueprint" },
 ];
 
 // ── Section picker: breaks an artifact into editable sections ──
@@ -272,7 +272,7 @@ export const ArtifactTabs = forwardRef<ArtifactTabsHandle, ArtifactTabsProps>(
   }
 
   return (
-    <Tabs defaultValue="competency_framework" className="w-full">
+    <Tabs defaultValue="blueprint" className="w-full">
       <TabsList className="grid w-full grid-cols-6">
         {TAB_CONFIG.map(({ key, label }) => (
           <TabsTrigger key={key} value={key} className="text-xs">
@@ -342,6 +342,15 @@ export const ArtifactTabs = forwardRef<ArtifactTabsHandle, ArtifactTabsProps>(
   );
 });
 
+const SECTION_TITLES: Record<ArtifactKey, string> = {
+  blueprint: "Blueprint",
+  competency_framework: "Framework",
+  learning_progression: "Progression",
+  assessments: "Performance Tasks",
+  rubrics: "Rubrics",
+  item_bank: "Item Bank",
+};
+
 function ArtifactContent({
   artifactKey,
   data,
@@ -349,18 +358,29 @@ function ArtifactContent({
   artifactKey: ArtifactKey;
   data: CertOpsOutput;
 }) {
-  switch (artifactKey) {
-    case "competency_framework":
-      return <FrameworkView framework={data.competency_framework} />;
-    case "learning_progression":
-      return <LearningPathView progression={data.learning_progression} />;
-    case "assessments":
-      return <AssessmentsView assessments={data.assessments} />;
-    case "rubrics":
-      return <RubricsView rubrics={data.rubrics} />;
-    case "item_bank":
-      return <ItemBankView items={data.item_bank} />;
-    case "blueprint":
-      return <BlueprintView blueprint={data.blueprint} />;
-  }
+  const content = (() => {
+    switch (artifactKey) {
+      case "competency_framework":
+        return <FrameworkView framework={data.competency_framework} />;
+      case "learning_progression":
+        return <LearningPathView progression={data.learning_progression} />;
+      case "assessments":
+        return <AssessmentsView assessments={data.assessments} />;
+      case "rubrics":
+        return <RubricsView rubrics={data.rubrics} />;
+      case "item_bank":
+        return <ItemBankView items={data.item_bank} />;
+      case "blueprint":
+        return <BlueprintView blueprint={data.blueprint} />;
+    }
+  })();
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-lg font-semibold border-b border-border pb-2">
+        {SECTION_TITLES[artifactKey]}
+      </h2>
+      {content}
+    </div>
+  );
 }

@@ -55,7 +55,7 @@ export const ResultsView = forwardRef<ArtifactTabsHandle, ResultsViewProps>(
                 <div className="text-2xl font-bold text-primary">
                   {data.assessments.length}
                 </div>
-                <div className="text-xs text-muted-foreground">Assessments</div>
+                <div className="text-xs text-muted-foreground">Tasks</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-primary">

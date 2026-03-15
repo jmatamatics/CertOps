@@ -179,6 +179,12 @@ function ObjectListEditor({
     onChange(newItems);
   }
 
+  function removeItem(index: number) {
+    if (expandedIndex === index) setExpandedIndex(null);
+    else if (expandedIndex !== null && expandedIndex > index) setExpandedIndex(expandedIndex - 1);
+    onChange(items.filter((_, i) => i !== index));
+  }
+
   const nameField = items[0]
     ? (["name", "title", "level", "criterion", "stem", "assessment_ref"] as const).find(
         (f) => f in items[0],
@@ -198,19 +204,31 @@ function ObjectListEditor({
         return (
           <Card key={i} className="border-border/50">
             <CardContent className="p-3">
-              <button
-                className="w-full flex items-center justify-between text-left"
-                onClick={() =>
-                  setExpandedIndex(expandedIndex === i ? null : i)
-                }
-              >
-                <span className="text-sm font-medium truncate">
-                  {itemLabel}
-                </span>
-                <Badge variant="outline" className="shrink-0 ml-2 text-[10px]">
-                  {expandedIndex === i ? "Collapse" : "Expand"}
-                </Badge>
-              </button>
+              <div className="flex items-center justify-between">
+                <button
+                  className="flex-1 flex items-center justify-between text-left min-w-0"
+                  onClick={() =>
+                    setExpandedIndex(expandedIndex === i ? null : i)
+                  }
+                >
+                  <span className="text-sm font-medium truncate">
+                    {itemLabel}
+                  </span>
+                  <Badge variant="outline" className="shrink-0 ml-2 text-[10px]">
+                    {expandedIndex === i ? "Collapse" : "Expand"}
+                  </Badge>
+                </button>
+                {items.length > 1 && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => removeItem(i)}
+                    className="shrink-0 ml-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
               {expandedIndex === i && (
                 <div className="mt-3 pt-3 border-t border-border/50 space-y-3">
                   <ObjectEditor
