@@ -1,13 +1,31 @@
 """Content ingestion utilities for Build Your Own certifications.
 
-Fetches URLs, parses PDF/DOCX uploads, and chunks text for the pipeline.
+Fetches URLs, parses PDF/DOCX uploads, chunks text, and optionally embeds
+into Qdrant for program-scoped RAG retrieval.
 """
 
 import io
+import os
+from pathlib import Path
+
 import httpx
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from docx import Document
+from langchain_openai import OpenAIEmbeddings
+from langchain_qdrant import QdrantVectorStore
+from langchain_core.documents import Document as LCDocument
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, VectorParams
+
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
+QDRANT_URL = os.getenv("QDRANT_URL")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
+CUSTOM_COLLECTION = "certops_custom_docs"
+
+_embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
 
 def fetch_url(url: str, timeout: float = 15.0) -> str:
@@ -100,3 +118,56 @@ def process_content(
         chunks.extend(chunk_text(text))
 
     return chunks
+
+
+def _ensure_custom_collection() -> None:
+    """Create the custom docs collection in Qdrant if it doesn't exist."""
+    client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+    existing = [c.name for c in client.get_collections().collections]
+    if CUSTOM_COLLECTION not in existing:
+        client.create_collection(
+            collection_name=CUSTOM_COLLECTION,
+            vectors_config=VectorParams(size=1536, distance=Distance.COSINE),
+        )
+
+
+def embed_program_docs(program_id: str, chunks: list[str], sources: list[str] | None = None) -> int:
+    """Embed text chunks into Qdrant with program_id metadata for scoped retrieval.
+
+    Returns the number of chunks embedded.
+    """
+    if not chunks:
+        return 0
+
+    _ensure_custom_collection()
+
+    documents = [
+        LCDocument(
+            page_content=chunk,
+            metadata={
+                "program_id": program_id,
+                "source": (sources[min(i, len(sources) - 1)] if sources else "upload"),
+            },
+        )
+        for i, chunk in enumerate(chunks)
+    ]
+
+    vs = QdrantVectorStore.from_existing_collection(
+        embedding=_embeddings,
+        collection_name=CUSTOM_COLLECTION,
+        url=QDRANT_URL,
+        api_key=QDRANT_API_KEY,
+    )
+    vs.add_documents(documents)
+    return len(documents)
+
+
+def get_program_vector_store() -> QdrantVectorStore:
+    """Return a QdrantVectorStore pointed at the custom docs collection."""
+    _ensure_custom_collection()
+    return QdrantVectorStore.from_existing_collection(
+        embedding=_embeddings,
+        collection_name=CUSTOM_COLLECTION,
+        url=QDRANT_URL,
+        api_key=QDRANT_API_KEY,
+    )

@@ -194,6 +194,28 @@ export interface ExamSnapshot {
   result: ExamResult | null;
 }
 
+// ── Results Dashboard ──
+
+export interface ResultsSummary {
+  program_id: string;
+  program_name: string | null;
+  total_attempts: number;
+  passed_count: number;
+  avg_score: number;
+  last_attempt: string;
+}
+
+export interface LearnerResult {
+  learner_id: string;
+  program_id: string;
+  thread_id: string;
+  passed: boolean;
+  overall_score: number;
+  domain_breakdown: Record<string, DomainProficiency>;
+  summary: string;
+  created_at: string;
+}
+
 // ── Procedural Memory / Agent Config ──
 
 export interface PassThresholds {
@@ -222,4 +244,6 @@ export interface AgentConfig {
   farewell_message: string;
   pass_thresholds: PassThresholds;
   scoring_scale: ScoringScale;
+  max_exam_items: number;
+  min_items_per_domain: number;
 }

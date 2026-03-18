@@ -18,19 +18,20 @@ At the same time, we need differentiated AI fluency tracks for everyday users, A
 
 ## The Solution
 
-CertOps is an agentic RAG application built with LangGraph. The home page presents a four-step pipeline journey:
+CertOps is an agentic RAG application built with LangGraph. The home page presents a five-step pipeline journey:
 
-1. **Build** — Upload URLs, PDFs, or DOCX files and CertOps generates a complete certification package from your content. Edit any artifact with form-based editors and LangGraph replays downstream artifacts automatically (Express Mode).
-2. **Configure** — Customize the exam agent's evaluation style, scoring thresholds, and messaging through procedural memory stored in Qdrant with per-user namespaces.
+1. **Build** — Upload URLs, PDFs, or DOCX files. Documents are embedded into a program-scoped Qdrant knowledge base, then the pipeline retrieves the most relevant chunks via Cohere reranking and generates a complete certification package. Edit any artifact with form-based editors and LangGraph replays downstream artifacts automatically (Express Mode). Delete individual item bank questions to curate the exam pool.
+2. **Configure** — Customize the exam agent's evaluation style, scoring thresholds, exam length, and messaging through procedural memory stored in Qdrant with per-user namespaces.
 3. **Test** — Take an adaptive exam powered by a second LangGraph agent. It delivers a mix of multiple choice and open-ended questions, scores responses deterministically or via LLM-as-judge, and presents a comprehensive question-by-question review with feedback and source links at the end.
-4. **Deploy** — Browse saved programs, view and download HTML certification reports, and share exams via direct links or embeddable snippets.
+4. **Deploy** — Browse saved programs, view and download HTML certification reports, share exams via direct links or embeddable iframe snippets, and add more documents to a program's knowledge base for future rebuilds.
+5. **Analyze** — Track pass/fail rates, review per-domain proficiency distributions, view score histograms and trends over time, and export learner results as CSV.
 
 Additional modes include **Explore Exemplar** for browsing pre-built certifications (AI Champion, M365 Copilot User) with an interactive guided tour.
 
 The generation pipeline:
 
-1. **Retrieve** relevant documentation chunks from Qdrant (Cohere-reranked) or ingest user-provided content (URLs, PDF, DOCX)
-2. **Augment** with Tavily web search for the latest platform updates
+1. **Embed** uploaded documents (URLs, PDF, DOCX) into a program-scoped Qdrant collection (`certops_custom_docs`)
+2. **Retrieve** the most relevant chunks via RAG with Cohere reranking (20 → top 5). For exemplar tracks, also **augment** with Tavily web search for the latest platform updates
 3. **Generate** each certification artifact in sequence — framework first (so downstream artifacts can reference it), then learning progression, assessments, rubrics, item bank, and certification blueprint
 
 Every LLM call uses OpenAI GPT-4o with structured output (Pydantic models) to ensure artifacts are valid and exportable. The final output is a comprehensive, styled HTML certification report that a non-technical user can download and hand to stakeholders.
@@ -41,18 +42,19 @@ Every LLM call uses OpenAI GPT-4o with structured output (Pydantic models) to en
 flowchart TB
     subgraph frontend ["Frontend — Vercel"]
         NextJS["Next.js + shadcn/ui + Framer Motion"]
-        Pipeline["Pipeline Journey<br/><small>Build → Configure → Test → Deploy</small>"]
-        Build["Build Your Own<br/><small>Upload + Generate + Edit</small>"]
-        Configure["Agent Configurator<br/><small>Prompts + Thresholds</small>"]
+        Pipeline["Pipeline Journey<br/><small>Build → Configure → Test → Deploy → Analyze</small>"]
+        Build["Build Your Own<br/><small>Upload + Embed + Generate + Edit</small>"]
+        Configure["Agent Configurator<br/><small>Prompts + Thresholds + Exam Length</small>"]
         Assess["Adaptive Exam<br/><small>MC + Open-Ended</small>"]
-        Deploy["Deploy<br/><small>Reports + Sharing</small>"]
+        Deploy["Deploy<br/><small>Reports + Sharing + Add Docs</small>"]
+        Analyze["Analyze<br/><small>Results Dashboard + CSV Export</small>"]
     end
 
     subgraph backend ["Backend — Render"]
         API["FastAPI Routes"]
-        Ingest["Content Ingestion<br/><small>URLs, PDF, DOCX</small>"]
+        Ingest["Content Ingestion<br/><small>URLs, PDF, DOCX → Embed</small>"]
         subgraph builderPipeline ["Builder Pipeline — LangGraph"]
-            Retrieve["retrieve_docs"]
+            Retrieve["retrieve_docs<br/><small>RAG: search → rerank → top 5</small>"]
             Framework["generate_competency_framework"]
             Progression["generate_learning_progression"]
             Assessments["generate_assessments"]
@@ -74,9 +76,10 @@ flowchart TB
     end
 
     subgraph dataLayer ["Data Layer"]
-        QdrantDocs[("Qdrant: certops_docs")]
+        QdrantDocs[("Qdrant: certops_docs<br/><small>Exemplar tracks</small>")]
+        QdrantCustom[("Qdrant: certops_custom_docs<br/><small>Build Your Own (per-program)</small>")]
         QdrantPM[("Qdrant: certops_procedural_memory")]
-        Postgres[("PostgreSQL")]
+        Postgres[("PostgreSQL<br/><small>Checkpoints + Programs + Learner Profiles</small>")]
     end
 
     subgraph services ["External Services"]
@@ -87,21 +90,27 @@ flowchart TB
     end
 
     NextJS --> Pipeline
-    Pipeline --> Build & Configure & Assess & Deploy
+    Pipeline --> Build & Configure & Assess & Deploy & Analyze
     Build -->|"POST /generate-custom"| API
     Configure -->|"GET/PUT /agent-config"| API
     Assess -->|"POST /exam/start + /respond"| API
     Deploy -->|"GET /programs"| API
-    API --> Ingest --> builderPipeline
+    Analyze -->|"GET /results/summary"| API
+    API --> Ingest
+    Ingest -->|"embed chunks"| QdrantCustom
+    Ingest --> builderPipeline
     API --> examAgent
     API --> ProcMem --> QdrantPM
-    Retrieve --> QdrantDocs
+    Retrieve -->|"exemplar tracks"| QdrantDocs
+    Retrieve -->|"Build Your Own"| QdrantCustom
     Retrieve --> Cohere
-    Retrieve --> Tavily
+    Retrieve -->|"exemplar only"| Tavily
     builderPipeline --> OpenAI
     examAgent --> OpenAI
     builderPipeline --> Checkpointer --> Postgres
     examAgent --> Checkpointer
+    FinalResult -->|"save learner_profiles"| Postgres
+    LoadProgram --> ProcMem
     API --> LangSmith
     API --> Templates
 ```
@@ -113,7 +122,7 @@ flowchart TB
 | **LLM** | OpenAI GPT-4o | Best-in-class structured output via `with_structured_output()` |
 | **Orchestration** | LangGraph (2 agents) | Builder graph for certification generation + Adaptive Exam agent with `interrupt()` for conversational assessment |
 | **Embeddings** | OpenAI text-embedding-3-small | High quality at low cost; 1536-dim vectors |
-| **Vector DB** | Qdrant Cloud | Two collections: `certops_docs` (RAG) and `certops_procedural_memory` (per-user agent config) |
+| **Vector DB** | Qdrant Cloud | Three collections: `certops_docs` (exemplar RAG), `certops_custom_docs` (Build Your Own per-program RAG), `certops_procedural_memory` (per-user agent config) |
 | **Retriever** | Cohere Rerank v3.5 | Winner from RAGAS evaluation — retrieve top 20, rerank to top 5 |
 | **Search Tool** | Tavily | Purpose-built for AI apps; fetches latest platform updates not in the local corpus |
 | **Checkpointer** | PostgresSaver (Render PostgreSQL) | Persistent graph state for Express Mode `update_state()` and selective replay |
@@ -148,7 +157,7 @@ CertOps ships with two exemplar tracks built from a curated corpus of 45 Microso
 
 > Domain names are representative — the LLM generates professional labels each run, but `TRACK_DOMAIN_HINTS` ensure the same four areas are always covered.
 
-**Build Your Own** — Upload any combination of URLs, PDFs, and DOCX files to generate a custom certification for any topic.
+**Build Your Own** — Upload any combination of URLs, PDFs, and DOCX files. Documents are embedded into a program-scoped Qdrant knowledge base (`certops_custom_docs`) and retrieved via RAG with Cohere reranking. The program description steers which chunks are retrieved, enabling multiple focused certifications from the same knowledge base. Additional documents can be added to the knowledge base at any time from the Deploy page.
 
 ## What It Generates
 
@@ -160,7 +169,7 @@ Each pipeline run produces six structured artifacts:
 | **Learning Progression** | Ordered learning objectives with suggested activities, estimated hours, and success criteria |
 | **Assessment Tasks** | Scenario-based performance assessments with instructions, expected outputs, and evaluator guides |
 | **Scoring Rubrics** | Weighted criteria with multi-level descriptors for consistent grading |
-| **Item Bank** | ~80% multiple choice (4 options with correct answer) + ~20% open-ended scenario items, each with model answers, scoring notes, and RAG source URLs |
+| **Item Bank** | ~80% multiple choice (4 options with correct answer) + ~20% open-ended scenario items, each with model answers, scoring notes, and RAG source URLs. Individual items can be deleted to curate the exam pool. |
 | **Certification Blueprint** | Executive summary tying all artifacts together — program overview, assessment strategy, estimated duration |
 
 All artifacts are delivered as a single downloadable HTML certification report styled for print and screen.
@@ -171,13 +180,13 @@ The **Test** step in the pipeline delivers adaptive certification assessments po
 
 **How it works:**
 
-1. **Load & Prepare** — `load_program` loads a saved program's item bank (15 items/domain across easy/medium/hard tiers), rubrics, and per-user procedural memory from Qdrant. Each domain's difficulty cursor is initialized to `medium`.
+1. **Load & Prepare** — `load_program` loads a saved program's item bank, rubrics, and per-user procedural memory from Qdrant. If the item bank exceeds `max_exam_items`, stratified random sampling selects a subset ensuring all domains are represented. Each domain's difficulty cursor is initialized to `medium`.
 2. **Domain Selection** — `select_item` prioritizes untested domains first, then weak domains (score < 2.0).
 3. **Difficulty Selection (Staircase)** — Within the chosen domain, the exam matches the difficulty cursor. Strong performance bumps the cursor up (medium → hard), weak performance drops it down (medium → easy). Items are tagged at generation time using Bloom's taxonomy tiers.
 4. **Presentation** — `present_item` formats the question. For multiple choice items, clickable A/B/C/D buttons appear in the chat UI. For open-ended items, the learner types a free-text response.
 5. **Evaluation** — `evaluate_response` handles both question types. MC questions are scored deterministically (correct = 3, incorrect = 1). Open-ended responses are evaluated by LLM-as-judge against rubric criteria with structured output. Borderline answers trigger a follow-up probe.
 6. **Cursor Adjustment** — `update_proficiency` updates the domain running score and adjusts the difficulty cursor based on the item score, creating a staircase that finds each learner's true level.
-7. **Termination** — The exam ends when all domains are sufficiently tested (≥2 items each, no uncertain domains), 20 items are reached, or items are exhausted.
+7. **Termination** — The exam ends when all domains are sufficiently tested (≥`min_items_per_domain` each, no uncertain domains), `max_exam_items` is reached, or items are exhausted. Both limits are configurable per program via procedural memory.
 8. **Results** — `determine_result` checks pass/fail thresholds and generates a narrative summary. The frontend renders a per-question review with feedback, difficulty level, model answers, and source links.
 
 ### API Endpoints
@@ -198,6 +207,7 @@ The **Configure** page exposes:
 - **Welcome / Farewell Messages** — Optional greeting and closing notes
 - **Pass/Fail Thresholds** — Overall minimum, domain minimum, and weak domain floor
 - **Proficiency Level Boundaries** — Score cutoffs for expert vs. competent vs. novice
+- **Exam Length** — Maximum exam items (5-50) and minimum items per domain (1-10)
 
 ### API Endpoints
 
@@ -207,6 +217,38 @@ The **Configure** page exposes:
 | GET | `/agent-config/{program_id}` | Load user-specific config for a program |
 | PUT | `/agent-config/{program_id}` | Save customized config |
 | POST | `/agent-config/{program_id}/reset` | Reset to defaults |
+
+## Results Dashboard
+
+The **Analyze** step provides aggregate analytics across all learner attempts for each program.
+
+**Summary view** — Cards per program showing total attempts, pass rate, and average score.
+
+**Program drill-down** — Clicking a program opens:
+- **Pass/Fail Distribution** — Donut chart with pass rate percentage
+- **Score Distribution** — Histogram of learner scores
+- **Domain Performance** — Horizontal bar chart with per-domain average scores
+- **Proficiency Distribution** — Stacked bars showing novice/competent/expert counts per domain
+- **Score Trend** — Line chart of average scores over time
+- **Learner Results Table** — Alphabetically sorted table with per-learner scores, proficiency, pass/fail, and drill-down into domain-level performance
+
+### API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/results/summary` | Summary stats for all programs |
+| GET | `/programs/{id}/results` | Detailed learner results for a program |
+| GET | `/programs/{id}/results/export` | Download learner results as CSV |
+
+## Knowledge Base Management
+
+Saved programs maintain a persistent knowledge base in Qdrant. The Deploy page includes an **Add Documents** card where new URLs, PDFs, or DOCX files can be embedded into the program's existing knowledge base for future rebuilds.
+
+### API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/programs/{id}/documents` | Embed additional documents into a program's knowledge base |
 
 ## Human-in-the-Loop: Express Mode
 
@@ -287,8 +329,8 @@ uv run jupyter notebook
 |---------|----------|-----|
 | **Frontend** | Vercel | [certops.vercel.app](https://certops.vercel.app) |
 | **Backend** | Render | [certops.onrender.com](https://certops.onrender.com) |
-| **Database** | Render PostgreSQL | Checkpoints + saved programs |
-| **Vector DB** | Qdrant Cloud | `certops_docs` (RAG corpus) + `certops_procedural_memory` (per-user agent config) |
+| **Database** | Render PostgreSQL | Checkpoints + saved programs + learner profiles |
+| **Vector DB** | Qdrant Cloud | `certops_docs` (exemplar RAG) + `certops_custom_docs` (Build Your Own per-program RAG) + `certops_procedural_memory` (per-user agent config) |
 
 The frontend auto-deploys from `main` via Vercel (root directory: `frontend`). The backend auto-deploys via Render using the project's `Dockerfile`.
 
@@ -306,12 +348,13 @@ The frontend auto-deploys from `main` via Vercel (root directory: `frontend`). T
 CertOps/
 ├── backend/
 │   ├── graph.py              # LangGraph builder pipeline (7 nodes) + PostgresSaver
-│   ├── main.py               # API endpoints, programs CRUD, HTML export, exam + agent-config endpoints
+│   ├── main.py               # API endpoints, programs CRUD, HTML export, exam + agent-config + results endpoints
 │   ├── schemas.py            # Pydantic models for certification artifacts (including MC fields)
 │   ├── exam_schemas.py       # Pydantic models and state for the adaptive exam
-│   ├── exam_graph.py         # Adaptive exam LangGraph (7 nodes, MC + open-ended)
+│   ├── exam_graph.py         # Adaptive exam LangGraph (7 nodes, MC + open-ended, configurable length)
 │   ├── procedural_memory.py  # Qdrant-backed per-user procedural memory CRUD
-│   ├── ingest.py             # URL fetching, PDF/DOCX parsing, text chunking
+│   ├── ingest.py             # URL fetching, PDF/DOCX parsing, text chunking, Qdrant embedding
+│   ├── seed_results.py       # Generate synthetic learner data for the results dashboard
 │   └── templates/
 │       └── certification_report.html
 ├── data/
@@ -319,6 +362,7 @@ CertOps/
 │   ├── certops_user_output.json
 │   ├── synthetic_testset.csv
 │   ├── programs/             # File-based program storage
+│   ├── results/              # File-based learner results storage
 │   └── docs/                 # Scraped Microsoft Learn markdown
 ├── docs/
 │   ├── adaptive_assessment_design.md
@@ -326,8 +370,8 @@ CertOps/
 │   ├── procedural_memory_pipeline_plan.md
 │   └── zeta_deployment_requirements.md
 ├── frontend/
-│   ├── src/app/              # Pages: home, exemplar, create, configure, assess, saved, generate
-│   ├── src/components/       # Pipeline journey, agent configurator, exam chat, exam results, artifact views
+│   ├── src/app/              # Pages: home, exemplar, create, configure, assess, saved, results, generate
+│   ├── src/components/       # Pipeline journey, agent configurator, exam chat, exam results, artifact views, item bank
 │   └── src/lib/              # Types, API client, utils
 ├── notebooks/
 │   ├── 01_data_pipeline.ipynb
@@ -336,6 +380,7 @@ CertOps/
 │   ├── 04_express_mode.ipynb
 │   ├── 05_adaptive_exam.ipynb
 │   └── 07_adaptive_testing.ipynb
+├── MEMORY_ARCHITECTURE.md    # CoALA memory framework mapping and state management docs
 ├── Dockerfile
 ├── docker-compose.yml
 ├── pyproject.toml
@@ -344,8 +389,8 @@ CertOps/
 
 ## Future Work
 
-- **Deploy Page Enhancements** — Shareable exam links, embeddable iframe snippets, and program report access from the pipeline's Deploy step.
 - **Skilljar Integration** — Connect CertOps to Skilljar LMS for course creation, exam embedding, and score passback.
 - **SSO / Identity Layer** — Email-based identity with future SSO (Okta, Azure AD) integration for enterprise deployment.
 - **Copilot Studio Integration** — Expose the adaptive exam as a backend for a Copilot Studio agent in Microsoft Teams.
 - **Cron-based Retrieval Testing** — Scheduled jobs to re-evaluate retrieval quality as the document corpus grows.
+- **LMS Mode** — Extend CertOps from an assessment engine into a lightweight LMS with learning content delivery and progress tracking.

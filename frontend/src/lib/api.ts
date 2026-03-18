@@ -3,6 +3,10 @@ import type {
   ArtifactKey,
   SavedProgram,
   SavedProgramSummary,
+  ExamSnapshot,
+  AgentConfig,
+  ResultsSummary,
+  LearnerResult,
 } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
@@ -165,9 +169,60 @@ export async function deleteProgram(id: string): Promise<void> {
   if (!res.ok) throw new Error("Failed to delete program");
 }
 
-// ── Adaptive Exam ──
+export async function addProgramDocuments(
+  programId: string,
+  urls: string[],
+  files: File[],
+): Promise<{ chunks_added: number }> {
+  if (!API_URL) throw new Error("Backend not configured.");
 
-import type { ExamSnapshot, AgentConfig } from "./types";
+  const formData = new FormData();
+  formData.append("urls", JSON.stringify(urls.filter((u) => u.trim())));
+  files.forEach((f) => formData.append("files", f));
+
+  const res = await fetch(`${API_URL}/programs/${programId}/documents`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
+// ── Results Dashboard ──
+
+export async function getResultsSummary(): Promise<ResultsSummary[]> {
+  if (!API_URL) return [];
+
+  const res = await fetch(`${API_URL}/results/summary`);
+  if (!res.ok) throw new Error("Failed to load results summary");
+  return res.json();
+}
+
+export async function getProgramResults(programId: string): Promise<LearnerResult[]> {
+  if (!API_URL) return [];
+
+  const res = await fetch(`${API_URL}/programs/${programId}/results`);
+  if (!res.ok) throw new Error("Failed to load program results");
+  return res.json();
+}
+
+export async function exportProgramResults(programId: string): Promise<void> {
+  if (!API_URL) throw new Error("Backend not configured.");
+
+  const url = `${API_URL}/programs/${programId}/results/export`;
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${programId}_results.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// ── Adaptive Exam ──
 
 export async function startExam(
   programId: string,

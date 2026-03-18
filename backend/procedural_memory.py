@@ -116,6 +116,8 @@ DEFAULT_MEMORIES = {
         "competent": {"min_score": 1.7, "label": "competent"},
         "novice": {"min_score": 0, "label": "novice"},
     },
+    "max_exam_items": 20,
+    "min_items_per_domain": 2,
 }
 
 

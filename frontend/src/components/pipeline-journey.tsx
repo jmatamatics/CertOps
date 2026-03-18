@@ -8,6 +8,7 @@ import {
   Settings2,
   FlaskConical,
   Rocket,
+  BarChart3,
 } from "lucide-react";
 
 const STEPS = [
@@ -63,6 +64,19 @@ const STEPS = [
     ring: "group-hover:ring-emerald-500/30",
     glow: "group-hover:shadow-emerald-500/10",
   },
+  {
+    number: "05",
+    title: "Analyze",
+    subtitle: "Learner Analytics",
+    description:
+      "Track pass rates, review domain proficiency, and export learner results across programs.",
+    icon: BarChart3,
+    href: "/results",
+    color: "from-rose-500/20 to-rose-500/5",
+    accent: "text-rose-400",
+    ring: "group-hover:ring-rose-500/30",
+    glow: "group-hover:shadow-rose-500/10",
+  },
 ];
 
 const spring = { type: "spring" as const, stiffness: 100, damping: 18 };
@@ -93,7 +107,7 @@ export function PipelineJourney() {
           transition={{ delay: 0.8, duration: 1.2, ease: "easeInOut" }}
           style={{ originX: 0 }}
         >
-          <div className="h-full w-full bg-gradient-to-r from-blue-500/30 via-violet-500/30 via-amber-500/30 to-emerald-500/30" />
+          <div className="h-full w-full bg-gradient-to-r from-blue-500/30 via-violet-500/30 via-amber-500/30 via-emerald-500/30 to-rose-500/30" />
         </motion.div>
 
         {/* Animated glow that follows hover */}
@@ -112,7 +126,7 @@ export function PipelineJourney() {
         )}
 
         {/* Steps grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 relative z-10">
           {STEPS.map((step, i) => {
             const Icon = step.icon;
             const isHovered = hoveredIndex === i;

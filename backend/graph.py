@@ -35,6 +35,7 @@ class CertOpsState(TypedDict):
     documents: list[str]
     document_sources: list[str]
     tavily_context: str
+    program_id: Optional[str]
     competency_framework: Optional[dict]
     learning_progression: Optional[dict]
     assessments: Optional[list[dict]]
@@ -81,6 +82,34 @@ TRACK_DOMAIN_HINTS = {
 
 
 def retrieve_docs(state: CertOpsState) -> dict:
+    program_id = state.get("program_id")
+
+    if program_id:
+        from qdrant_client.models import Filter, FieldCondition, MatchValue
+        from backend.ingest import get_program_vector_store
+
+        custom_vs = get_program_vector_store()
+        qdrant_filter = Filter(must=[
+            FieldCondition(key="metadata.program_id", match=MatchValue(value=program_id))
+        ])
+        retriever = custom_vs.as_retriever(
+            search_kwargs={"k": 20, "filter": qdrant_filter}
+        )
+        compressor = CohereRerank(model="rerank-v3.5", top_n=5)
+        reranked_retriever = ContextualCompressionRetriever(
+            base_compressor=compressor,
+            base_retriever=retriever,
+        )
+
+        description = state.get("tavily_context", "")
+        query = f"{state['track']} {description}".strip() or f"{state['track']} certification competencies and skills"
+        docs = reranked_retriever.invoke(query)
+        doc_texts = [doc.page_content for doc in docs]
+        doc_sources = [doc.metadata.get("source", "") for doc in docs]
+
+        tavily_context = description
+        return {"documents": doc_texts, "document_sources": doc_sources, "tavily_context": tavily_context}
+
     if state.get("documents") and len(state["documents"]) >= 3:
         return {}
 

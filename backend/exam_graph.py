@@ -77,13 +77,43 @@ def _format_rubric_criteria(criteria: list[dict]) -> str:
 # ── Nodes ──
 
 def load_program(state: ExamState) -> dict:
-    """Prepare items with difficulty, domain-rubric mapping, initial proficiency, and difficulty cursors."""
+    """Prepare items with difficulty, domain-rubric mapping, initial proficiency, and difficulty cursors.
+
+    When the item bank is larger than max_exam_items, a stratified random
+    sample is drawn so every domain is represented before filling the rest.
+    """
+    pm = _pm(state)
+    max_items = int(pm.get("max_exam_items", 20))
+
     items_with_index = []
     for i, item in enumerate(state["item_bank"]):
         enriched = {**item, "index": i}
         if "difficulty" not in enriched or enriched["difficulty"] not in ("easy", "medium", "hard"):
             enriched["difficulty"] = "medium"
         items_with_index.append(enriched)
+
+    if len(items_with_index) > max_items:
+        by_domain: dict[str, list[dict]] = {}
+        for it in items_with_index:
+            d = _extract_domain(it.get("competency_ref", ""))
+            by_domain.setdefault(d, []).append(it)
+        for v in by_domain.values():
+            random.shuffle(v)
+
+        selected: list[dict] = []
+        seen: set[int] = set()
+        for domain_items in by_domain.values():
+            pick = domain_items[0]
+            selected.append(pick)
+            seen.add(pick["index"])
+
+        pool = [it for it in items_with_index if it["index"] not in seen]
+        random.shuffle(pool)
+        remaining_slots = max_items - len(selected)
+        if remaining_slots > 0:
+            selected.extend(pool[:remaining_slots])
+
+        items_with_index = selected
 
     random.shuffle(items_with_index)
 
@@ -442,26 +472,26 @@ def after_evaluate(state: ExamState) -> str:
     return "update_proficiency"
 
 
-MAX_EXAM_ITEMS = 20
-MIN_ITEMS_PER_DOMAIN = 2
-
-
 def after_update(state: ExamState) -> str:
     if not state["items_remaining"]:
         return "determine_result"
 
+    pm = _pm(state)
+    max_items = int(pm.get("max_exam_items", 20))
+    min_per_domain = int(pm.get("min_items_per_domain", 2))
+
     administered_count = len(state.get("items_administered", []))
-    if administered_count >= MAX_EXAM_ITEMS:
+    if administered_count >= max_items:
         return "determine_result"
 
     proficiency = state["domain_proficiency"]
     domains = list(proficiency.keys())
     all_tested = all(proficiency[d]["items_count"] > 0 for d in domains)
 
-    if all_tested and administered_count >= len(domains) * MIN_ITEMS_PER_DOMAIN:
+    if all_tested and administered_count >= len(domains) * min_per_domain:
         uncertain = [
             d for d in domains
-            if proficiency[d]["items_count"] < MIN_ITEMS_PER_DOMAIN
+            if proficiency[d]["items_count"] < min_per_domain
             and any(_extract_domain(it["competency_ref"]) == d for it in state["items_remaining"])
         ]
         if not uncertain:

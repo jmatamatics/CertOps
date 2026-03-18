@@ -26,6 +26,7 @@ import {
   AlertCircle,
   MessageSquareText,
   SlidersHorizontal,
+  ListChecks,
 } from "lucide-react";
 
 interface Props {
@@ -121,6 +122,14 @@ export function AgentConfigurator({ programId, programName }: Props) {
           },
         };
       });
+      setStatus("idle");
+    },
+    [],
+  );
+
+  const handleIntChange = useCallback(
+    (key: "max_exam_items" | "min_items_per_domain", value: number) => {
+      setConfig((prev) => (prev ? { ...prev, [key]: value } : prev));
       setStatus("idle");
     },
     [],
@@ -258,6 +267,10 @@ export function AgentConfigurator({ programId, programName }: Props) {
             <SlidersHorizontal className="h-4 w-4" />
             Thresholds
           </TabsTrigger>
+          <TabsTrigger value="exam-length" className="gap-1.5">
+            <ListChecks className="h-4 w-4" />
+            Exam Length
+          </TabsTrigger>
         </TabsList>
 
         {/* Prompts Tab */}
@@ -362,6 +375,41 @@ export function AgentConfigurator({ programId, programName }: Props) {
           </Card>
         </TabsContent>
 
+        {/* Exam Length Tab */}
+        <TabsContent value="exam-length" className="mt-6 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Exam Length Controls</CardTitle>
+              <CardDescription>
+                Control how many questions are administered during an exam.
+                The agent adaptively selects items from the full item bank up to
+                these limits.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <ThresholdSlider
+                label="Maximum Exam Items"
+                description="The most questions a learner will be asked in a single exam session."
+                value={config.max_exam_items}
+                min={5}
+                max={50}
+                step={1}
+                onChange={(v) => handleIntChange("max_exam_items", Math.round(v))}
+              />
+              <Separator />
+              <ThresholdSlider
+                label="Minimum Items Per Domain"
+                description="Each domain must have at least this many questions answered before the exam can end."
+                value={config.min_items_per_domain}
+                min={1}
+                max={10}
+                step={1}
+                onChange={(v) => handleIntChange("min_items_per_domain", Math.round(v))}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
       </Tabs>
     </motion.div>
   );
@@ -387,6 +435,9 @@ function ThresholdSlider({
   step: number;
   onChange: (v: number) => void;
 }) {
+  const isInteger = step >= 1;
+  const fmt = (v: number) => (isInteger ? String(Math.round(v)) : v.toFixed(1));
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -395,7 +446,7 @@ function ThresholdSlider({
           <p className="text-xs text-muted-foreground">{description}</p>
         </div>
         <span className="min-w-[48px] text-right text-lg font-semibold tabular-nums">
-          {value.toFixed(1)}
+          {fmt(value)}
         </span>
       </div>
       <input
@@ -408,8 +459,8 @@ function ThresholdSlider({
         className="w-full accent-primary h-2 rounded-full appearance-none bg-muted cursor-pointer"
       />
       <div className="flex justify-between text-[10px] text-muted-foreground">
-        <span>{min.toFixed(1)}</span>
-        <span>{max.toFixed(1)}</span>
+        <span>{fmt(min)}</span>
+        <span>{fmt(max)}</span>
       </div>
     </div>
   );

@@ -12,6 +12,11 @@ import {
   Check,
   Copy,
   AlertTriangle,
+  Plus,
+  Upload,
+  FileText,
+  X,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,6 +26,7 @@ import {
   getProgram,
   deleteProgram,
   getProgramReportUrl,
+  addProgramDocuments,
 } from "@/lib/api";
 import type { SavedProgram } from "@/lib/types";
 
@@ -49,6 +55,12 @@ export default function SavedDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showAddDocs, setShowAddDocs] = useState(false);
+  const [docUrls, setDocUrls] = useState<string[]>([""]);
+  const [docFiles, setDocFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadResult, setUploadResult] = useState<string | null>(null);
+  const docFileInputRef = useRef<HTMLInputElement | null>(null);
   const tabsRef = useRef<ArtifactTabsHandle | null>(null);
   const { copied, copy } = useCopyFeedback();
 
@@ -76,6 +88,23 @@ export default function SavedDetailPage() {
       router.push("/saved");
     } catch (err) {
       setError(String(err));
+    }
+  }
+
+  async function handleAddDocs() {
+    const validUrls = docUrls.filter((u) => u.trim());
+    if (!validUrls.length && !docFiles.length) return;
+    setUploading(true);
+    setUploadResult(null);
+    try {
+      const result = await addProgramDocuments(programId, validUrls, docFiles);
+      setUploadResult(`${result.chunks_added} chunks embedded into knowledge base.`);
+      setDocUrls([""]);
+      setDocFiles([]);
+    } catch (err) {
+      setError(String(err));
+    } finally {
+      setUploading(false);
     }
   }
 
@@ -314,6 +343,184 @@ export default function SavedDetailPage() {
                     to the allowed sources in the Content Security Policy (CSP).
                   </p>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Add Documents to Knowledge Base */}
+            <Card>
+              <CardContent className="pt-5 pb-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Knowledge Base
+                    </h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Add more source documents to this program&apos;s knowledge base for future rebuilds.
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5"
+                    onClick={() => {
+                      setShowAddDocs(!showAddDocs);
+                      setUploadResult(null);
+                    }}
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    Add Documents
+                  </Button>
+                </div>
+
+                <AnimatePresence>
+                  {showAddDocs && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-4 overflow-hidden"
+                    >
+                      {/* URLs */}
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium flex items-center gap-2">
+                          <Link2 className="h-3.5 w-3.5 text-muted-foreground" />
+                          Source URLs
+                        </label>
+                        {docUrls.map((url, i) => (
+                          <div key={i} className="flex gap-2">
+                            <input
+                              type="url"
+                              value={url}
+                              onChange={(e) =>
+                                setDocUrls((prev) =>
+                                  prev.map((u, j) => (j === i ? e.target.value : u)),
+                                )
+                              }
+                              placeholder="https://docs.example.com/..."
+                              className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                            />
+                            {docUrls.length > 1 && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="px-2 text-muted-foreground hover:text-destructive"
+                                onClick={() =>
+                                  setDocUrls((prev) => prev.filter((_, j) => j !== i))
+                                }
+                              >
+                                <X className="h-3.5 w-3.5" />
+                              </Button>
+                            )}
+                          </div>
+                        ))}
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-xs"
+                          onClick={() => setDocUrls((prev) => [...prev, ""])}
+                        >
+                          <Plus className="h-3 w-3 mr-1" /> Add URL
+                        </Button>
+                      </div>
+
+                      {/* File Upload */}
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium flex items-center gap-2">
+                          <Upload className="h-3.5 w-3.5 text-muted-foreground" />
+                          Upload Files
+                          <span className="text-xs text-muted-foreground font-normal">(PDF, DOCX)</span>
+                        </label>
+                        <div
+                          onClick={() => docFileInputRef.current?.click()}
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            const accepted = Array.from(e.dataTransfer.files).filter((f) => {
+                              const ext = f.name.toLowerCase();
+                              return ext.endsWith(".pdf") || ext.endsWith(".docx") || ext.endsWith(".txt");
+                            });
+                            setDocFiles((prev) => [...prev, ...accepted]);
+                          }}
+                          className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer transition-colors hover:border-primary/50 hover:bg-primary/5"
+                        >
+                          <Upload className="h-6 w-6 text-muted-foreground/50 mx-auto mb-1" />
+                          <p className="text-xs text-muted-foreground">
+                            Drag and drop, or click to browse
+                          </p>
+                          <input
+                            ref={docFileInputRef}
+                            type="file"
+                            multiple
+                            accept=".pdf,.docx,.txt"
+                            onChange={(e) => {
+                              if (e.target.files) {
+                                setDocFiles((prev) => [...prev, ...Array.from(e.target.files!)]);
+                                e.target.value = "";
+                              }
+                            }}
+                            className="hidden"
+                          />
+                        </div>
+                        {docFiles.length > 0 && (
+                          <div className="space-y-1">
+                            {docFiles.map((file, i) => (
+                              <div
+                                key={i}
+                                className="flex items-center justify-between rounded-md border border-border px-3 py-1.5 text-xs"
+                              >
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <FileText className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                  <span className="truncate">{file.name}</span>
+                                  <span className="text-muted-foreground shrink-0">
+                                    ({(file.size / 1024).toFixed(0)} KB)
+                                  </span>
+                                </div>
+                                <button
+                                  onClick={() => setDocFiles((prev) => prev.filter((_, j) => j !== i))}
+                                  className="text-muted-foreground hover:text-destructive ml-2 shrink-0"
+                                >
+                                  <X className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      <Button
+                        size="sm"
+                        onClick={handleAddDocs}
+                        disabled={
+                          uploading ||
+                          (!docUrls.some((u) => u.trim()) && docFiles.length === 0)
+                        }
+                        className="gap-1.5"
+                      >
+                        {uploading ? (
+                          <motion.div
+                            className="h-3.5 w-3.5 rounded-full border-2 border-white border-t-transparent"
+                            animate={{ rotate: 360 }}
+                            transition={{ repeat: Infinity, duration: 0.6, ease: "linear" }}
+                          />
+                        ) : (
+                          <Upload className="h-3.5 w-3.5" />
+                        )}
+                        {uploading ? "Embedding..." : "Embed Documents"}
+                      </Button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {uploadResult && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-2 text-sm text-green-400"
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    {uploadResult}
+                  </motion.div>
+                )}
               </CardContent>
             </Card>
 

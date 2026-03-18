@@ -333,7 +333,19 @@ export const ArtifactTabs = forwardRef<ArtifactTabsHandle, ArtifactTabsProps>(
 
             {/* Normal view when not editing this tab */}
             {!isEditingThisTab && (
-              <ArtifactContent artifactKey={key} data={data} />
+              <ArtifactContent
+                artifactKey={key}
+                data={data}
+                onDeleteItemBankEntry={
+                  key === "item_bank" && onEdit && !readOnly
+                    ? (index: number) => {
+                        const updated = [...data.item_bank];
+                        updated.splice(index, 1);
+                        onEdit("item_bank", updated);
+                      }
+                    : undefined
+                }
+              />
             )}
           </TabsContent>
         );
@@ -354,9 +366,11 @@ const SECTION_TITLES: Record<ArtifactKey, string> = {
 function ArtifactContent({
   artifactKey,
   data,
+  onDeleteItemBankEntry,
 }: {
   artifactKey: ArtifactKey;
   data: CertOpsOutput;
+  onDeleteItemBankEntry?: (index: number) => void;
 }) {
   const content = (() => {
     switch (artifactKey) {
@@ -369,7 +383,7 @@ function ArtifactContent({
       case "rubrics":
         return <RubricsView rubrics={data.rubrics} />;
       case "item_bank":
-        return <ItemBankView items={data.item_bank} />;
+        return <ItemBankView items={data.item_bank} onDeleteItem={onDeleteItemBankEntry} />;
       case "blueprint":
         return <BlueprintView blueprint={data.blueprint} />;
     }

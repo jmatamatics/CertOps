@@ -5,9 +5,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import csv
+import io
+
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from pydantic import BaseModel
 from jinja2 import Environment, FileSystemLoader
 
@@ -15,7 +18,7 @@ from langgraph.types import Command
 
 from backend.graph import graph, CertOpsState, PIPELINE_STEPS, ARTIFACT_TO_NODE, db_conn
 from backend.exam_graph import exam_graph
-from backend.ingest import process_content
+from backend.ingest import process_content, embed_program_docs
 from backend.procedural_memory import (
     get_user_namespace,
     get_default_memories,
@@ -55,6 +58,7 @@ class GenerateRequest(BaseModel):
 
 class GenerateResponse(BaseModel):
     thread_id: str
+    program_id: str | None = None
     competency_framework: dict
     learning_progression: dict
     assessments: list[dict]
@@ -200,14 +204,18 @@ async def generate_custom(
     if not chunks:
         raise HTTPException(status_code=400, detail="No content could be extracted from the provided URLs or files.")
 
+    program_id = str(uuid.uuid4())
     thread_id = str(uuid.uuid4())
     config = {"configurable": {"thread_id": thread_id}}
 
+    embed_program_docs(program_id, chunks, sources=url_list or None)
+
     initial_state: CertOpsState = {
         "track": name,
-        "documents": chunks,
+        "documents": [],
         "document_sources": url_list,
         "tavily_context": description,
+        "program_id": program_id,
         "competency_framework": None,
         "learning_progression": None,
         "assessments": None,
@@ -222,6 +230,7 @@ async def generate_custom(
         raise HTTPException(status_code=500, detail=str(e))
 
     artifacts = _extract_artifacts(result, thread_id)
+    artifacts["program_id"] = program_id
     _cache_artifacts(artifacts, name, cache_key=thread_id)
     return GenerateResponse(**artifacts)
 
@@ -383,6 +392,28 @@ def delete_program(program_id: str):
     return {"status": "deleted"}
 
 
+@app.post("/programs/{program_id}/documents")
+async def add_program_documents(
+    program_id: str,
+    urls: str = Form("[]"),
+    files: list[UploadFile] = File(default=[]),
+):
+    """Add more documents to an existing program's knowledge base in Qdrant."""
+    url_list = json.loads(urls) if urls else []
+
+    file_contents: list[tuple[str, bytes]] = []
+    for f in files:
+        content = await f.read()
+        file_contents.append((f.filename or "upload", content))
+
+    chunks = process_content(url_list, file_contents)
+    if not chunks:
+        raise HTTPException(status_code=400, detail="No content could be extracted.")
+
+    count = embed_program_docs(program_id, chunks, sources=url_list or None)
+    return {"status": "ok", "chunks_added": count}
+
+
 @app.get("/programs/{program_id}/report", response_class=HTMLResponse)
 def program_report(program_id: str, download: bool = False):
     """Render an HTML certification report from a saved program's artifacts."""
@@ -402,6 +433,136 @@ def program_report(program_id: str, download: bool = False):
         )
     return HTMLResponse(content=html)
 
+
+
+# ── Results Dashboard ──
+
+RESULTS_DIR = DATA_DIR / "results"
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _load_file_results(program_id: str | None = None) -> list[dict]:
+    """Load learner results from JSON files on disk."""
+    all_results: list[dict] = []
+    for f in RESULTS_DIR.glob("*.json"):
+        data = json.loads(f.read_text())
+        records = data if isinstance(data, list) else [data]
+        for r in records:
+            if program_id and r.get("program_id") != program_id:
+                continue
+            if isinstance(r.get("domain_breakdown"), str):
+                r["domain_breakdown"] = json.loads(r["domain_breakdown"])
+            all_results.append(r)
+    all_results.sort(key=lambda r: r.get("created_at", ""), reverse=True)
+    return all_results
+
+
+@app.get("/programs/{program_id}/results")
+def program_results(program_id: str):
+    """All exam attempts for a program."""
+    if _programs_use_db():
+        try:
+            with db_conn.cursor() as cur:
+                cur.execute(
+                    "SELECT learner_id, program_id, thread_id, passed, overall_score, "
+                    "domain_breakdown, summary, created_at "
+                    "FROM learner_profiles WHERE program_id = %s ORDER BY created_at DESC",
+                    (program_id,),
+                )
+                cols = [desc[0] for desc in cur.description]
+                rows = [dict(zip(cols, row)) for row in cur.fetchall()]
+            for r in rows:
+                if isinstance(r.get("domain_breakdown"), str):
+                    r["domain_breakdown"] = json.loads(r["domain_breakdown"])
+                if r.get("created_at") and not isinstance(r["created_at"], str):
+                    r["created_at"] = r["created_at"].isoformat()
+            return rows
+        except Exception:
+            return []
+    return _load_file_results(program_id)
+
+
+@app.get("/programs/{program_id}/results/export")
+def program_results_export(program_id: str):
+    """Export exam results for a program as CSV."""
+    rows = program_results(program_id)
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["learner_id", "passed", "overall_score", "summary", "date"])
+    for r in rows:
+        writer.writerow([
+            r.get("learner_id", ""),
+            r.get("passed", ""),
+            round(r.get("overall_score", 0), 2),
+            r.get("summary", ""),
+            r.get("created_at", ""),
+        ])
+    buf.seek(0)
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{program_id}_results.csv"'},
+    )
+
+
+@app.get("/results/summary")
+def results_summary():
+    """Aggregate exam stats per program for the dashboard list view."""
+    if _programs_use_db():
+        try:
+            with db_conn.cursor() as cur:
+                cur.execute(
+                    "SELECT lp.program_id, "
+                    "COUNT(*) AS total_attempts, "
+                    "SUM(CASE WHEN lp.passed THEN 1 ELSE 0 END) AS passed_count, "
+                    "AVG(lp.overall_score) AS avg_score, "
+                    "MAX(lp.created_at) AS last_attempt, "
+                    "p.name AS program_name "
+                    "FROM learner_profiles lp "
+                    "LEFT JOIN programs p ON lp.program_id = p.id "
+                    "GROUP BY lp.program_id, p.name "
+                    "ORDER BY last_attempt DESC"
+                )
+                cols = [desc[0] for desc in cur.description]
+                rows = [dict(zip(cols, row)) for row in cur.fetchall()]
+            for r in rows:
+                if r.get("last_attempt") and not isinstance(r["last_attempt"], str):
+                    r["last_attempt"] = r["last_attempt"].isoformat()
+                if r.get("avg_score") is not None:
+                    r["avg_score"] = round(float(r["avg_score"]), 2)
+                r["passed_count"] = int(r.get("passed_count", 0))
+                r["total_attempts"] = int(r.get("total_attempts", 0))
+            return rows
+        except Exception:
+            return []
+
+    all_results = _load_file_results()
+    program_names: dict[str, str] = {}
+    for f in sorted(PROGRAMS_DIR.glob("*.json")):
+        data = json.loads(f.read_text())
+        program_names[data["id"]] = data.get("name", data["id"])
+
+    grouped: dict[str, list[dict]] = {}
+    for r in all_results:
+        pid = r.get("program_id", "unknown")
+        grouped.setdefault(pid, []).append(r)
+
+    summaries = []
+    for pid, records in grouped.items():
+        total = len(records)
+        passed = sum(1 for r in records if r.get("passed"))
+        avg = sum(r.get("overall_score", 0) for r in records) / total if total else 0
+        last = max((r.get("created_at", "") for r in records), default="")
+        summaries.append({
+            "program_id": pid,
+            "program_name": program_names.get(pid, pid),
+            "total_attempts": total,
+            "passed_count": passed,
+            "avg_score": round(avg, 2),
+            "last_attempt": last,
+        })
+    summaries.sort(key=lambda s: s["last_attempt"], reverse=True)
+    return summaries
 
 
 def _row_to_dict(row: dict) -> dict:
