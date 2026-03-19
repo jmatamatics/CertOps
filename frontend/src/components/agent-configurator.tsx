@@ -77,7 +77,12 @@ export function AgentConfigurator({ programId, programName }: Props) {
           getAgentConfig(programId),
           getAgentConfigDefaults(),
         ]);
-        setConfig(cfg);
+        setConfig({
+          ...defs,
+          ...cfg,
+          max_exam_items: cfg.max_exam_items ?? defs.max_exam_items ?? 20,
+          min_items_per_domain: cfg.min_items_per_domain ?? defs.min_items_per_domain ?? 2,
+        });
         setDefaults(defs);
       } catch (e) {
         setErrorMsg(e instanceof Error ? e.message : "Failed to load config");

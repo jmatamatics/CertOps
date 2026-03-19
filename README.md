@@ -2,7 +2,7 @@
 
 **AI-Native Certification Builder for Enterprise AI Platforms**
 
-CertOps is an LLM-powered system that ingests platform documentation (or user-provided content), retrieves relevant material via RAG, and generates production-ready certification artifacts — competency frameworks, learning progressions, performance-based assessments, scoring rubrics, item banks with multiple choice and open-ended questions, and certification blueprints. A second LangGraph agent delivers adaptive exams with per-user customizable behavior through procedural memory.
+CertOps is an LLM-powered system that ingests platform documentation (or user-provided content), retrieves relevant material via RAG, and generates production-ready certification artifacts — competency frameworks, learning progressions, performance tasks, scoring rubrics, item banks with multiple choice and open-ended questions, and certification blueprints. A second LangGraph agent delivers adaptive exams with per-user customizable behavior through procedural memory.
 
 **[Live Demo](https://certops.vercel.app)** | **[Loom Video](https://www.loom.com/share/e1309d309c5940098a2b80b2c843170a)**
 
@@ -32,7 +32,7 @@ The generation pipeline:
 
 1. **Embed** uploaded documents (URLs, PDF, DOCX) into a program-scoped Qdrant collection (`certops_custom_docs`)
 2. **Retrieve** the most relevant chunks via RAG with Cohere reranking (20 → top 5). For exemplar tracks, also **augment** with Tavily web search for the latest platform updates
-3. **Generate** each certification artifact in sequence — framework first (so downstream artifacts can reference it), then learning progression, assessments, rubrics, item bank, and certification blueprint
+3. **Generate** each certification artifact in sequence — framework first (so downstream artifacts can reference it), then learning progression, performance tasks, rubrics, item bank, and certification blueprint
 
 Every LLM call uses OpenAI GPT-4o with structured output (Pydantic models) to ensure artifacts are valid and exportable. The final output is a comprehensive, styled HTML certification report that a non-technical user can download and hand to stakeholders.
 
@@ -167,7 +167,7 @@ Each pipeline run produces six structured artifacts:
 |----------|-------------|
 | **Competency Framework** | Domains, skills, and proficiency levels (novice / competent / expert) with behavioral indicators |
 | **Learning Progression** | Ordered learning objectives with suggested activities, estimated hours, and success criteria |
-| **Assessment Tasks** | Scenario-based performance assessments with instructions, expected outputs, and evaluator guides |
+| **Performance Tasks** | Scenario-based hands-on tasks with instructions, expected outputs, and evaluator guides |
 | **Scoring Rubrics** | Weighted criteria with multi-level descriptors for consistent grading |
 | **Item Bank** | ~80% multiple choice (4 options with correct answer) + ~20% open-ended scenario items, each with model answers, scoring notes, and RAG source URLs. Individual items can be deleted to curate the exam pool. |
 | **Certification Blueprint** | Executive summary tying all artifacts together — program overview, assessment strategy, estimated duration |
@@ -273,7 +273,6 @@ The `notebooks/` directory contains five notebooks that walk through the full en
 | **03_certification_engine** | Pydantic schemas, LangGraph node definitions, complete `StateGraph` pipeline, end-to-end runs for both tracks |
 | **04_express_mode** | LangGraph checkpointing with `MemorySaver`, full pipeline without pauses, selective editing via `update_state()`, downstream replay, comparison of original vs. edited artifacts |
 | **05_adaptive_exam** | Second LangGraph agent for adaptive assessment — `interrupt()` for learner input, LLM-as-judge evaluation against rubrics, conversational probing, per-domain proficiency tracking, pass/fail determination |
-| **07_adaptive_testing** | Adaptive testing design — staircase algorithm, Bloom's taxonomy difficulty tiers, domain + difficulty selection walkthrough, LangSmith observability, cost analysis |
 
 ## Quickstart
 
@@ -378,8 +377,7 @@ CertOps/
 │   ├── 02_retrieval_evaluation.ipynb
 │   ├── 03_certification_engine.ipynb
 │   ├── 04_express_mode.ipynb
-│   ├── 05_adaptive_exam.ipynb
-│   └── 07_adaptive_testing.ipynb
+│   └── 05_adaptive_exam.ipynb
 ├── MEMORY_ARCHITECTURE.md    # CoALA memory framework mapping and state management docs
 ├── Dockerfile
 ├── docker-compose.yml

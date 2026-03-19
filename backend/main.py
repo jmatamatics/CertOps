@@ -519,7 +519,7 @@ def results_summary():
                     "MAX(lp.created_at) AS last_attempt, "
                     "p.name AS program_name "
                     "FROM learner_profiles lp "
-                    "LEFT JOIN programs p ON lp.program_id = p.id "
+                    "INNER JOIN programs p ON lp.program_id = p.id "
                     "GROUP BY lp.program_id, p.name "
                     "ORDER BY last_attempt DESC"
                 )

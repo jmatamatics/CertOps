@@ -169,7 +169,9 @@ def load_memories(namespace: str, program_id: str) -> dict:
 
     points = results[0]
     if points:
-        return json.loads(points[0].payload["memories"])
+        merged = get_default_memories()
+        merged.update(json.loads(points[0].payload["memories"]))
+        return merged
 
     return get_default_memories()
 
