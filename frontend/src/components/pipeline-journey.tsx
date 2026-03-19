@@ -101,7 +101,7 @@ export function PipelineJourney() {
       <div className="relative">
         {/* Connecting line */}
         <motion.div
-          className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-px hidden md:block"
+          className="absolute left-0 right-0 top-[35%] -translate-y-1/2 h-px hidden md:block"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ delay: 0.8, duration: 1.2, ease: "easeInOut" }}
@@ -113,7 +113,7 @@ export function PipelineJourney() {
         {/* Animated glow that follows hover */}
         {hoveredIndex !== null && (
           <motion.div
-            className="absolute top-1/2 -translate-y-1/2 h-px hidden md:block"
+            className="absolute top-[35%] -translate-y-1/2 h-px hidden md:block"
             layoutId="pipeline-glow"
             style={{
               left: 0,
