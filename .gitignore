@@ -39,8 +39,7 @@ data/programs/
 # Large build artifacts
 notebooks/certops_kg.json
 
-# Internal notebooks (not for AIE9 submission)
-notebooks/04_human_in_the_loop.ipynb
+# Internal notebooks (not yet complete)
 notebooks/06_procedural_memory.ipynb
 notebooks/07_adaptive_testing.ipynb
 
@@ -49,6 +48,7 @@ docs/
 
 # Project handoff (internal)
 HANDOFF.md
+SUBMISSION.md
 
 # Transfer archives
 *.zip

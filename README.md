@@ -4,7 +4,7 @@
 
 CertOps is an LLM-powered system that ingests platform documentation (or user-provided content), retrieves relevant material via RAG, and generates production-ready certification artifacts — competency frameworks, learning progressions, performance tasks, scoring rubrics, item banks with multiple choice and open-ended questions, and certification blueprints. A second LangGraph agent delivers adaptive exams with per-user customizable behavior through procedural memory.
 
-**[Live Demo](https://certops.vercel.app)** | **[Loom Video](https://www.loom.com/share/e1309d309c5940098a2b80b2c843170a)**
+**[Live Demo](https://certops.vercel.app)**
 
 ---
 
